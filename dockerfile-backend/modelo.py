@@ -17,12 +17,28 @@ class Alternativa(db.Model):
             "certa":self.certa
         }
 
+class Assunto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(254))
+    def __str__(self):
+        return self.nome + "("+str(self.id)+")"
+        
+    def json(self):
+        return {
+            "id":self.id,
+            "nome": self.nome
+        }
+ 
+
 class Questao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     enunciado = db.Column(db.String(254))
     autor = db.Column(db.String(254))
-    assunto = db.Column(db.String(254))
+    #assunto = db.Column(db.String(254))
     data_cadastro = db.Column(db.String(254))
+
+    # n x n
+    assuntos = db.relationship("Assunto", secondary="assuntodaquestao")
 
     #questoesNaProva = db.relationship("QuestaoNaProva")
     #respostas = db.relationship("Resposta")
@@ -45,6 +61,13 @@ alternativasDaQuestao = db.Table('alternativasDaQuestao', db.metadata,
     db.Column('id_alternativa', db.Integer, db.ForeignKey(Alternativa.id)),
     db.Column('id_questao', db.Integer, db.ForeignKey(Questao.id))
 )
+
+
+assuntoDaQuestao = db.Table('assuntodaquestao', db.metadata,
+    db.Column('id_assunto', db.Integer, db.ForeignKey(Questao.id)),
+    db.Column('id_questao', db.Integer, db.ForeignKey(Assunto.id))
+)
+
 
 class MultiplaEscolha(Questao):
     id = db.Column(db.Integer, db.ForeignKey('questao.id'), primary_key=True)
@@ -218,28 +241,42 @@ class Aberta(Questao):
         }
 
 
-
 class Circulo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(254))
     data = db.Column(db.String(254))
-    assuntos = db.Column(db.String(254)) # separados por "|"
+    
+    # relacionamento n x n 
+    assuntos = db.relationship("Assunto", secondary="assuntodocirculo")
+    
+    #assuntos = db.Column(db.String(254)) # separados por "|"
+    
     #questoesNaProva = db.relationship("QuestaoNaProva")#, secondary=questoesNaProva)
     
     # atributo para acessar questões a partir de uma prova
     respostasNoCirculo = db.relationship("Resposta", secondary="respostanocirculo")
 
     def __str__(self):
-        return self.nome + "("+str(self.id)+"), em "+self.data+", sobre: "+self.assuntos
+        s = self.nome + "("+str(self.id)+"), em "+self.data
+        for assunto in self.assuntos:
+            s = s + " > " + str(assunto)       
+        return s
         
     def json(self):
         return {
             "id":self.id,
             "nome": self.nome,
             "data":self.data,
-            "assuntos": self.assuntos
-            #"questoes":[q.json() for q in self.questoesDaProva]
+            #"assuntos": self.assuntos
+            "assuntos":[a.json() for a in self.assuntos]
         }
+
+assuntoDoCirculo = db.Table('assuntodocirculo', db.metadata,
+    # Circulo.id como string, pois a definição vem depois!
+    db.Column('id_circulo', db.Integer, db.ForeignKey(Circulo.id)),
+    db.Column('id_assunto', db.Integer, db.ForeignKey(Assunto.id))
+)
+
 
 class RespostaNoCirculo(db.Model):
     __tablename__ = "respostanocirculo"
@@ -256,14 +293,18 @@ class RespostaNoCirculo(db.Model):
     
 
     def __str__(self):
-        return str(self.resposta)+" em "+str(self.circulo)+\
-            ", ordem="+str(self.ordem)
+        return str(self.resposta)+" em "+str(self.circulo)
+            
 
 #
 # teste
 #
 
 if __name__ == "__main__":
+
+    # apagar o arquivo, se houver
+    if os.path.exists(arquivobd):
+        os.remove(arquivobd)
 
     # criar tabelas
     db.create_all()
@@ -284,7 +325,12 @@ if __name__ == "__main__":
     print(a1,a2,a3)
 
     # questão de multipla escolha
+    pyt = Assunto(nome = "javascript básico")
+    db.session.add(pyt)
+    db.session.commit()
+
     m1 = MultiplaEscolha(enunciado = "O que é javascript?")
+    m1.assuntos.append(pyt)
     m1.alternativas.append(a1)
     m1.alternativas.append(a2)
     m1.alternativas.append(a3)
@@ -309,8 +355,15 @@ if __name__ == "__main__":
     print(p1)  
 
     # questão de lacuna
+    git = Assunto(nome = "git")
+
     lac1 = Completar(enunciado = "Os comandos do git para enviar programas para o repositório remoto "+\
         "do github.com são add, commit e __________", lacunas = "push")
+    lac1.assuntos.append(git)        
+
+    db.session.add(git)
+    db.session.commit()
+
     db.session.add(lac1)
     db.session.commit()
 
@@ -329,7 +382,9 @@ if __name__ == "__main__":
         print("questao da prova "+p1.data+":"+str(q))
 
     # criar um novo circulo
-    c1 = Circulo(nome="prova 1", data = "22/03/2020", assuntos="git | bootstrap")
+    c1 = Circulo(nome="prova 1", data = "22/03/2020")
+    c1.assuntos.append(git)
+    c1.assuntos.append(pyt)
     db.session.add(c1)
     db.session.commit()
 

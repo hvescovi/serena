@@ -301,7 +301,7 @@ def preparar_rodada(id_circulo):
     # pega os respondentes do circulo (por enquanto pega todos)
     todos = db.session.query(Respondente).all()
 
-    # escolhe um
+    # escolhe um respondente
     nquem = random.randint(1,len(todos))
 
     q = db.session.query(Respondente).filter(Respondente.id == todos[nquem-1].id).all()
@@ -317,9 +317,33 @@ def abrir_questao_circulo(id_circulo, id_respondente):
     # geral: escolhe uma questao de assunto do circulo
     resp = []
     try:
-        # temp: retorna uma questao
-        q = db.session.query(Aberta).filter(Aberta.id == 2).all()
-        resp = q[0].json()
+        # temp: retorna uma questao aberta
+        # ampliações:
+        # - outros tipos de questão
+        # - buscar apenas questão ainda não respondida
+        # - buscar apenas questões do círculo
+        q = db.session.query(Aberta).all()
+        nq = random.randint(1,len(q))
+        resp = q[nq-1].json()
+
+        # obter assuntos do círculo
+        circs = Circulo.query.filter(Circulo.id == id_circulo).all()
+        assuntos = circs[0].assunto
+        partes = assuntos.split("|")
+
+        # questões que eu respondi
+        res = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente)
+            
+        # obtém questões que ainda não respondi
+        questoes1 = Questao.query.filter(Questao.id.notin_(res)).all()
+
+        # questoes do circulo: aquelas que incluem assuntos do circulo
+        circ = Questao.query.filter(Questao.assunto == "assunto1").all()
+
+        # questões que estiverem no círculo
+        questoes2 = Questao.query.filter(Questao.id.in_(circ)).all()
+        
+        
 
     except Exception as e:
         # resposta de erro

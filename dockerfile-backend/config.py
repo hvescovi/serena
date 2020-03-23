@@ -23,8 +23,8 @@ import random
 
 app = Flask(__name__)
 
-if os.path.exists("/home/friend/pcloud/04-experiments/07-questoes-online-python-sqlalchemy/Serena/dockerfile-backend/"):
-    arquivobd = "/home/friend/pcloud/04-experiments/07-questoes-online-python-sqlalchemy/Serena/dockerfile-backend/serena.db"
+if os.path.exists("/home/friend/01-github/serena/dockerfile-backend/"):
+    arquivobd = "/home/friend/01-github/serena/dockerfile-backend/serena.db"
 else:    
     arquivobd = "/serena.db"
 
