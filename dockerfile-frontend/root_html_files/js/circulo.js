@@ -1,5 +1,7 @@
 $(document).on("click", "#btn_abrir_questao_circulo", function() {
 
+    $(this).prop("disabled", true);
+
     myip = $("#myip").text();
 
     //alert('entrei');
@@ -134,7 +136,6 @@ $(document).on("click", ".responder_questao_circulo_aberta", function() {
             var deu_certo = resultado.message == "ok";
 
             // diz que deu certo o envio
-
             if (deu_certo) {
                 //$("#final").text("Sua resposta foi enviada!");
                 alert("OBRIGADO! Sua resposta foi enviada.");
@@ -175,16 +176,17 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
     var id_alternativa = marcada[1]; //r3 => 3
     //alert(id_alternativa);
 
-    var user_name = $.session.get("user_name")
-    var user_email = $.session.get("user_email")
+    // pegar dados do circulo
+    id_circulo = $("#id_circulo").val();
+    id_respondente = $("#id_respondente").val();
 
     //alert(resp);
     // prepara os dados em json
-    var dados = JSON.stringify({ idq: idq, alternativa: id_alternativa, user_name: user_name, user_email: user_email })
+    var dados = JSON.stringify({ idq: idq, resposta: id_alternativa, id_circulo: id_circulo, id_respondente: id_respondente })
 
     myip = $("#myip").text();
     $.ajax({
-        url: 'http://' + myip + ':5000/verificar_resposta_multipla_escolha',
+        url: 'http://' + myip + ':5000/responder_questao_circulo',
         type: 'POST',
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
@@ -192,14 +194,17 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
         success: function(resultado) {
             var deu_certo = resultado.message == "ok";
 
-            // coloca a resposta no gabarito
-            $("#g" + idq).text(resultado.details);
-            // alert(resultado.details);
-            //mostrar_resultado_acao(deu_certo);
-            if (!deu_certo) {
+            // diz que deu certo o envio
+            if (deu_certo) {
+                //$("#final").text("Sua resposta foi enviada!");
+                alert("OBRIGADO! Sua resposta foi enviada.");
+
+                // volta ao começo
+                $(location).attr('href', '/circulo.html');
+
+            } else {
                 alert(resultado.message + ":" + resultado.details);
             }
-
         },
         error: function() {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
@@ -243,15 +248,16 @@ $(document).on("click", ".verificar_resposta_completar", function() {
 
     //alert(valores);
 
-    var user_name = $.session.get("user_name")
-    var user_email = $.session.get("user_email")
+    // pegar dados do circulo
+    id_circulo = $("#id_circulo").val();
+    id_respondente = $("#id_respondente").val();
 
     // prepara os dados em json
-    var dados = JSON.stringify({ idq: idq, lacunas: valores, user_name: user_name, user_email: user_email })
+    var dados = JSON.stringify({ idq: idq, resposta: valores, id_circulo: id_circulo, id_respondente: id_respondente })
 
     myip = $("#myip").text();
     $.ajax({
-        url: 'http://' + myip + ':5000/verificar_resposta_completar',
+        url: 'http://' + myip + ':5000/responder_questao_circulo',
         type: 'POST',
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
@@ -259,11 +265,15 @@ $(document).on("click", ".verificar_resposta_completar", function() {
         success: function(resultado) {
             var deu_certo = resultado.message == "ok";
 
-            // coloca a resposta no gabarito
-            $("#g" + idq).text(resultado.details);
-            // alert(resultado.details);
-            //mostrar_resultado_acao(deu_certo);
-            if (!deu_certo) {
+            // diz que deu certo o envio
+            if (deu_certo) {
+                //$("#final").text("Sua resposta foi enviada!");
+                alert("OBRIGADO! Sua resposta foi enviada.");
+
+                // volta ao começo
+                $(location).attr('href', '/circulo.html');
+
+            } else {
                 alert(resultado.message + ":" + resultado.details);
             }
 
@@ -307,22 +317,6 @@ $(document).on("click", ".retornar_contagem_respostas_questao", function() {
     });
 });
 
-
-function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    //console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    //console.log('Name: ' + profile.getName());
-    //console.log('Image URL: ' + profile.getImageUrl());
-    //console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-    $("#user_name").text(profile.getName());
-    $("#user_email").text(profile.getEmail());
-
-    // guarda na sessão
-    $.session.set("user_name", profile.getName());
-    $.session.set("user_email", profile.getEmail());
-
-    // https://ciphertrick.com/session-handling-using-jquery/
-}
 
 
 //$("#myip").text("192.168.15.8");

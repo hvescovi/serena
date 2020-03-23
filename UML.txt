@@ -7,8 +7,8 @@ abstract class Questao {
   +id: int
   +enunciado: string
   +autor: string
-  +assunto: string
   +data_cadastro: string
+  +assuntos: list of Assunto
   +type: string
   
 }
@@ -17,6 +17,11 @@ class Alternativa {
   +id: int
   +descricao: string
   +certa: boolean
+}
+
+class Assunto {
+  +id: int
+  +nome: string
 }
 
 class MultiplaEscolha {
@@ -41,12 +46,14 @@ class QuestaoDeProva {
 
 class Prova {
   +id: int
-  +data: date
+  +data: string
+  +questoesDaProva: list of Questao
 }
 
 class Respondente {
   +id: int
   +nome: string
+  +email: string
   +observacao: string
 }
 
@@ -62,7 +69,8 @@ class Circulo {
   +id: int
   +nome: String
   +data: Date
-  +assuntos: String // separados por |
+  +assuntos: list of Assunto
+  +respostasNoCirculo: list of Resposta
 }
 
 class RespostaDoCirculo {
@@ -87,6 +95,8 @@ Resposta *-- Respondente
 Resposta *-- Questao
 (Circulo,Resposta) .. RespostaDoCirculo
 (Respondente,Grupo) .. RespondenteNoGrupo
+Circulo -- Assunto
+Questao -- Assunto
 
 
 /'
