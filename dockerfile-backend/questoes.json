@@ -5,7 +5,7 @@
             "id": 1,
             "enunciado": "Cite três vantagens de se utilizar o Bootstrap.",
             "autor": "Erick José Heiler, 301 info 2020 | Lucas Vinicius Maske, 301 info 2020",
-            "assunto": "bootstrap",
+            "assuntos": ["bootstrap"],
             "data_cadastro": "14/03/2020",
             "type": "AbertaMultiplasRespostas",
             "respostas": [
@@ -18,7 +18,7 @@
             "id": 2,
             "enunciado": "A respeito do github, responda: qual a diferença de git push e git pull?",
             "autor": "Priscila Lemke, 302 info 2020 | Vanessa de Souza, 302 info 2020",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "14/03/2020",
             "type": "Aberta",
             "resposta": "git push envia e git pull traz"
@@ -28,7 +28,7 @@
             "id": 3,
             "enunciado": "A respeito do github, responda: quais os comandos necessários para trazer o repositório para o computador?",
             "autor": "Priscila Lemke, 302 info 2020 | Vanessa de Souza, 302 info 2020",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "14/03/2020",
             "type": "Aberta",
             "resposta": "git clone https://github.com/login/repositorio.git"
@@ -37,7 +37,7 @@
             "id": 4,
             "enunciado": "A respeito do github, responda: qual o comando de adicionar arquivos no repositório?",
             "autor": "Priscila Lemke, 302 info 2020 | Vanessa de Souza, 302 info 2020",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "14/03/2020",
             "type": "Aberta",
             "resposta": "git add \"nome do arquivo\" ou git add *"
@@ -46,7 +46,7 @@
             "id": 5,
             "enunciado": "A respeito do github, responda: qual é o config exigido pelo github através do terminal?",
             "autor": "Priscila Lemke, 302 info 2020 | Vanessa de Souza, 302 info 2020",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "14/03/2020",
             "type": "Aberta",
             "resposta": "git config user.email \"email\""
@@ -55,7 +55,7 @@
             "id": 6,
             "enunciado": "Considerando que você chegou em casa e apenas você irá usar sua máquina, forneça os comandos necessários para atualizar seu repositório e realizar as tarefas seguintes: (a) clonar o seu repositório em um computador; (b) acessar a pasta do repositório; (c) definir as configurações globais de acesso.",
             "autor": "Sabrina Mara, 301 info 2020 | Vinicius Gobetti, 301 info 2020 | Josef Bischof, 301 info 2020",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "15/03/2020",
             "type": "AbertaMultiplosItens",
             "respostas": [
@@ -68,7 +68,7 @@
             "id": 7,
             "enunciado": "Considere alterações no repositório local cujo envio para o servidor remoto (add... commit... push) resultou em conflitos de versão. Ao efetuar o comando \"git remote update\" e depois utilizar o \"git status\" o retorno dele foi \"behind\". Para atualizar o repositório, quais comandos você deve utilizar para resolver a situação? Considere um cenário de resolução automática de conflitos.",
             "autor": "Sabrina Mara, 301 info 2020 | Vinicius Gobetti, 301 info 2020 | Josef Bischof, 301 info 2020",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "15/03/2020",
             "type": "Aberta",
             "resposta": "git pull e git merge"
@@ -78,7 +78,7 @@
             "id": 8,
             "enunciado": "Qual é o parâmetro do comando git que permite realizar a fusão (ou mesclagem) de arquivos, mediante situação de conflitos originados de modificações no mesmo arquivo em locais diferentes (repositórios remoto e local)?",
             "autor": "Hylson",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "16/03/2020",
             "type": "MultiplaEscolha",
             "alternativas": [
@@ -93,7 +93,7 @@
             "id": 9,
             "enunciado": "Informe os principais componentes do bootstrap que podem ser utilizados para construir um layout semelhante ao site apresentado a seguir: <img src=img/site1.png alt='site exemplo'>",
             "autor": "Hylson",
-            "assunto": "bootstrap",
+            "assuntos": ["bootstrap"],
             "data_cadastro": "16/03/2020",
             "type": "Aberta",
             "resposta": "classes row e col para grid; rounded-pill para deixar elementos em formato arredondado; h1, h2, h3... para letras grandes; m-3 ou similar para adicionar margem às imagens."
@@ -102,7 +102,7 @@
             "id": 10,
             "enunciado": "Qual é a classe do bootstrap que permite, por exemplo, formatar uma imagem restringindo sua área de apresentação no interior de um círculo (isto é, circundando a imagem com um círculo)?",
             "autor": "Hylson",
-            "assunto": "git",
+            "assuntos": ["git"],
             "data_cadastro": "16/03/2020",
             "type": "MultiplaEscolha",
             "alternativas": [
@@ -117,7 +117,7 @@
             "id": 11,
             "enunciado": "Há uma classe do bootstrap chamada ___ que permite deixar as linhas de uma tabela do HTML com cores alternadas. Outra classe útil se chama ___ e faz com que a tabela apareça com fundo preto.",
             "autor": "Hylson",
-            "assunto": "bootstrap",
+            "assuntos": ["bootstrap"],
             "data_cadastro": "16/03/2020",
             "type": "Completar",
             "lacunas": "table-striped | table-dark"

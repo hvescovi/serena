@@ -92,8 +92,9 @@ class MultiplaEscolha(Questao):
             "id":self.id,
             "enunciado":self.enunciado,
             "autor": self.autor,
-            "assunto": self.assunto,
+            #"assunto": self.assunto,
             "data_cadastro":self.data_cadastro,
+            # assuntos...
             "type":self.__class__.__name__,
             # específico desse tipo de questão
                 "alternativas":[alternativa.json() for alternativa in self.alternativas]
@@ -206,8 +207,9 @@ class Completar(Questao):
             "id":self.id,
             "enunciado": self.enunciado,
             "autor": self.autor,
-            "assunto": self.assunto,
+            #"assunto": self.assunto,
             "data_cadastro": self.data_cadastro,
+            # assuntos ...
             "type": self.__class__.__name__,
             # específico desse tipo de questão
             "lacunas":self.lacunas
@@ -233,13 +235,13 @@ class Aberta(Questao):
             "id":self.id,
             "enunciado":self.enunciado,
             "autor": self.autor,
-            "assunto": self.assunto,
+#            "assunto": self.assunto,
             "data_cadastro":self.data_cadastro,
+#   assuntos = db.relationship("Assunto", secondary="assuntodaquestao")         
             "type":self.__class__.__name__,
             # específico desse tipo de questão
             "resposta": self.resposta
-        }
-
+        }  
 
 class Circulo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

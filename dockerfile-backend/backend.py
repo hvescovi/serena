@@ -319,32 +319,48 @@ def abrir_questao_circulo(id_circulo, id_respondente):
     try:
         # temp: retorna uma questao aberta
         # ampliações:
-        # - outros tipos de questão
-        # - buscar apenas questão ainda não respondida
-        # - buscar apenas questões do círculo
-        q = db.session.query(Aberta).all()
-        nq = random.randint(1,len(q))
-        resp = q[nq-1].json()
+        # - outros tipos de questão (OK)
+        # - buscar apenas questão ainda não respondida (OK)
+        # - buscar apenas questões de assuntos do círculo
+        
+        #q = db.session.query(Aberta).all()
+        #nq = random.randint(1,len(q))
+        #resp = q[nq-1].json()
 
-        # obter assuntos do círculo
-        circs = Circulo.query.filter(Circulo.id == id_circulo).all()
-        assuntos = circs[0].assunto
-        partes = assuntos.split("|")
+        # obter círculo
+        #circs = Circulo.query.filter(Circulo.id == id_circulo).all()
+        # este circulo
+        #este_circulo = circs[0] # este_circulo.assuntos
 
         # questões que eu respondi
-        res = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente)
+        r1 = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente)
+        #r1 = db.session.query(Questao).all()
             
         # obtém questões que ainda não respondi
-        questoes1 = Questao.query.filter(Questao.id.notin_(res)).all()
+        res = Questao.query.filter(Questao.id.notin_(r1)).all()
 
-        # questoes do circulo: aquelas que incluem assuntos do circulo
-        circ = Questao.query.filter(Questao.assunto == "assunto1").all()
+        # sorteia uma questão
+        nq = random.randint(1,len(res)) # questoes_ainda_nao))
 
-        # questões que estiverem no círculo
-        questoes2 = Questao.query.filter(Questao.id.in_(circ)).all()
+        resp = ""
+
+        # obtém a questão        
+        q = res[nq-1]
+
+        # faz uma conversão de tipo para obter o json
+
+        if q.type == "aberta":
+            q.__class__ = Aberta
+            resp = q.json()
+            
+        if q.type == "completar":
+            q.__class__ = Completar
+            resp = q.json()
+
+        if q.type == "multiplaescolha":
+            q.__class__ = MultiplaEscolha
+            resp = q.json()            
         
-        
-
     except Exception as e:
         # resposta de erro
         resp = jsonify({"message": "error", "details": str(e)})
