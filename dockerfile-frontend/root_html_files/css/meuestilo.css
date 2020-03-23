@@ -1,0 +1,11 @@
+.wood {
+    background: url("../images/background.jpg") no-repeat scroll 0px 100% / cover transparent;
+}
+
+.wood2 {
+    background: url("../images/wood2.png") no-repeat scroll 0px 100% / cover transparent;
+}
+
+.lightblue {
+    background-color: lightblue;
+}

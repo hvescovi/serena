@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/meuestilo.css">
+
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Serena</title>
+</head>
+
+<body>
+
+
+    <!-- barra de navegação -->
+    <nav class="navbar navbar-expand-sm navbar-light wood">
+
+        <!-- logo da aplicação -->
+
+        <img src="images/eyes.jpg" width="15%" class="navbar-brand rounded-circle">
+
+        <!-- botão que aparece quando reduz -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav1" aria-controls="nav1" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- esconder os menus quando reduzir -->
+        <div class="collapse navbar-collapse" id="nav1">
+            <div class="navbar-nav">
+                <!--
+                <div class="nav-item">
+                    <button class="btn btn-primary" id="btn_listar_questoes">FIM</button>
+                </div>
+                -->
+            </div>
+        </div>
+
+        <span class="navbar-text">
+
+            <!-- tooltip -->
+            <span data-toggle="tooltip" title="Sistema Aberto de Perguntas">Serena</span>, em <span id="myip"></span>. Círculo: <span id="nome_circulo">Exercício xx/yy/2020</span> (<span id="circulo_id">4</span>)
+
+        <!-- texto do tooltip 
+
+        <div class="tooltip bs-tooltip-top" role="tooltip">
+            <div class="arrow"></div>
+            <div class="tooltip-inner">
+                <u>S</u>ist<u>e</u>ma Abe<u>r</u>to de P<u>e</u>rgu<u>n</u>t<u>a</u>s
+            </div>
+        </div>
+    -->
+        </span>
+        <!-- navbar-text -->
+    </nav>
+
+    <div class="container-fluid wood vh-100">
+        <div class="row">
+            <div class="col-10 text-center">
+                <span id="nome_respondente" class="display-1">XX</span>
+                <br>
+                <span id="email_respondente">YY</span>
+                <input type=hidden id="id_respondente" value="*">
+                <input type=hidden id="id_circulo" value="1">
+            </div>
+            <div class="col-2 mt-4 text-center my-auto">
+                <button class="btn btn-secondary btn-lg">Passar a vez</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mt-4 text-center">
+                <button id="btn_abrir_questao_circulo" class="btn btn-primary btn-lg btn-block btn_abrir_questao_circulo">Responder questão</button>
+            </div>
+        </div>
+
+        <div id="tabela_questoes" class="container-fluid">
+            <!-- área dinâmica de exibição -->
+        </div>
+
+        <!-- área para informação de envio bem sucedido -->
+        <div id="final"></div>
+
+    </div>
+
+</body>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<script src="js/jquery-3.4.1.min.js "></script>
+<script src="js/jquerysession.js "></script>
+<script src="js/circulo.js "></script>
+
+</body>
+
+</html>

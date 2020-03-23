@@ -1,0 +1,100 @@
+@startuml
+
+title Questões
+
+
+abstract class Questao {
+  +id: int
+  +enunciado: string
+  +autor: string
+  +assunto: string
+  +data_cadastro: string
+  +type: string
+  
+}
+
+class Alternativa {
+  +id: int
+  +descricao: string
+  +certa: boolean
+}
+
+class MultiplaEscolha {
+  +id: int //fk questao.id
+  +alternativas: list of Alternativa
+}
+
+class Completar {
+  +id: int //fk questao.id
+  +lacunas: string
+}
+
+class Aberta {
+  +id: int //fk questao.id
+  +resposta: string
+}
+
+class QuestaoDeProva {
+  +ordem: int
+  +pontos: float
+}
+
+class Prova {
+  +id: int
+  +data: date
+}
+
+class Respondente {
+  +id: int
+  +nome: string
+  +observacao: string
+}
+
+class Resposta {
+  +id: int
+  +questao: Questao
+  +respondente: Respondente
+  +resposta: string
+  +timestamp: datetime
+}
+
+class Circulo {
+  +id: int
+  +nome: String
+  +data: Date
+  +assuntos: String // separados por |
+}
+
+class RespostaDoCirculo {
+}
+
+class Grupo {
+  +id: int
+  +descricao: String
+}
+
+class RespondenteNoGrupo {
+}
+
+' RELACIONAMENTOS
+
+(Questao,Prova) .. QuestaoDeProva
+Questao <|-- MultiplaEscolha
+Questao <|-- Completar
+Questao <|-- Aberta
+MultiplaEscolha --o Alternativa
+Resposta *-- Respondente
+Resposta *-- Questao
+(Circulo,Resposta) .. RespostaDoCirculo
+(Respondente,Grupo) .. RespondenteNoGrupo
+
+
+/'
+Dwelling <|-down- Apartment: Inheritance
+Dwelling <|-down- Commune: Inheritance
+Dwelling <|-down- House: Inheritance
+Dwelling "1" *-up- "many" Window: Composition
+Dwelling "1" *-up- "many" Door: Composition
+'/
+
+@enduml
