@@ -121,6 +121,109 @@
             "data_cadastro": "16/03/2020",
             "type": "Completar",
             "lacunas": "table-striped | table-dark"
+        },
+        {
+            "id": 12,
+            "enunciado": "Cite os elementos do bootstrap que podem ser utilizados para construir o site exibido (zukunft). <img src=img/site2.png alt='site exemplo'>",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "24/03/2020",
+            "type": "Aberta",
+            "resposta": "navbar, imagem de tamanho completo da página (img-fluid), div com altura total restante da página (vh-100), centralização de elementos (text-center, my-auto ou align-self-center) e letras grandes (display-1, display-2, ...)",
+            "observacao": "https://www.behance.net/gallery/93585921/Saubermacher-Website?tracking_source=curated_galleries_interaction"
+        },
+        {
+            "id": 13,
+            "enunciado": "Qual dessas alternativas NÃO é uma característica do framework bootstrap?",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "24/03/2020",
+            "type": "MultiplaEscolha",
+            "alternativas": [
+                { "descricao": "É amplamente compatível com diversos navegadores web ", "certa": false },
+                { "descricao": "Possui código aberto para uso", "certa": false },
+                { "descricao": "Foi projetado para ser responsivo", "certa": false },
+                { "descricao": "É fácil para utilizar e rápido", "certa": false },
+                { "descricao": "Foi criado para ser utilizado em computadores desktop", "certa": true }
+            ],
+            "observacao": "https://www.softwaretestinghelp.com/bootstrap-interview-questions/"
+        },
+        {
+            "id": 14,
+            "enunciado": "Qual dos estilos a seguir NÃO é um estilo de botão do bootstrap?",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "24/03/2020",
+            "type": "MultiplaEscolha",
+            "alternativas": [
+                { "descricao": "btn-primary", "certa": false },
+                { "descricao": "btn-secondary", "certa": false },
+                { "descricao": "btn-main", "certa": true },
+                { "descricao": "btn-success", "certa": false },
+                { "descricao": "btn-info", "certa": false }
+            ],
+            "observacao": "https://www.softwaretestinghelp.com/bootstrap-interview-questions/"
+        },
+        {
+            "id": 15,
+            "enunciado": "Existem pequenos retângulos que são utilizados para, por exemplo, apresentar links ou valores de contadores. Qual é o nome desse componente/classe que pode ser utilizado, no bootstrap?",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "24/03/2020",
+            "type": "MultiplaEscolha",
+            "alternativas": [
+                { "descricao": "body", "certa": false },
+                { "descricao": "container", "certa": false },
+                { "descricao": "badge", "certa": true },
+                { "descricao": "navbar", "certa": false },
+                { "descricao": "mx-auto", "certa": false }
+            ],
+            "observacao": "https://www.softwaretestinghelp.com/bootstrap-interview-questions/"
+        },
+        {
+            "id": 16,
+            "enunciado": "O sistema de grid no bootstrap oferece a divisão de colunas até um certo número máximo de colunas, que pode ser fracionado entre as colunas. Qual é esse número máximo?",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "24/03/2020",
+            "type": "MultiplaEscolha",
+            "alternativas": [
+                { "descricao": "1", "certa": false },
+                { "descricao": "8", "certa": false },
+                { "descricao": "10", "certa": false },
+                { "descricao": "12", "certa": true },
+                { "descricao": "18", "certa": false },
+                { "descricao": "20", "certa": false },
+                { "descricao": "infinito", "certa": false }
+            ],
+            "observacao": "https://www.softwaretestinghelp.com/bootstrap-interview-questions/"
+        },
+        {
+            "id": 17,
+            "enunciado": "Considere o trecho de código HTML exibido a seguir, que faz uso do boostrap para configurar uma grade com linhas e colunas. Qual é o layout resultante exibido a partir do código? <br><br><img src=img/codigo_grade_bootstrap1.png alt='código HTML de grade bootstrap'><br>",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "24/03/2020",
+            "type": "MultiplaEscolha",
+            "alternativas": [{
+                    "descricao": "<img src=img/grade_bootstrap1.png alt='código HTML de grade bootstrap 1'><br>",
+                    "certa": false
+                },
+                {
+                    "descricao": "<img src=img/grade_bootstrap2.png alt='código HTML de grade bootstrap 2'><br>",
+                    "certa": false
+                },
+                {
+                    "descricao": "<img src=img/grade_bootstrap3.png alt='código HTML de grade bootstrap 3'><br>",
+                    "certa": false
+                },
+                {
+                    "descricao": "<img src=img/grade_bootstrap4.png alt='código HTML de grade bootstrap 4'><br>",
+                    "certa": true
+                }
+            ],
+            "observacao": "https://github.com/hvescovi/programar2020/tree/master/02-front-end/02-bootstrap"
         }
+
     ]
 }

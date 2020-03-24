@@ -23,12 +23,13 @@ import random
 
 app = Flask(__name__)
 
+# execução local?
 if os.path.exists("/home/friend/01-github/serena/dockerfile-backend/"):
-    arquivobd = "/home/friend/01-github/serena/dockerfile-backend/serena.db"
+    arquivobd = "/home/friend/01-github/serena/dockerfile-backend/database/serena.db"
 else:    
-    arquivobd = "/serena.db"
+    # execução em container do docker
+    arquivobd = "/database/serena.db"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+arquivobd
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # remove warning
 db = SQLAlchemy(app)
-
