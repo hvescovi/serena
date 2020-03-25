@@ -361,6 +361,11 @@ def abrir_questao_circulo(id_circulo, id_respondente):
             q.__class__ = MultiplaEscolha
             resp = q.json()            
         
+        # registrar que a questão foi aberta, exibida na tela
+        ex = QuestaoExibidaNoCirculo(circulo_id=id_circulo, respondente_id=id_respondente, questao_id=q.id)
+        db.session.add(ex)
+        db.session.commit()               
+
     except Exception as e:
         # resposta de erro
         resp = jsonify({"message": "error", "details": str(e)})
@@ -419,5 +424,20 @@ def responder_questao_circulo():
 def imagem(nome):
     filename = 'imagens_questoes/'+nome
     return send_file(filename, mimetype='image/png')
+
+@app.route('/retornar_questoes_exibidas_no_circulo')
+def retornar_questoes_exibidas_no_circulo():
+    resp = []
+    registros = QuestaoExibidaNoCirculo.query.all()
+    for r in registros:
+        resp.append(r.json())    
+    ret = jsonify(resp)
+    
+    # jsonify é para retornar algo do tipo Response,
+    # informação na qual se pode adicionar headers
+    ret.headers.add('Access-Control-Allow-Origin', '*')        
+    return ret
+
+
 
 app.run(host='0.0.0.0', debug=True)

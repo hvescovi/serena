@@ -296,7 +296,20 @@ class RespostaNoCirculo(db.Model):
 
     def __str__(self):
         return str(self.resposta)+" em "+str(self.circulo)
-            
+
+class QuestaoExibidaNoCirculo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    circulo_id = db.Column(db.Integer, db.ForeignKey(Circulo.id))
+    questao_id = db.Column(db.Integer, db.ForeignKey(Questao.id))
+    respondente_id = db.Column(db.Integer, db.ForeignKey(Respondente.id))
+    
+    def json(self):
+        return {
+            "id":self.id,
+            "circulo_id":self.circulo_id,
+            "questao_id":self.questao_id,
+            "respondente_id":self.respondente_id
+        }
 
 #
 # teste
