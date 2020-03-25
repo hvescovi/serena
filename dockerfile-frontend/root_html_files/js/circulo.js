@@ -28,27 +28,33 @@ $(document).on("click", "#btn_abrir_questao_circulo", function() {
             //alert(url);
 
             if (quest.type == "Aberta") {
-                lin = lin + quest.enunciado; // + "(" + quest[i].type + ")"
+                lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                 lin = lin + "<br>"
                 lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
                 lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta">enviar resposta</button>';
 
                 // contador de respostas
-                lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+                //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
 
                 lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
             }
 
             if (quest.type == "MultiplaEscolha") {
-                lin = lin + quest.enunciado; // + "(" + quest[i].type + ")"
+                lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                 lin = lin + "<br>"
+
+
+                // embaralhar as alernativas
+                // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+                quest.alternativas.sort(() => Math.random() - 0.5);
+
                 for (var j in quest.alternativas) {
-                    lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + quest.alternativas[j].descricao + "<br/>";
+                    lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                 }
                 lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">verificar resposta</button>';
 
                 // contador de respostas
-                lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+                //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
 
                 lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
             }
@@ -60,7 +66,7 @@ $(document).on("click", "#btn_abrir_questao_circulo", function() {
                 en = "";
                 for (var lac = 0; lac < n; lac++) {
                     // acrescentar o texto antes da lacuna
-                    en = en + partes[lac];
+                    en = en + ajustaImagens(partes[lac]);
                     // ainda não é a última parte de texto?
                     if (lac < (n - 1)) {
                         // acrescentar o campo de entrada da lacuna
@@ -79,7 +85,7 @@ $(document).on("click", "#btn_abrir_questao_circulo", function() {
                 lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">verificar resposta(s)</button>';
 
                 // contador de respostas
-                lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+                //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
 
                 lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
             }
@@ -286,36 +292,13 @@ $(document).on("click", ".verificar_resposta_completar", function() {
 });
 
 
-$(document).on("click", ".retornar_contagem_respostas_questao", function() {
 
-    // qual elemento foi clicado
-    var eu = $(this).attr('id');
-    // obtém o id da questão
-    //alert(eu);
-    var idq = eu.substring(4); // cont23 = contador de respostas da questão 23
 
+function ajustaImagens(texto) {
     myip = $("#myip").text();
-    url = 'http://' + myip + ':5000/retornar_contagem_respostas_questao/' + $.session.get("user_email") + "/" + idq;
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json', // vou receber a resposta em json,
-        //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-        //contentType: "application/json",
-        success: function(resultado) {
-            // coloca a resposta no gabarito
-            $("#cont" + idq).text(resultado);
-            // alert(resultado.details);
-            //mostrar_resultado_acao(deu_certo);
-
-        },
-        error: function() {
-            alert("ocorreu algum erro na leitura dos dados de contagem, verifique o backend");
-        }
-
-    });
-});
+    url = 'http://' + myip + ':5000/imagem/';
+    return texto.replace(/<img src=/gi, "<img src=" + url);
+}
 
 
 

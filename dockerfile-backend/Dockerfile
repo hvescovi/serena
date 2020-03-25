@@ -1,5 +1,6 @@
 FROM debian:latest
-MAINTAINER Hylson "hvescovi@gmail.com"
+#FROM alpine
+LABEL maintainer="hvescovi@gmail.com"
 RUN apt-get update
 RUN apt-get install -y python3 python3-pip wget
 

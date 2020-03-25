@@ -38,6 +38,11 @@ $(document).on("click", "#btn_listar_questoes", function() {
                 if (quest[i].type == "MultiplaEscolha") {
                     lin = lin + ajustaImagens(quest[i].enunciado); // + "(" + quest[i].type + ")"
                     lin = lin + "<br>"
+
+                    // embaralhar as alernativas
+                    // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+                    quest[i].alternativas.sort(() => Math.random() - 0.5);
+
                     for (var j in quest[i].alternativas) {
                         lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest[i].alternativas[j].id + '">' + ajustaImagens(quest[i].alternativas[j].descricao) + "<br/>";
                     }

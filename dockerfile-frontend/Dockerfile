@@ -1,5 +1,5 @@
 FROM nginx:latest
-MAINTAINER Hylson "hvescovi@gmail.com"
+LABEL maintainer="hvescovi@gmail.com"
 RUN apt-get update
 
 #RUN export PYTHONIOENCODING=utf-8
