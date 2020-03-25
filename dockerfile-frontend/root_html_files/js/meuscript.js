@@ -112,8 +112,8 @@ $(document).on("click", ".verificar_resposta_aberta", function() {
         return false;
     }
 
-    var user_name = $.session.get("user_name")
-    var user_email = $.session.get("user_email")
+    var user_name = $.session.get("user_name");
+    var user_email = $.session.get("user_email");
 
     //alert(resp);
     // prepara os dados em json
@@ -166,8 +166,8 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
     var id_alternativa = marcada[1]; //r3 => 3
     //alert(id_alternativa);
 
-    var user_name = $.session.get("user_name")
-    var user_email = $.session.get("user_email")
+    var user_name = $.session.get("user_name");
+    var user_email = $.session.get("user_email");
 
     //alert(resp);
     // prepara os dados em json
@@ -234,8 +234,8 @@ $(document).on("click", ".verificar_resposta_completar", function() {
 
     //alert(valores);
 
-    var user_name = $.session.get("user_name")
-    var user_email = $.session.get("user_email")
+    var user_name = $.session.get("user_name");
+    var user_email = $.session.get("user_email");
 
     // prepara os dados em json
     var dados = JSON.stringify({ idq: idq, lacunas: valores, user_name: user_name, user_email: user_email })

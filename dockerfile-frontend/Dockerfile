@@ -11,12 +11,27 @@ RUN mkdir /usr/share/nginx/html/img
 RUN mkdir /usr/share/nginx/html/js
 
 ADD root_html_files/index.html /usr/share/nginx/html/index.html
+
 ADD root_html_files/css/meuestilo.css /usr/share/nginx/html/css/meuestilo.css
 ADD root_html_files/images/background.jpg /usr/share/nginx/html/images/background.jpg
 ADD root_html_files/images/eyes.jpg /usr/share/nginx/html/images/eyes.jpg
+
 ADD root_html_files/img/site1.png /usr/share/nginx/html/img/site1.png
+ADD root_html_files/img/site2.png /usr/share/nginx/html/img/site2.png
+ADD root_html_files/img/codigo_grade_bootstrap1.png /usr/share/nginx/html/img/codigo_grade_bootstrap1.png
+ADD root_html_files/img/grade_bootstrap1.png /usr/share/nginx/html/img/grade_bootstrap1.png
+ADD root_html_files/img/grade_bootstrap2.png /usr/share/nginx/html/img/grade_bootstrap2.png
+ADD root_html_files/img/grade_bootstrap3.png /usr/share/nginx/html/img/grade_bootstrap3.png
+ADD root_html_files/img/grade_bootstrap4.png /usr/share/nginx/html/img/grade_bootstrap4.png
+
+ADD root_html_files/circulo.html /usr/share/nginx/html/circulo.html
+
+
 ADD root_html_files/js/jquery-3.4.1.min.js /usr/share/nginx/html/js/jquery-3.4.1.min.js
 ADD root_html_files/js/meuscript.js /usr/share/nginx/html/js/meuscript.js
+ADD root_html_files/js/meuscript.js /usr/share/nginx/html/js/circulo.js
+ADD root_html_files/js/jquerysession.js /usr/share/nginx/html/js/jquerysession.js
+
 
 ADD root_html_files/android-icon-144x144.png /usr/share/nginx/html/
 ADD root_html_files/apple-icon-57x57.png  /usr/share/nginx/html/
