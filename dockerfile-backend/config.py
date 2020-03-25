@@ -3,7 +3,7 @@
 
 # SERENA	Sistema abERto pErguNtAs
 
-from flask import Flask, jsonify, request#, Response
+from flask import Flask, jsonify, request, send_file#, Response
 from flask_sqlalchemy import SQLAlchemy
 import os
 

@@ -415,4 +415,9 @@ def responder_questao_circulo():
     # retorno!
     return response    
 
+@app.route('/imagem/<nome>')
+def imagem(nome):
+    filename = 'imagens_questoes/'+nome
+    return send_file(filename, mimetype='image/png')
+
 app.run(host='0.0.0.0', debug=True)

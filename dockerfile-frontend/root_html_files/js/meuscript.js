@@ -24,7 +24,7 @@ $(document).on("click", "#btn_listar_questoes", function() {
                 //alert(url);
 
                 if (quest[i].type == "Aberta") {
-                    lin = lin + quest[i].enunciado; // + "(" + quest[i].type + ")"
+                    lin = lin + ajustaImagens(quest[i].enunciado); // + "(" + quest[i].type + ")"
                     lin = lin + "<br>"
                     lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
                     lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_aberta">verificar resposta</button>';
@@ -36,10 +36,10 @@ $(document).on("click", "#btn_listar_questoes", function() {
                 }
 
                 if (quest[i].type == "MultiplaEscolha") {
-                    lin = lin + quest[i].enunciado; // + "(" + quest[i].type + ")"
+                    lin = lin + ajustaImagens(quest[i].enunciado); // + "(" + quest[i].type + ")"
                     lin = lin + "<br>"
                     for (var j in quest[i].alternativas) {
-                        lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest[i].alternativas[j].id + '">' + quest[i].alternativas[j].descricao + "<br/>";
+                        lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest[i].alternativas[j].id + '">' + ajustaImagens(quest[i].alternativas[j].descricao) + "<br/>";
                     }
                     lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">verificar resposta</button>';
 
@@ -56,7 +56,7 @@ $(document).on("click", "#btn_listar_questoes", function() {
                     en = "";
                     for (var lac = 0; lac < n; lac++) {
                         // acrescentar o texto antes da lacuna
-                        en = en + partes[lac];
+                        en = en + ajustaImagens(partes[lac]);
                         // ainda não é a última parte de texto?
                         if (lac < (n - 1)) {
                             // acrescentar o campo de entrada da lacuna
@@ -298,6 +298,12 @@ $(document).on("click", ".retornar_contagem_respostas_questao", function() {
     });
 });
 
+
+function ajustaImagens(texto) {
+    myip = $("#myip").text();
+    url = 'http://' + myip + ':5000/imagem/';
+    return texto.replace(/<img src=/gi, "<img src=" + url);
+}
 
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();

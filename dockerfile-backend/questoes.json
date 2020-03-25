@@ -91,7 +91,7 @@
         },
         {
             "id": 9,
-            "enunciado": "Informe os principais componentes do bootstrap que podem ser utilizados para construir um layout semelhante ao site apresentado a seguir: <img src=img/site1.png alt='site exemplo'>",
+            "enunciado": "Informe os principais componentes do bootstrap que podem ser utilizados para construir um layout semelhante ao site apresentado a seguir: <img src=site1.png alt='site exemplo'>",
             "autor": "Hylson",
             "assuntos": ["bootstrap"],
             "data_cadastro": "16/03/2020",
@@ -124,7 +124,7 @@
         },
         {
             "id": 12,
-            "enunciado": "Cite os elementos do bootstrap que podem ser utilizados para construir o site exibido (zukunft). <img src=img/site2.png alt='site exemplo'>",
+            "enunciado": "Cite os elementos do bootstrap que podem ser utilizados para construir o site exibido (zukunft). <img src=site2.png alt='site exemplo'>",
             "autor": "Hylson",
             "assuntos": ["bootstrap"],
             "data_cadastro": "24/03/2020",
@@ -200,25 +200,25 @@
         },
         {
             "id": 17,
-            "enunciado": "Considere o trecho de código HTML exibido a seguir, que faz uso do boostrap para configurar uma grade com linhas e colunas. Qual é o layout resultante exibido a partir do código? <br><br><img src=img/codigo_grade_bootstrap1.png alt='código HTML de grade bootstrap'><br>",
+            "enunciado": "Considere o trecho de código HTML exibido a seguir, que faz uso do boostrap para configurar uma grade com linhas e colunas. Qual é o layout resultante exibido a partir do código? <br><br><img src=codigo_grade_bootstrap1.png alt='código HTML de grade bootstrap'><br>",
             "autor": "Hylson",
             "assuntos": ["bootstrap"],
             "data_cadastro": "24/03/2020",
             "type": "MultiplaEscolha",
             "alternativas": [{
-                    "descricao": "<img src=img/grade_bootstrap1.png alt='código HTML de grade bootstrap 1'><br>",
+                    "descricao": "<img src=grade_bootstrap1.png alt='código HTML de grade bootstrap 1'><br>",
                     "certa": false
                 },
                 {
-                    "descricao": "<img src=img/grade_bootstrap2.png alt='código HTML de grade bootstrap 2'><br>",
+                    "descricao": "<img src=grade_bootstrap2.png alt='código HTML de grade bootstrap 2'><br>",
                     "certa": false
                 },
                 {
-                    "descricao": "<img src=img/grade_bootstrap3.png alt='código HTML de grade bootstrap 3'><br>",
+                    "descricao": "<img src=grade_bootstrap3.png alt='código HTML de grade bootstrap 3'><br>",
                     "certa": false
                 },
                 {
-                    "descricao": "<img src=img/grade_bootstrap4.png alt='código HTML de grade bootstrap 4'><br>",
+                    "descricao": "<img src=grade_bootstrap4.png alt='código HTML de grade bootstrap 4'><br>",
                     "certa": true
                 }
             ],
