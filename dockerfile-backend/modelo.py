@@ -105,6 +105,8 @@ class Respondente(db.Model):
     nome = db.Column(db.String(254))
     email = db.Column(db.String(254))
     observacao = db.Column(db.String(254))
+    identificador = db.Column(db.String(254)) # utilizado durante operação
+    token = db.Column(db.String(254)) # utilizado durante operação
     def __str__(self):
         return self.nome+" ("+self.email+")"+self.observacao
 

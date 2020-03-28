@@ -120,9 +120,11 @@ $(document).on("click", ".verificar_resposta_aberta", function() {
     var user_name = $.session.get("user_name");
     var user_email = $.session.get("user_email");
 
+    var token = $.session.get("token");
+
     //alert(resp);
     // prepara os dados em json
-    var dados = JSON.stringify({ idq: idq, resposta: resp, user_name: user_name, user_email: user_email })
+    var dados = JSON.stringify({ idq: idq, resposta: resp, user_name: user_name, user_email: user_email, token: token })
 
     myip = $("#myip").text();
     $.ajax({
@@ -311,44 +313,50 @@ function ajustaImagens(texto) {
 }
 
 function onSignIn(googleUser) {
+
     var profile = googleUser.getBasicProfile();
     //console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     //console.log('Name: ' + profile.getName());
     //console.log('Image URL: ' + profile.getImageUrl());
     //console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-    $("#user_name").text(profile.getName());
-    $("#user_email").text(profile.getEmail());
+    var email = profile.getEmail();
+    var nome = profile.getName();
+    var foto = profile.getImageUrl();
+
+    $("#user_name").text(nome);
+    $("#user_email").text(email);
 
     // https://ciphertrick.com/session-handling-using-jquery/
     // guarda na sessão
-    $.session.set("user_name", profile.getName());
-    $.session.set("user_email", profile.getEmail());
+    $.session.set("user_name", nome);
+    $.session.set("user_email", email);
 
-    // solicitar token
+    // guardar token
+    var token = googleUser.getAuthResponse().id_token;
+    $.session.set("token", token);
 
-    var myip = $("#myip").text();
-    var url = 'http://' + myip + ':5000/get_token/' +
-        $.session.get("user_email");
+    // grava token no backend
+    myip = $("#myip").text();
+    // verificar se o link da foto muda a cada login ou época
+    url = 'http://' + myip + ':5000/salvar_token/' + foto + "/" + token
 
-    //alert(url);
     $.ajax({
         url: url,
-        method: 'GET',
-        dataType: 'json',
+        type: 'GET',
+        dataType: 'json', // vou receber a resposta em json,
+        //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+        //contentType: "application/json",
         success: function(resultado) {
-            if (resultado.message == "ok") {
-                var token = resultado.details
-                $.session.set("token", token);
-            } else {
-                alert("Não foi possível gerar o token");
-            }
+            //
         },
         error: function() {
-            alert("ocorreu algum erro na leitura dos dados, verifique o backend");
+            alert("ocorreu algum erro ao salvar token no backend");
         }
     });
 
-
+    // coloca a foto na tela
+    $("#foto").html("<img src='" + foto + "' heigth='80' alt='foto'>");
+    $("#meu_nome").html("<b>" + nome + "</b>");
 }
 
 // when the document is ready...

@@ -10,13 +10,17 @@
             "id": 1,
             "nome": "João da silva",
             "email": "josilva@gmail.com",
-            "observacao": "302 info 2020"
+            "observacao": "302 info 2020",
+            "identificador": "abc",
+            "token": "aaa"
         },
         {
             "id": 2,
             "nome": "Mariana Paula",
             "email": "mapa@gmail.com",
-            "observacao": "301 info 2020"
+            "observacao": "301 info 2020",
+            "identificador": "zzz",
+            "token": "kkk"
         }
     ]
 }

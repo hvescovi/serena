@@ -50,7 +50,7 @@ def retornar_questoes_com_filtro(filtro, parametro):
     ret.headers.add('Access-Control-Allow-Origin', '*')        
     return ret    
 
-# curl -d '{ "idq": 2, "resposta": "123", "user_name":"Hylson Netto", "user_email":"hvescovi@gmail.com" }' -X POST http://localhost:5000/verificar_resposta_aberta
+# curl -d '{ "idq": 2, "resposta": "123", "user_name":"Hylson Netto", "user_email":"hvescovi@gmail.com", "token":"123" }' -X POST http://localhost:5000/verificar_resposta_aberta
 @app.route('/verificar_resposta_aberta', methods=['post'])
 def verificar_resposta():
     # prepara a resposta padrão otimista
@@ -65,6 +65,8 @@ def verificar_resposta():
         user_name = dados['user_name']
         user_email = dados['user_email']
 
+        token = dados['token']
+
         # obtém questão 
         q = db.session.query(Aberta).filter(Aberta.id == idq).all()
 
@@ -73,22 +75,27 @@ def verificar_resposta():
         # respondente não existe?
         alguem = None
         if len(r) == 0:
-            # adiciona novo respondente
+            # adiciona novo respondente (!!! não vai mais ser assim, precisa se logar !!!)
             alguem = Respondente(nome = user_name, email=user_email, observacao = "")
             db.session.add(alguem)
             db.session.commit()
         else:
             alguem = r[0]
           
-        # cria a resposta
-        nova_resposta = Resposta(questao=q[0], respondente=alguem, resposta=resposta)         
-        db.session.add(nova_resposta)
-        db.session.commit()
-                
-        #q[0].resposta
+        # verifica token
+        s = db.session.query(Respondente).filter(Respondente.token == token).all()
+        if len(s) == 0:
+            response = jsonify({"message": "ok", "details": "token inválido"})
+        else:
+            # cria a resposta
+            nova_resposta = Resposta(questao=q[0], respondente=alguem, resposta=resposta)         
+            db.session.add(nova_resposta)
+            db.session.commit()
+                    
+            #q[0].resposta
 
-        # a resposta será a resposta da questão aberta, para conferência
-        response = jsonify({"message": "ok", "details": q[0].resposta})
+            # a resposta será a resposta da questão aberta, para conferência
+            response = jsonify({"message": "ok", "details": q[0].resposta})
 
     except Exception as e:
         # resposta de erro
@@ -491,7 +498,7 @@ def alterar_questao():
     return response    
 
 # curl localhost:5000/get_token/hvescovi@gmail.com
-@app.route('/get_token/<email>')
+@app.route('/create_token/<email>')
 def get_token(email):
     
     try:
@@ -520,5 +527,41 @@ def get_token(email):
     ret.headers.add('Access-Control-Allow-Origin', '*')        
     return ret
 
+    
 
+# curl localhost:5000/salvar_token/agaasdafdsada/ae234
+@app.route('/salvar_token/<identif>/<token>')
+def salvar_token(identif, token):
+
+    ret = jsonify({"message": "ok", "details": "ok"})    
+    try:
+        # verificar se o usuario existe
+        r = db.session.query(Respondente).filter(Respondente.identificador == identif).all()
+        
+        if len(r) > 0:
+            # atualizar token do usuario
+            stmt = update(Respondente).\
+                where(Respondente.identificador == identif).\
+                values(token = token)
+            ret = jsonify({"message": "ok", "details": "respondente atualizado"})                    
+        else:
+            # incluir respondente
+            novo = Respondente(nome="novo", email="novo", observacao="", identificador=identif, token = token)
+            db.session.add(novo)
+            ret = jsonify({"message": "ok", "details": "token do respondente criado"})                    
+            
+        # efetivar alterações
+        db.session.commit()
+
+    except Exception as e:
+        # resposta de erro
+        ret = jsonify({"message": "error", "details": str(e)})
+
+    # jsonify é para retornar algo do tipo Response,
+    # informação na qual se pode adicionar headers
+    ret.headers.add('Access-Control-Allow-Origin', '*')        
+    return ret
+
+    
 app.run(host='0.0.0.0', debug=True)
+
