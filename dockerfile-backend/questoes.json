@@ -7,12 +7,8 @@
             "autor": "Erick José Heiler, 301 info 2020 | Lucas Vinicius Maske, 301 info 2020",
             "assuntos": ["bootstrap"],
             "data_cadastro": "14/03/2020",
-            "type": "AbertaMultiplasRespostas",
-            "respostas": [
-                "O processo de estilizar e personalizar a página se torna mais simples, já que ele vem com blocos de código prontos para usar.",
-                "Ele não é apenas fácil de usar, mas também acelera o desenvolvimento",
-                "O Bootstrap faz os aplicativos móveis se ajustarem na resolução da tela de maneira apropriada, para o seu layout não parecer uma bagunça visto em dispositivos móveis"
-            ]
+            "type": "Aberta",
+            "resposta": "i) O processo de estilizar e personalizar a página se torna mais simples, já que ele vem com blocos de código prontos para usar; ii) Ele não é apenas fácil de usar, mas também acelera o desenvolvimento; iii) O Bootstrap faz os aplicativos móveis se ajustarem na resolução da tela de maneira apropriada, para o seu layout não parecer uma bagunça visto em dispositivos móveis"
         },
         {
             "id": 2,
@@ -57,12 +53,8 @@
             "autor": "Sabrina Mara, 301 info 2020 | Vinicius Gobetti, 301 info 2020 | Josef Bischof, 301 info 2020",
             "assuntos": ["git"],
             "data_cadastro": "15/03/2020",
-            "type": "AbertaMultiplosItens",
-            "respostas": [
-                "git clone https://github.com/login/repositorio",
-                "cd repositorio",
-                "git config --global user.name login e git config --global user.email \"e-mail\""
-            ]
+            "type": "Aberta",
+            "resposta": "i) git clone https://github.com/login/repositorio; ii) cd repositorio; iii) git config --global user.name login e git config --global user.email \"e-mail\""
         },
         {
             "id": 7,

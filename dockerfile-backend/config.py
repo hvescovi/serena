@@ -26,10 +26,16 @@ app = Flask(__name__)
 # execução local?
 if os.path.exists("/home/friend/01-github/serena/dockerfile-backend/"):
     arquivobd = "/home/friend/01-github/serena/dockerfile-backend/database/serena.db"
+    saltfile = "/home/friend/01-github/serena/dockerfile-backend/salt/salt.txt"
 else:    
     # execução em container do docker
     arquivobd = "/database/serena.db"
+    saltfile = "/salt/salt.txt"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+arquivobd
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # remove warning
 db = SQLAlchemy(app)
+
+from datetime import datetime
+
+import hashlib

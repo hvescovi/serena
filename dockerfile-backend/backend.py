@@ -439,5 +439,86 @@ def retornar_questoes_exibidas_no_circulo():
     return ret
 
 
+@app.route('/retornar_questao/<id_questao>')
+def retornar_questao(id_questao):
+    resp = []
+    questoes = Questao.query.filter(Questao.id == id_questao).all()
+    for q in questoes:
+        if q.type == "aberta":
+            q.__class__ = Aberta
+            resp.append(q.json())
+            
+        if q.type == "completar":
+            q.__class__ = Completar
+            resp.append(q.json())
+
+        if q.type == "multiplaescolha":
+            q.__class__ = MultiplaEscolha
+            resp.append(q.json())
+
+    ret = jsonify(resp)
+    
+    # jsonify é para retornar algo do tipo Response,
+    # informação na qual se pode adicionar headers
+    ret.headers.add('Access-Control-Allow-Origin', '*')        
+    return ret
+
+# curl -d '{ "idq": 1, "enunciado":"ok mudou", "autor": "eu", "data_cadastro":"1/1/2020", "resposta":"ok valeu" }' -X POST http://localhost:5000/alterar_questao
+@app.route('/alterar_questao', methods=['post'])
+def alterar_questao():
+    # prepara a resposta padrão otimista
+    response = jsonify({"message": "ok", "details": "ok"})
+    try:
+        # pega os dados informados
+        dados = request.get_json(force=True)
+        
+        # verifica o tipo de questão
+        if dados['type'] == "aberta":
+            stmt = db.session.update(Questao).where(Questao.id==5).\
+                values(enunciado=dados['enunciado'], 
+                    autor=dados['autor'],
+                    data_cadastro=dados['data_cadastro'],
+                    resposta=dados['resposta'])
+            db.session.commit()
+      
+    except Exception as e:
+        # resposta de erro
+        response = jsonify({"message": "error", "details": str(e)})
+
+    # informa que outras origens podem acessar os dados desde servidor/serviço
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    # retorno!
+    return response    
+
+# curl localhost:5000/get_token/hvescovi@gmail.com
+@app.route('/get_token/<email>')
+def get_token(email):
+    
+    try:
+        # obter a data atual
+        now = datetime.now() # current date and time
+        data = now.strftime("%Y %m %d")
+
+        # obter o salt
+        f = open(saltfile, "r")
+        salt = f.read()
+        f.close()
+        
+        # gerar hash
+        # https://www.geeksforgeeks.org/md5-hash-python/    
+        phrase = data+salt+email
+        hash = hashlib.md5(phrase.encode('utf-8')).hexdigest()
+        
+        ret = jsonify({"message": "ok", "details": hash})
+
+    except Exception as e:
+        # resposta de erro
+        ret = jsonify({"message": "error", "details": str(e)})
+
+    # jsonify é para retornar algo do tipo Response,
+    # informação na qual se pode adicionar headers
+    ret.headers.add('Access-Control-Allow-Origin', '*')        
+    return ret
+
 
 app.run(host='0.0.0.0', debug=True)

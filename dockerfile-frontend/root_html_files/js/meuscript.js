@@ -319,24 +319,43 @@ function onSignIn(googleUser) {
     $("#user_name").text(profile.getName());
     $("#user_email").text(profile.getEmail());
 
+    // https://ciphertrick.com/session-handling-using-jquery/
     // guarda na sessão
     $.session.set("user_name", profile.getName());
     $.session.set("user_email", profile.getEmail());
 
-    // https://ciphertrick.com/session-handling-using-jquery/
+    // solicitar token
+
+    var myip = $("#myip").text();
+    var url = 'http://' + myip + ':5000/get_token/' +
+        $.session.get("user_email");
+
+    //alert(url);
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        success: function(resultado) {
+            if (resultado.message == "ok") {
+                var token = resultado.details
+                $.session.set("token", token);
+            } else {
+                alert("Não foi possível gerar o token");
+            }
+        },
+        error: function() {
+            alert("ocorreu algum erro na leitura dos dados, verifique o backend");
+        }
+    });
+
+
 }
-
-
-//$("#myip").text("192.168.15.8");
-//$("#myip").text("172.18.0.2");
 
 // when the document is ready...
 $(function() {
-    //alert(document.URL);
     if (document.URL.startsWith("http://localhost")) {
         $("#myip").text("localhost");
     } else if (document.URL.startsWith("http://k8master")) {
         $("#myip").text("k8master.blumenau.ifc.edu.br");
     }
-    //$("#myip").text("k8master.blumenau.ifc.edu.br");
 });
