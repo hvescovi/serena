@@ -52,7 +52,7 @@ def retornar_questoes_com_filtro(filtro, parametro):
 
 # curl -d '{ "idq": 2, "resposta": "123", "user_name":"Hylson Netto", "user_email":"hvescovi@gmail.com", "token":"123" }' -X POST http://localhost:5000/verificar_resposta_aberta
 @app.route('/verificar_resposta_aberta', methods=['post'])
-def verificar_resposta():
+def verificar_resposta_aberta():
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -64,7 +64,6 @@ def verificar_resposta():
         # obtém usuario
         user_name = dados['user_name']
         user_email = dados['user_email']
-
         token = dados['token']
 
         # obtém questão 
@@ -530,29 +529,44 @@ def get_token(email):
     
 
 # curl localhost:5000/salvar_token/agaasdafdsada/ae234
-@app.route('/salvar_token/<identif>/<token>')
-def salvar_token(identif, token):
-
+# 
+#@app.route('/salvar_token/<identif>/<token>')
+#def salvar_token(identif, token):
+# curl -d '{ "identificador": "aab", "token":"123" }' -X POST http://localhost:5000/salvar_token
+@app.route('/salvar_token', methods=['post'])
+def salvar_token():
+    # prepara a resposta padrão otimista
     ret = jsonify({"message": "ok", "details": "ok"})    
     try:
+        # pega os dados informados
+        dados = request.get_json(force=True)
+
+        identif = dados['identificador']
+        token = dados['token']
+
         # verificar se o usuario existe
         r = db.session.query(Respondente).filter(Respondente.identificador == identif).all()
         
         if len(r) > 0:
             # atualizar token do usuario
-            stmt = update(Respondente).\
-                where(Respondente.identificador == identif).\
-                values(token = token)
+            db.session.query().\
+                filter(Respondente.identificador == identif).\
+                update({"token": token})
+            # efetivar alterações
+            db.session.commit()
+
+            #stmt = update(Respondente).\
+            #    where(Respondente.identificador == identif).\
+            #    values(token = token)
             ret = jsonify({"message": "ok", "details": "respondente atualizado"})                    
         else:
             # incluir respondente
             novo = Respondente(nome="novo", email="novo", observacao="", identificador=identif, token = token)
             db.session.add(novo)
             ret = jsonify({"message": "ok", "details": "token do respondente criado"})                    
-            
-        # efetivar alterações
-        db.session.commit()
-
+            # efetivar alterações
+            db.session.commit()          
+        
     except Exception as e:
         # resposta de erro
         ret = jsonify({"message": "error", "details": str(e)})

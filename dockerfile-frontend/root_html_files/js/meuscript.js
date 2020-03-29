@@ -119,10 +119,9 @@ $(document).on("click", ".verificar_resposta_aberta", function() {
 
     var user_name = $.session.get("user_name");
     var user_email = $.session.get("user_email");
-
     var token = $.session.get("token");
 
-    //alert(resp);
+    alert(token);
     // prepara os dados em json
     var dados = JSON.stringify({ idq: idq, resposta: resp, user_name: user_name, user_email: user_email, token: token })
 
@@ -338,16 +337,19 @@ function onSignIn(googleUser) {
     // grava token no backend
     myip = $("#myip").text();
     // verificar se o link da foto muda a cada login ou época
-    url = 'http://' + myip + ':5000/salvar_token/' + foto + "/" + token
+    url = 'http://' + myip + ':5000/salvar_token'
 
+    var dados = JSON.stringify({ identificador: foto, token: token })
+
+    myip = $("#myip").text();
     $.ajax({
-        url: url,
-        type: 'GET',
+        url: 'http://' + myip + ':5000/salvar_token',
+        type: 'POST',
         dataType: 'json', // vou receber a resposta em json,
-        //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+        data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
         success: function(resultado) {
-            //
+            var deu_certo = resultado.message == "ok";
         },
         error: function() {
             alert("ocorreu algum erro ao salvar token no backend");
