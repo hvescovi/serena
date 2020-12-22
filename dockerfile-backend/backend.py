@@ -81,20 +81,22 @@ def verificar_resposta_aberta():
         else:
             alguem = r[0]
           
+        '''
         # verifica token
         s = db.session.query(Respondente).filter(Respondente.token == token).all()
         if len(s) == 0:
             response = jsonify({"message": "ok", "details": "token inválido"})
         else:
-            # cria a resposta
-            nova_resposta = Resposta(questao=q[0], respondente=alguem, resposta=resposta)         
-            db.session.add(nova_resposta)
-            db.session.commit()
-                    
-            #q[0].resposta
+            '''
+        # cria a resposta
+        nova_resposta = Resposta(questao=q[0], respondente=alguem, resposta=resposta)         
+        db.session.add(nova_resposta)
+        db.session.commit()
+                
+        #q[0].resposta
 
-            # a resposta será a resposta da questão aberta, para conferência
-            response = jsonify({"message": "ok", "details": q[0].resposta})
+        # a resposta será a resposta da questão aberta, para conferência
+        response = jsonify({"message": "ok", "details": q[0].resposta})
 
     except Exception as e:
         # resposta de erro
