@@ -15,5 +15,6 @@ ADD modelo.py /modelo.py
 ADD config.py /config.py
 ADD inicializa.sh /inicializa.sh
 
+EXPOSE 5000
 RUN chmod +x /inicializa.sh
 ENTRYPOINT ["/inicializa.sh"]
