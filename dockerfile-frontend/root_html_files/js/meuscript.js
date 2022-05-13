@@ -367,5 +367,15 @@ $(function() {
         $("#myip").text("localhost");
     } else if (document.URL.startsWith("http://k8master")) {
         $("#myip").text("k8master.blumenau.ifc.edu.br");
+    } else {
+        url = document.URL;
+        pos = url.search(":")
+        if (pos > 0) {
+            http = len("http://")
+            meuip = url.substring(http, pos-1);
+            $("#myip").text(meuip);
+        } else {
+            alert("ERRO: não localizei URL");
+        }
     }
 });
