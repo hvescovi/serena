@@ -144,7 +144,7 @@ $(document).on("click", ".responder_questao_circulo_aberta", function() {
             // diz que deu certo o envio
             if (deu_certo) {
                 //$("#final").text("Sua resposta foi enviada!");
-                alert("OBRIGADO! Sua resposta foi enviada.");
+                alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                 // volta ao começo
                 $(location).attr('href', '/circulo.html');
@@ -203,7 +203,7 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
             // diz que deu certo o envio
             if (deu_certo) {
                 //$("#final").text("Sua resposta foi enviada!");
-                alert("OBRIGADO! Sua resposta foi enviada.");
+                alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                 // volta ao começo
                 $(location).attr('href', '/circulo.html');
@@ -274,7 +274,7 @@ $(document).on("click", ".verificar_resposta_completar", function() {
             // diz que deu certo o envio
             if (deu_certo) {
                 //$("#final").text("Sua resposta foi enviada!");
-                alert("OBRIGADO! Sua resposta foi enviada.");
+                alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                 // volta ao começo
                 $(location).attr('href', '/circulo.html');
@@ -314,10 +314,11 @@ $(function() {
         $("#myip").text("k8master.blumenau.ifc.edu.br");
     } else {
         url = document.URL;
-        pos = url.search(":")
+        pos = url.search("/circulo.html");
         if (pos > 0) {
-            http = len("http://")
-            meuip = url.substring(http, pos-1);
+            protocolo = "http://"
+            http = protocolo.length;
+            meuip = url.substring(http, pos);
             $("#myip").text(meuip);
         } else {
             alert("ERRO: não localizei URL");
@@ -334,6 +335,8 @@ $(function() {
 
     myip = $("#myip").text();
 
+    // circulo 1 = turma 301
+    // circulo 2 = turma 302
     url = 'http://' + myip + ':5000/preparar_rodada/1';
 
     $.ajax({
@@ -356,5 +359,11 @@ $(function() {
         }
 
     });
+
+    $(document).on("click", "#btnPassarVez", function() {
+        window.location.reload();
+    });
+
+ 
 
 });

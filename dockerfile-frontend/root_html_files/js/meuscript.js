@@ -1,4 +1,4 @@
-$(document).on("click", "#btn_listar_questoes", function() {
+$(document).on("click", "#btn_listar_questoes", function () {
     myip = $("#myip").text();
 
     url = 'http://' + myip + ':5000/retornar_questoes';
@@ -13,7 +13,7 @@ $(document).on("click", "#btn_listar_questoes", function() {
         url: url,
         method: 'GET',
         dataType: 'json',
-        success: function(resultado) {
+        success: function (resultado) {
             $('#tabela_questoes').empty();
             //alert(resultado);
             quest = resultado;
@@ -93,13 +93,13 @@ $(document).on("click", "#btn_listar_questoes", function() {
                 //alert(lin);
             }
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
 });
 
-$(document).on("click", ".verificar_resposta_aberta", function() {
+$(document).on("click", ".verificar_resposta_aberta", function () {
 
     // qual botão foi clicado
     var eu = $(this).attr('id');
@@ -132,7 +132,7 @@ $(document).on("click", ".verificar_resposta_aberta", function() {
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             var deu_certo = resultado.message == "ok";
 
             // coloca a resposta no gabarito
@@ -144,14 +144,14 @@ $(document).on("click", ".verificar_resposta_aberta", function() {
             }
 
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
 
 });
 
-$(document).on("click", ".verificar_resposta_multipla_escolha", function() {
+$(document).on("click", ".verificar_resposta_multipla_escolha", function () {
 
     // qual botão foi clicado
     var eu = $(this).attr('id');
@@ -186,7 +186,7 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             var deu_certo = resultado.message == "ok";
 
             // coloca a resposta no gabarito
@@ -198,14 +198,14 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
             }
 
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
 
 });
 
-$(document).on("click", ".verificar_resposta_completar", function() {
+$(document).on("click", ".verificar_resposta_completar", function () {
 
     // qual botão foi clicado
     var eu = $(this).attr('id');
@@ -253,7 +253,7 @@ $(document).on("click", ".verificar_resposta_completar", function() {
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             var deu_certo = resultado.message == "ok";
 
             // coloca a resposta no gabarito
@@ -265,7 +265,7 @@ $(document).on("click", ".verificar_resposta_completar", function() {
             }
 
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
@@ -273,7 +273,7 @@ $(document).on("click", ".verificar_resposta_completar", function() {
 });
 
 
-$(document).on("click", ".retornar_contagem_respostas_questao", function() {
+$(document).on("click", ".retornar_contagem_respostas_questao", function () {
 
     // qual elemento foi clicado
     var eu = $(this).attr('id');
@@ -290,14 +290,14 @@ $(document).on("click", ".retornar_contagem_respostas_questao", function() {
         dataType: 'json', // vou receber a resposta em json,
         //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             // coloca a resposta no gabarito
             $("#cont" + idq).text(resultado);
             // alert(resultado.details);
             //mostrar_resultado_acao(deu_certo);
 
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados de contagem, verifique o backend");
         }
 
@@ -348,10 +348,10 @@ function onSignIn(googleUser) {
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             var deu_certo = resultado.message == "ok";
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro ao salvar token no backend");
         }
     });
@@ -362,20 +362,17 @@ function onSignIn(googleUser) {
 }
 
 // when the document is ready...
-$(function() {
+$(function () {
     if (document.URL.startsWith("http://localhost")) {
         $("#myip").text("localhost");
     } else if (document.URL.startsWith("http://k8master")) {
         $("#myip").text("k8master.blumenau.ifc.edu.br");
     } else {
         url = document.URL;
-        pos = url.search(":")
-        if (pos > 0) {
-            http = len("http://")
-            meuip = url.substring(http, pos-1);
-            $("#myip").text(meuip);
-        } else {
-            alert("ERRO: não localizei URL");
-        }
+        protocolo = "http://"
+        http = protocolo.length;
+        meuip = url.substring(http);
+        meuip = meuip.substring(0, meuip.length-1); // remove a última barra
+        $("#myip").text(meuip);
     }
 });

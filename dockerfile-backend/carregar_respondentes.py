@@ -4,7 +4,8 @@ from modelo import *
 import json
 
 # ler arquivo json das outras coisas
-data = json.load(open('/home/friend/01-github/serena/dockerfile-backend/outros2.json'))
+#data = json.load(open('/home/friend/01-github/serena/dockerfile-backend/outros2.json'))
+data = json.load(open('/home/friend/01-github/serena/dockerfile-backend/302.json'))
 
 # insere respondentes
 for q in data['respondentes']:
