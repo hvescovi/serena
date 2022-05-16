@@ -338,7 +338,7 @@ $(function() {
     // circulo 2 = turma 302
 
     myip = $("#myip").text();
-
+/*
     url = 'http://' + myip + ':5000/get/Circulo/'+circulo;
     $.ajax({
         url: url,
@@ -355,6 +355,7 @@ $(function() {
         }
     });
 
+*/
 
     url = 'http://' + myip + ':5000/preparar_rodada/'+circulo;
 
@@ -378,6 +379,7 @@ $(function() {
         }
 
     });
+    
 
     $(document).on("click", "#btnPassarVez", function() {
         window.location.reload();

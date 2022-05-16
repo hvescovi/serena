@@ -719,4 +719,4 @@ def get_especifico(classe, id):
 
    return resposta   
 
-app.run(host='0.0.0.0', debug=True)
+app.run(host='0.0.0.0') #, debug=True)
