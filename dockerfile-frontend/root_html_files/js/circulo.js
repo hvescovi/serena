@@ -51,7 +51,7 @@ $(document).on("click", "#btn_abrir_questao_circulo", function() {
                 for (var j in quest.alternativas) {
                     lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                 }
-                lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">verificar resposta</button>';
+                lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">salvar resposta</button>';
 
                 // contador de respostas
                 //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
@@ -82,7 +82,7 @@ $(document).on("click", "#btn_abrir_questao_circulo", function() {
                 lin = lin + en;
                 lin = lin + "<br>";
 
-                lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">verificar resposta(s)</button>';
+                lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">salvar resposta</button>';
 
                 // contador de respostas
                 //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
@@ -329,15 +329,34 @@ $(function() {
     // iniciar o círculo
 
     // qual elemento foi clicado
-    var eu = $(this).attr('id');
+    //var eu = $(this).attr('id');
     // obtém o id da questão
     //alert(eu);
 
-    myip = $("#myip").text();
-
+    var circulo = 1;
     // circulo 1 = turma 301
     // circulo 2 = turma 302
-    url = 'http://' + myip + ':5000/preparar_rodada/1';
+
+    myip = $("#myip").text();
+
+    url = 'http://' + myip + ':5000/get/Circulo/'+circulo;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json', // vou receber a resposta em json,
+        contentType: "application/json",
+        success: function(resultado) {
+            $("#nome_circulo").text(resultado.nome);
+            $("#circulo_id").text(resultado.id);
+            $("#data_circulo").text(resultado.data);
+        },
+        error: function() {
+            alert("ocorreu algum erro na leitura dos dados do círculo, verifique o backend");
+        }
+    });
+
+
+    url = 'http://' + myip + ':5000/preparar_rodada/'+circulo;
 
     $.ajax({
         url: url,

@@ -6,10 +6,11 @@
 from flask import Flask, jsonify, request, send_file#, Response
 from flask_sqlalchemy import SQLAlchemy
 import os
-
 from sqlalchemy import func, update
 
 import random
+
+from flask_cors import CORS # permitir back receber json do front
 
 #from sqlalchemy import inspect
 
@@ -21,7 +22,9 @@ import random
 # configurações e ambiente
 #
 
+# configurações
 app = Flask(__name__)
+#CORS(app) # aplicar o cross domain
 
 # execução local?
 if os.path.exists("/home/friend/01-github/serena/dockerfile-backend/"):

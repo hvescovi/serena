@@ -131,7 +131,8 @@ class Prova(db.Model):
     #questoesNaProva = db.relationship("QuestaoNaProva")#, secondary=questoesNaProva)
     
     # atributo para acessar questões a partir de uma prova
-    questoesDaProva = db.relationship("Questao", secondary="questaodeprova")
+    #questoesDaProva = db.relationship("Questao", secondary="questaodeprova")
+    # implementado como backref em QuestaoDeProva para evitar warning
 
     def __str__(self):
         s = str(self.data)
@@ -151,7 +152,7 @@ class QuestaoDeProva(db.Model):
 
     # atributos de relacionamento
     questao = db.relationship("Questao")
-    prova = db.relationship("Prova")
+    prova = db.relationship("Prova", backref="questoesDaProva")
     
     # atributos da questão de prova
     ordem = db.Column(db.Integer)
@@ -258,7 +259,8 @@ class Circulo(db.Model):
     #questoesNaProva = db.relationship("QuestaoNaProva")#, secondary=questoesNaProva)
     
     # atributo para acessar questões a partir de uma prova
-    respostasNoCirculo = db.relationship("Resposta", secondary="respostanocirculo")
+    #respostasNoCirculo = db.relationship("Resposta", secondary="respostanocirculo")
+    # atributo acima substituido: utilizado backref em Circulo
 
     def __str__(self):
         s = self.nome + "("+str(self.id)+"), em "+self.data
@@ -289,7 +291,7 @@ class RespostaNoCirculo(db.Model):
     resposta_id = db.Column(db.Integer, db.ForeignKey(Resposta.id), primary_key=True)
 
     # atributos de relacionamento
-    circulo = db.relationship("Circulo")
+    circulo = db.relationship("Circulo", backref="respostasNoCirculo")
     resposta = db.relationship("Resposta")
     
     # atributos especificos - nao tem
