@@ -333,7 +333,7 @@ $(function() {
     // obtém o id da questão
     //alert(eu);
 
-    var circulo = 1;
+    var circulo = 2;
     // circulo 1 = turma 301
     // circulo 2 = turma 302
 
