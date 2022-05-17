@@ -179,7 +179,7 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
         return false;
     }
 
-    var id_alternativa = marcada[1]; //r3 => 3
+    var id_alternativa = marcada.substring(1); //r3 => 3
     //alert(id_alternativa);
 
     // pegar dados do circulo
@@ -370,6 +370,7 @@ $(function() {
             $("#id_respondente").val(resultado.id);
             $("#nome_respondente").text(resultado.nome);
             $("#email_respondente").text(resultado.email);
+            $("#questoes_respondidas").text(resultado.questoes_respondidas);
             // alert(resultado.details);
             //mostrar_resultado_acao(deu_certo);
 
