@@ -397,45 +397,54 @@ def abrir_questao_circulo(id_circulo, id_respondente):
             Resposta.respondente_id == id_respondente)
         #r1 = db.session.query(Questao).all()
 
-        # obtém questões que ainda não respondi
-        res = Questao.query.filter(Questao.id.notin_(r1)).all()
+        if len(r1.all()) >= 10:
+            retorno = jsonify({"message": "error", "details":"Já foram respondidas 10 perguntas"})
+        else:    
+            # obtém questões que ainda não respondi
+            res = Questao.query.filter(Questao.id.notin_(r1)).all()
 
-        # sorteia uma questão
-        nq = random.randint(1, len(res))  # questoes_ainda_nao))
+            if len(res) == 0: 
+                retorno = jsonify({"message": "error", "details":"Não há mais perguntas a responder"})
+            else:
 
-        resp = ""
+                # sorteia uma questão
+                nq = random.randint(1, len(res))  # questoes_ainda_nao))
 
-        # obtém a questão
-        q = res[nq-1]
+                resp = ""
 
-        # faz uma conversão de tipo para obter o json
+                # obtém a questão
+                q = res[nq-1]
 
-        if q.type == "aberta":
-            q.__class__ = Aberta
-            resp = q.json()
+                # faz uma conversão de tipo para obter o json
 
-        if q.type == "completar":
-            q.__class__ = Completar
-            resp = q.json()
+                if q.type == "aberta":
+                    q.__class__ = Aberta
+                    resp = q.json()
 
-        if q.type == "multiplaescolha":
-            q.__class__ = MultiplaEscolha
-            resp = q.json()
+                if q.type == "completar":
+                    q.__class__ = Completar
+                    resp = q.json()
 
-        # registrar que a questão foi aberta, exibida na tela
-        ex = QuestaoExibidaNoCirculo(
-            circulo_id=id_circulo, respondente_id=id_respondente, questao_id=q.id)
-        db.session.add(ex)
-        db.session.commit()
+                if q.type == "multiplaescolha":
+                    q.__class__ = MultiplaEscolha
+                    resp = q.json()
+
+                # registrar que a questão foi aberta, exibida na tela
+                ex = QuestaoExibidaNoCirculo(
+                    circulo_id=id_circulo, respondente_id=id_respondente, questao_id=q.id)
+                db.session.add(ex)
+                db.session.commit()
+
+                retorno = jsonify({"message": "ok", "details": resp})
 
     except Exception as e:
         # resposta de erro
-        resp = jsonify({"message": "error", "details": str(e)})
+        retorno = jsonify({"message": "error", "details": str(e)})
 
     # retornos
-    ret = jsonify(resp)
-    ret.headers.add('Access-Control-Allow-Origin', '*')
-    return ret
+    #retorno = jsonify(resultado)
+    retorno.headers.add('Access-Control-Allow-Origin', '*')
+    return retorno
 
 # curl -d '{ "idq": 2, "resposta": "git é legal", "id_respondente":1, "id_circulo":1 }' -X POST http://localhost:5000/responder_questao_circulo
 

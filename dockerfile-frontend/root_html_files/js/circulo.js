@@ -20,82 +20,89 @@ $(document).on("click", "#btn_abrir_questao_circulo", function () {
 
             $('#tabela_questoes').empty();
             //alert(resultado);
+          
+            if (resultado.message != "ok") {
+                alert("Erro: "+resultado.details);
+            } else {
 
-            quest = resultado;
-            idq = quest.id;
-            lin = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood">';
+                // sucesso, vamos abrir a questão...
+                
+                quest = resultado.details;
+                idq = quest.id;
+                lin = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood">';
 
-            //alert(url);
+                //alert(url);
 
-            if (quest.type == "Aberta") {
-                lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
-                lin = lin + "<br>"
-                lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
-                lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta">enviar resposta</button>';
+                if (quest.type == "Aberta") {
+                    lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
+                    lin = lin + "<br>"
+                    lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
+                    lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta">enviar resposta</button>';
 
-                // contador de respostas
-                //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+                    // contador de respostas
+                    //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
 
-                lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
-            }
-
-            if (quest.type == "MultiplaEscolha") {
-                lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
-                lin = lin + "<br>"
-
-
-                // embaralhar as alernativas
-                // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-                quest.alternativas.sort(() => Math.random() - 0.5);
-
-                for (var j in quest.alternativas) {
-                    lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
+                    lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
                 }
-                lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">salvar resposta</button>';
 
-                // contador de respostas
-                //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+                if (quest.type == "MultiplaEscolha") {
+                    lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
+                    lin = lin + "<br>"
 
-                lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
-            }
 
-            if (quest.type == "Completar") {
-                // quebrar o enunciado em partes sepadas por três underlines
-                partes = quest.enunciado.split("___");
-                n = partes.length;
-                en = "";
-                for (var lac = 0; lac < n; lac++) {
-                    // acrescentar o texto antes da lacuna
-                    en = en + ajustaImagens(partes[lac]);
-                    // ainda não é a última parte de texto?
-                    if (lac < (n - 1)) {
-                        // acrescentar o campo de entrada da lacuna
-                        en = en + '<input type=text id="q' + idq + 'l' + lac + '">';
+                    // embaralhar as alernativas
+                    // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+                    quest.alternativas.sort(() => Math.random() - 0.5);
+
+                    for (var j in quest.alternativas) {
+                        lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                     }
+                    lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">salvar resposta</button>';
+
+                    // contador de respostas
+                    //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+
+                    lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
                 }
 
-                // acrescentar campo escondido para controle do número de lacunas
-                // se são 3 partes de texto, então são 2 lacunas
-                lin = lin + '<input type=hidden id="lacunas' + idq + '" value="' + (n - 1) + '">';
+                if (quest.type == "Completar") {
+                    // quebrar o enunciado em partes sepadas por três underlines
+                    partes = quest.enunciado.split("___");
+                    n = partes.length;
+                    en = "";
+                    for (var lac = 0; lac < n; lac++) {
+                        // acrescentar o texto antes da lacuna
+                        en = en + ajustaImagens(partes[lac]);
+                        // ainda não é a última parte de texto?
+                        if (lac < (n - 1)) {
+                            // acrescentar o campo de entrada da lacuna
+                            en = en + '<input type=text id="q' + idq + 'l' + lac + '">';
+                        }
+                    }
 
-                // acrescentar o enunciado da questão de lacuna, com as lacunas (caixas de texto)
-                lin = lin + en;
-                lin = lin + "<br>";
+                    // acrescentar campo escondido para controle do número de lacunas
+                    // se são 3 partes de texto, então são 2 lacunas
+                    lin = lin + '<input type=hidden id="lacunas' + idq + '" value="' + (n - 1) + '">';
 
-                lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">salvar resposta</button>';
+                    // acrescentar o enunciado da questão de lacuna, com as lacunas (caixas de texto)
+                    lin = lin + en;
+                    lin = lin + "<br>";
 
-                // contador de respostas
-                //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+                    lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">salvar resposta</button>';
 
-                lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
+                    // contador de respostas
+                    //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
+
+                    lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
+                }
+
+                lin = lin + "</div></div>";
+                //for (var j in quest[i].alternativas) {
+                //    lin = lin + "<br> => " + quest[i].alternativas[j].descricao;
+                // }
+                $('#tabela_questoes').append(lin);
+                //alert(lin);
             }
-
-            lin = lin + "</div></div>";
-            //for (var j in quest[i].alternativas) {
-            //    lin = lin + "<br> => " + quest[i].alternativas[j].descricao;
-            // }
-            $('#tabela_questoes').append(lin);
-            //alert(lin);
 
         },
         error: function () {
