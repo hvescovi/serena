@@ -24,7 +24,7 @@ from flask_cors import CORS # permitir back receber json do front
 
 # configurações
 app = Flask(__name__)
-#CORS(app) # aplicar o cross domain
+CORS(app) # aplicar o cross domain
 
 # execução local?
 if os.path.exists("/home/friend/01-github/serena/dockerfile-backend/"):

@@ -182,7 +182,7 @@ class Resposta(db.Model):
     def json(self):
         return {
             "id":self.id,
-            "questa_id":self.questao_id,
+            "questao_id":self.questao_id,
             "questao": self.questao.json(),
             "respondente_id": self.respondente_id,
             "respondente":self.respondente.json(),

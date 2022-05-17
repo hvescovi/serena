@@ -395,8 +395,7 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # questões que eu respondi
         r1 = db.session.query(Resposta.questao_id).filter(
             Resposta.respondente_id == id_respondente)
-        #r1 = db.session.query(Questao).all()
-
+        
         if len(r1.all()) >= 10:
             retorno = jsonify({"message": "error", "details":"Já foram respondidas 10 perguntas"})
         else:    
@@ -410,6 +409,7 @@ def abrir_questao_circulo(id_circulo, id_respondente):
                 # sorteia uma questão
                 nq = random.randint(1, len(res))  # questoes_ainda_nao))
 
+                # prepara a variável de questão
                 resp = ""
 
                 # obtém a questão
@@ -752,11 +752,10 @@ def exibir_respostas_circulo(id_circulo):
     respostas = Resposta.query.order_by(Resposta.questao_id).all()
     for r in respostas:
         lista.append(r.json())
-    retorno = jsonify(lista)
+    
+    ret = jsonify({"message": "ok", "details": lista})
 
-    retorno.headers.add('Access-Control-Allow-Origin', '*')
-    return retorno
-
-
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
 
 app.run(host='0.0.0.0', debug=True)
