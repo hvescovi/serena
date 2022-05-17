@@ -1,4 +1,4 @@
-$(document).on("click", "#btn_abrir_questao_circulo", function() {
+$(document).on("click", "#btn_abrir_questao_circulo", function () {
 
     $(this).prop("disabled", true);
 
@@ -16,7 +16,7 @@ $(document).on("click", "#btn_abrir_questao_circulo", function() {
         url: url,
         method: 'GET',
         dataType: 'json',
-        success: function(resultado) {
+        success: function (resultado) {
 
             $('#tabela_questoes').empty();
             //alert(resultado);
@@ -98,13 +98,13 @@ $(document).on("click", "#btn_abrir_questao_circulo", function() {
             //alert(lin);
 
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
 });
 
-$(document).on("click", ".responder_questao_circulo_aberta", function() {
+$(document).on("click", ".responder_questao_circulo_aberta", function () {
 
     // qual botão foi clicado
     var eu = $(this).attr('id');
@@ -138,7 +138,7 @@ $(document).on("click", ".responder_questao_circulo_aberta", function() {
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             var deu_certo = resultado.message == "ok";
 
             // diz que deu certo o envio
@@ -154,14 +154,14 @@ $(document).on("click", ".responder_questao_circulo_aberta", function() {
             }
 
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
 
 });
 
-$(document).on("click", ".verificar_resposta_multipla_escolha", function() {
+$(document).on("click", ".verificar_resposta_multipla_escolha", function () {
 
     // qual botão foi clicado
     var eu = $(this).attr('id');
@@ -197,7 +197,7 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             var deu_certo = resultado.message == "ok";
 
             // diz que deu certo o envio
@@ -212,14 +212,14 @@ $(document).on("click", ".verificar_resposta_multipla_escolha", function() {
                 alert(resultado.message + ":" + resultado.details);
             }
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
 
 });
 
-$(document).on("click", ".verificar_resposta_completar", function() {
+$(document).on("click", ".verificar_resposta_completar", function () {
 
     // qual botão foi clicado
     var eu = $(this).attr('id');
@@ -268,7 +268,7 @@ $(document).on("click", ".verificar_resposta_completar", function() {
         dataType: 'json', // vou receber a resposta em json,
         data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             var deu_certo = resultado.message == "ok";
 
             // diz que deu certo o envio
@@ -284,7 +284,7 @@ $(document).on("click", ".verificar_resposta_completar", function() {
             }
 
         },
-        error: function() {
+        error: function () {
             alert("ocorreu algum erro na leitura dos dados, verifique o backend");
         }
     });
@@ -306,7 +306,7 @@ function ajustaImagens(texto) {
 //$("#myip").text("172.18.0.2");
 
 // when the document is ready...
-$(function() {
+$(function () {
     //alert(document.URL);
     if (document.URL.startsWith("http://localhost")) {
         $("#myip").text("localhost");
@@ -338,26 +338,12 @@ $(function() {
     // circulo 2 = turma 302
 
     myip = $("#myip").text();
-/*
-    url = 'http://' + myip + ':5000/get/Circulo/'+circulo;
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json', // vou receber a resposta em json,
-        contentType: "application/json",
-        success: function(resultado) {
-            $("#nome_circulo").text(resultado.nome);
-            $("#circulo_id").text(resultado.id);
-            $("#data_circulo").text(resultado.data);
-        },
-        error: function() {
-            alert("ocorreu algum erro na leitura dos dados do círculo, verifique o backend");
-        }
-    });
+    /*
+        
+    
+    */
 
-*/
-
-    url = 'http://' + myip + ':5000/preparar_rodada/'+circulo;
+    url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;
 
     $.ajax({
         url: url,
@@ -365,7 +351,7 @@ $(function() {
         dataType: 'json', // vou receber a resposta em json,
         //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
         //contentType: "application/json",
-        success: function(resultado) {
+        success: function (resultado) {
             // coloca a resposta no gabarito
             $("#id_respondente").val(resultado.id);
             $("#nome_respondente").text(resultado.nome);
@@ -374,18 +360,22 @@ $(function() {
             // alert(resultado.details);
             //mostrar_resultado_acao(deu_certo);
 
+            $("#nome_circulo").text(resultado.nome_circulo);
+            $("#circulo_id").text(resultado.circulo_id);
+            $("#data_circulo").text(resultado.data_circulo);
+    
         },
-        error: function() {
-            alert("ocorreu algum erro na leitura dos dados de contagem, verifique o backend");
+        error: function () {
+            alert("ocorreu algum erro na leitura dos dados do círculo, verifique o backend");
         }
 
     });
-    
 
-    $(document).on("click", "#btnPassarVez", function() {
+
+    $(document).on("click", "#btnPassarVez", function () {
         window.location.reload();
     });
 
- 
+
 
 });

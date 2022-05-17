@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="css/meuestilo.css">
 
     <!-- favicon -->
@@ -43,7 +44,8 @@
         <img src="images/eyes.jpg" width="15%" class="navbar-brand rounded-circle">
 
         <!-- botão que aparece quando reduz -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav1" aria-controls="nav1" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav1" aria-controls="nav1"
+            aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -61,9 +63,11 @@
         <span class="navbar-text">
 
             <!-- tooltip -->
-            <span data-toggle="tooltip" title="Sistema Aberto de Perguntas">Serena</span>, em <span id="myip"></span>. Círculo: <span id="nome_circulo">nome_circulo</span>, criado em <span id="data_circulo">nome_circulo</span> (<span id="circulo_id">id</span>)
+            <span data-toggle="tooltip" title="Sistema Aberto de Perguntas">Serena</span>, em <span id="myip"></span>.
+            Círculo: <span id="nome_circulo">nome_circulo</span>, criado em <span id="data_circulo">nome_circulo</span>
+            (<span id="circulo_id">id</span>)
 
-        <!-- texto do tooltip 
+            <!-- texto do tooltip 
 
         <div class="tooltip bs-tooltip-top" role="tooltip">
             <div class="arrow"></div>
@@ -79,9 +83,13 @@
     <div class="container-fluid wood vh-100">
         <div class="row">
             <div class="col-10 text-center">
-                <span id="nome_respondente" class="display-1">XX</span>
+                <span id="nome_respondente" class="display-1">.</span>
                 <br>
-                <span id="email_respondente">YY</span>
+                <span id="email_respondente">.</span>
+                <br>
+                <span class="display-4">
+                    Questões respondidas: <span id="questoes_respondidas">.</span>
+                </span>
                 <input type=hidden id="id_respondente" value="*">
                 <input type=hidden id="id_circulo" value="1">
             </div>
@@ -92,7 +100,8 @@
 
         <div class="row">
             <div class="col mt-4 text-center">
-                <button id="btn_abrir_questao_circulo" class="btn btn-primary btn-lg btn-block btn_abrir_questao_circulo">Responder questão</button>
+                <button id="btn_abrir_questao_circulo"
+                    class="btn btn-primary btn-lg btn-block btn_abrir_questao_circulo">Responder questão</button>
             </div>
         </div>
 
@@ -108,9 +117,15 @@
 </body>
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
 
 <script src="js/jquery-3.4.1.min.js "></script>
 <script src="js/jquerysession.js "></script>

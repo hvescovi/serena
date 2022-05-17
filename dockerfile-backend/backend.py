@@ -330,6 +330,7 @@ def retornar_contagem_respostas_questao(email, questao):
     return ret
 
 
+# curl localhost/preparar_rodada/1
 @app.route('/preparar_rodada/<id_circulo>')
 def preparar_rodada(id_circulo):
     # geral: escolhe um respondente que esteja participando do circulo
@@ -344,9 +345,26 @@ def preparar_rodada(id_circulo):
     # escolhe um respondente
     nquem = random.randint(1, len(todos))
 
+    id_respondente = todos[nquem-1].id
+
+    # retorna o respondente sorteado
     q = db.session.query(Respondente).filter(
-        Respondente.id == todos[nquem-1].id).all()
+        Respondente.id == id_respondente).all()
     resp = q[0].json()
+
+    # OUTRA CONSULTA
+    # verificar quantas questões a pessoa já respondeu
+    q = Resposta.query.filter_by(respondente_id = id_respondente).count()
+
+    # adicionar no json essa quantidade de questões respondidas
+    resp.update({"questoes_respondidas":q})
+
+
+    # MAIS UMA CONSULTA
+    c = Circulo.query.get(id_circulo)
+    resp.update({"circulo_id":c.id, 
+                "nome_circulo":c.nome, 
+                "data_circulo":c.data})
 
     # retornos
     ret = jsonify(resp)
@@ -719,4 +737,17 @@ def get_especifico(classe, id):
 
    return resposta   
 
-app.run(host='0.0.0.0') #, debug=True)
+@app.route('/exibir_respostas/<id_circulo>')
+def exibir_respostas_circulo(id_circulo):
+    lista = []
+    respostas = Resposta.query.order_by(Resposta.questao_id).all()
+    for r in respostas:
+        lista.append(r.json())
+    retorno = jsonify(lista)
+
+    retorno.headers.add('Access-Control-Allow-Origin', '*')
+    return retorno
+
+
+
+app.run(host='0.0.0.0', debug=True)
