@@ -1,6 +1,7 @@
 from config import *
 from modelo import *
 
+
 @app.route("/")
 def inicio():
     return "Serena: servidor backend."
@@ -8,6 +9,10 @@ def inicio():
 
 @app.route('/retornar_questoes')
 def retornar_questoes():
+    print(request.remote_addr)
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
     questoes = Questao.query.all()
     for q in questoes:
@@ -24,6 +29,9 @@ def retornar_questoes():
 
 @app.route('/retornar_questoes/<filtro>/<parametro>')
 def retornar_questoes_com_filtro(filtro, parametro):
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
 
     # resposta padrao
@@ -60,6 +68,9 @@ def retornar_questoes_com_filtro(filtro, parametro):
 
 @app.route('/verificar_resposta_aberta', methods=['post'])
 def verificar_resposta_aberta():
+    if not ipok(request.remote_addr):
+        return failed()
+
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -92,7 +103,8 @@ def verificar_resposta_aberta():
 
         '''
         # verifica token
-        s = db.session.query(Respondente).filter(Respondente.token == token).all()
+        s = db.session.query(Respondente).filter(
+            Respondente.token == token).all()
         if len(s) == 0:
             response = jsonify({"message": "ok", "details": "token inválido"})
         else:
@@ -122,6 +134,9 @@ def verificar_resposta_aberta():
 
 @app.route('/verificar_resposta_multipla_escolha', methods=['post'])
 def verificar_resposta_multipla_escolha():
+    if not ipok(request.remote_addr):
+        return failed()
+
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -181,6 +196,9 @@ def verificar_resposta_multipla_escolha():
 
 @app.route('/verificar_resposta_completar', methods=['post'])
 def verificar_resposta_lacunas():
+    if not ipok(request.remote_addr):
+        return failed()
+
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -234,6 +252,9 @@ def verificar_resposta_lacunas():
 
 @app.route('/retornar_respostas')
 def retornar_respostas():
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
     respostas = Resposta.query.all()
     for q in respostas:
@@ -333,14 +354,19 @@ def retornar_contagem_respostas_questao(email, questao):
 # curl localhost/preparar_rodada/1
 @app.route('/preparar_rodada/<id_circulo>')
 def preparar_rodada(id_circulo):
+    if not ipok(request.remote_addr):
+        return failed()
+
     # geral: escolhe um respondente que esteja participando do circulo
 
-    # pega os respondentes do circulo 
+    # pega os respondentes do circulo
     # HARD-CODED
     if id_circulo == '1':
-        todos = db.session.query(Respondente).filter(Respondente.observacao == "301").all()
+        todos = db.session.query(Respondente).filter(
+            Respondente.observacao == "301").all()
     else:
-        todos = db.session.query(Respondente).filter(Respondente.observacao == "302").all()
+        todos = db.session.query(Respondente).filter(
+            Respondente.observacao == "302").all()
 
     # escolhe um respondente
     nquem = random.randint(1, len(todos))
@@ -354,17 +380,16 @@ def preparar_rodada(id_circulo):
 
     # OUTRA CONSULTA
     # verificar quantas questões a pessoa já respondeu
-    q = Resposta.query.filter_by(respondente_id = id_respondente).count()
+    q = Resposta.query.filter_by(respondente_id=id_respondente).count()
 
     # adicionar no json essa quantidade de questões respondidas
-    resp.update({"questoes_respondidas":q})
-
+    resp.update({"questoes_respondidas": q})
 
     # MAIS UMA CONSULTA
     c = Circulo.query.get(id_circulo)
-    resp.update({"circulo_id":c.id, 
-                "nome_circulo":c.nome, 
-                "data_circulo":c.data})
+    resp.update({"circulo_id": c.id,
+                "nome_circulo": c.nome,
+                 "data_circulo": c.data})
 
     # retornos
     ret = jsonify(resp)
@@ -374,6 +399,9 @@ def preparar_rodada(id_circulo):
 
 @app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
 def abrir_questao_circulo(id_circulo, id_respondente):
+    if not ipok(request.remote_addr):
+        return failed()
+
     # geral: escolhe uma questao de assunto do circulo
     resp = []
     try:
@@ -395,15 +423,17 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # questões que eu respondi
         r1 = db.session.query(Resposta.questao_id).filter(
             Resposta.respondente_id == id_respondente)
-        
+
         if len(r1.all()) >= 10:
-            retorno = jsonify({"message": "error", "details":"Já foram respondidas 10 perguntas"})
-        else:    
+            retorno = jsonify(
+                {"message": "error", "details": "Já foram respondidas 10 perguntas"})
+        else:
             # obtém questões que ainda não respondi
             res = Questao.query.filter(Questao.id.notin_(r1)).all()
 
-            if len(res) == 0: 
-                retorno = jsonify({"message": "error", "details":"Não há mais perguntas a responder"})
+            if len(res) == 0:
+                retorno = jsonify(
+                    {"message": "error", "details": "Não há mais perguntas a responder"})
             else:
 
                 # sorteia uma questão
@@ -451,6 +481,9 @@ def abrir_questao_circulo(id_circulo, id_respondente):
 
 @app.route('/responder_questao_circulo', methods=['post'])
 def responder_questao_circulo():
+    if not ipok(request.remote_addr):
+        return failed()
+
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -498,12 +531,18 @@ def responder_questao_circulo():
 
 @app.route('/imagem/<nome>')
 def imagem(nome):
+    if not ipok(request.remote_addr):
+        return failed()
+
     filename = 'imagens_questoes/'+nome
     return send_file(filename, mimetype='image/png')
 
 
 @app.route('/retornar_questoes_exibidas_no_circulo')
 def retornar_questoes_exibidas_no_circulo():
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
     registros = QuestaoExibidaNoCirculo.query.all()
     for r in registros:
@@ -518,6 +557,9 @@ def retornar_questoes_exibidas_no_circulo():
 
 @app.route('/retornar_questao/<id_questao>')
 def retornar_questao(id_questao):
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
     questoes = Questao.query.filter(Questao.id == id_questao).all()
     for q in questoes:
@@ -545,6 +587,9 @@ def retornar_questao(id_questao):
 
 @app.route('/alterar_questao', methods=['post'])
 def alterar_questao():
+    if not ipok(request.remote_addr):
+        return failed()
+
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -570,12 +615,11 @@ def alterar_questao():
     return response
 
 
-
-
-
-
 @app.route('/incluir_questao', methods=['POST'])
 def incluir_questao():
+    if not ipok(request.remote_addr):
+        return failed()
+
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -595,10 +639,11 @@ def incluir_questao():
             nova = MultiplaEscolha()
             for i in range(1, 10):
                 desc = 'a'+str(i)+'_descricao'
-                try: # sera que tem essa alternativa?
+                try:  # sera que tem essa alternativa?
                     a = Alternativa()
-                    a.descricao = dados[desc] # aqui dá erro se não houve a altenativa
-                    tmp = dados['a'+str(i)+'_certa'] 
+                    # aqui dá erro se não houve a altenativa
+                    a.descricao = dados[desc]
+                    tmp = dados['a'+str(i)+'_certa']
                     if tmp.upper() == "TRUE":
                         a.certa = True
                     else:
@@ -607,12 +652,12 @@ def incluir_questao():
                     db.session.commit()
                     nova.alternativas.append(a)
                 except:
-                    pass # acabaram as alternativas
+                    pass  # acabaram as alternativas
 
-        # comum para todas as questões        
+        # comum para todas as questões
         nova.enunciado = dados['enunciado']
-        
-        db.session.add(nova)             
+
+        db.session.add(nova)
         db.session.commit()
 
     except Exception as e:
@@ -625,17 +670,12 @@ def incluir_questao():
     return response
 
 
-
-
-
-
-
-
 # curl localhost:5000/get_token/hvescovi@gmail.com
 
 
 @app.route('/create_token/<email>')
 def get_token(email):
+    
 
     try:
         # obter a data atual
@@ -671,6 +711,9 @@ def get_token(email):
 # curl -d '{ "identificador": "aab", "token":"123" }' -X POST http://localhost:5000/salvar_token
 @app.route('/salvar_token', methods=['post'])
 def salvar_token():
+    if not ipok(request.remote_addr):
+        return failed()
+
     # prepara a resposta padrão otimista
     ret = jsonify({"message": "ok", "details": "ok"})
     try:
@@ -719,43 +762,73 @@ def salvar_token():
 
 @app.route('/getall/<string:classe>', methods=['get'])
 def get_generico(classe):
+    if not ipok(request.remote_addr):
+        return failed()
 
-   # reflexao
-   # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
-   modulo = __import__("modelo")
-   refclasse = getattr(modulo,classe)
-    
-   result = db.session.query(refclasse).all()
-   result_json = [x.json() for x in result]
-   resposta = jsonify(result_json)
-   resposta.headers.add('Access-Control-Allow-Origin', '*')
 
-   return resposta
+    # reflexao
+    # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
+    modulo = __import__("modelo")
+    refclasse = getattr(modulo, classe)
+
+    result = db.session.query(refclasse).all()
+    result_json = [x.json() for x in result]
+    resposta = jsonify(result_json)
+    resposta.headers.add('Access-Control-Allow-Origin', '*')
+
+    return resposta
+
 
 @app.route('/get/<string:classe>/<string:id>', methods=['get'])
 def get_especifico(classe, id):
 
-   # reflexao
-   # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
-   modulo = __import__("modelo")
-   refclasse = getattr(modulo,classe)
-    
-   result = refclasse.query.get(id);
-   resposta = jsonify(result.json())
-   resposta.headers.add('Access-Control-Allow-Origin', '*')
+    # reflexao
+    # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
+    modulo = __import__("modelo")
+    refclasse = getattr(modulo, classe)
 
-   return resposta   
+    result = refclasse.query.get(id)
+    resposta = jsonify(result.json())
+    resposta.headers.add('Access-Control-Allow-Origin', '*')
+
+    return resposta
+
 
 @app.route('/exibir_respostas/<id_circulo>')
 def exibir_respostas_circulo(id_circulo):
+    if not ipok(request.remote_addr):
+        return failed()
+
     lista = []
     respostas = Resposta.query.order_by(Resposta.questao_id).all()
     for r in respostas:
         lista.append(r.json())
-    
+
     ret = jsonify({"message": "ok", "details": lista})
 
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
+ipcontrol = True
+ips = []
+
+def ipok(ip):
+    if ipcontrol:
+        return ip in ips
+    else:
+        return True
+
+def failed():
+    return jsonify({"message": "error", "details": "unauthorized"})
+
+def loadiptable():
+    f = open('/home/friend/01-github/serena/dockerfile-backend/ips.txt','r')
+    for x in f:
+        ips.append(x[:-1])
+    print(ips)
+
+# start of backend
+
+if ipcontrol:
+    loadiptable()
 app.run(host='0.0.0.0', debug=True)
