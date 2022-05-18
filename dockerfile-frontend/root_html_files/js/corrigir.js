@@ -36,20 +36,21 @@ $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
 
                     resp = resps[i];
 
-                    cabecalho = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood">';
+                    cabecalho = '<div class="row"><div class="col shadow rounded wood">';
                 
                     lin = cabecalho;
 
                     if (ultima_questao_id != resp.questao_id) { //mudou a questão?
                         // mostra a questão
-                        lin += '<div class="col">'+resp.questao.enunciado+"</col>";
+                        lin += '<br>';
+                        lin += '<div class="col"><b>'+resp.questao.enunciado+"</b></col>";
                         lin += '</div>';
                         lin += cabecalho;
                         // atualiza a última questão
                         ultima_questao_id = resp.questao_id;
                     }
 
-                    lin += '<div class="row"><div class="col shadow p-3 mb-4 rounded wood">';
+                    lin += '<div class="row"><div class="col shadow rounded wood">';
                     lin += '<div class="col">';
                     lin += resp.resposta;
 
