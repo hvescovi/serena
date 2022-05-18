@@ -36,7 +36,8 @@ $(document).on("click", "#btn_abrir_questao_circulo", function () {
                 if (quest.type == "Aberta") {
                     lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                     lin = lin + "<br>"
-                    lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
+                    //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
+                    lin = lin + "Sua resposta: <textarea id=r" + idq + "></textarea> <br>";
                     lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta">enviar resposta</button>';
 
                     // contador de respostas

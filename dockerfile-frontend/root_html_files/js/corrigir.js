@@ -54,20 +54,19 @@ $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
                     lin += resp.resposta;
 
                     if (resp.questao.type == "MultiplaEscolha") {
+                        
                         acertou = false;
                         for (j in resp.questao.alternativas) {
                             alt = resp.questao.alternativas[j];
-                            if (alt.certa) {
-                                if (alt.id == resp.resposta) {
-                                    acertou = true;
-                                    break;
-                                }
+                            if (alt.id == resp.resposta) {
+                                acertou = alt.certa;
+                                lin += " => " + alt.descricao;
                             }
                         }
                         if (acertou) {
-                            lin += " ACERTOU ";
+                            lin += " !! ACERTOU !! ";
                         } else {
-                            lin += " errou ";
+                            lin += " _ errou _";
                         }
                     }
                     
