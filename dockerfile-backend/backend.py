@@ -814,7 +814,8 @@ ips = []
 
 def ipok(ip):
     if ipcontrol:
-        return ip in ips
+        ret =  (ip in ips)
+        return ret
     else:
         return True
 
