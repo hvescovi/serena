@@ -18,4 +18,10 @@ def exibir_respostas_circulo(id_circulo):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-app.run(debug=True)
+@app.route('/imagem/<nome>')
+def imagem(nome):
+    
+    filename = 'imagens_questoes/'+nome
+    return send_file(filename, mimetype='image/png')
+
+app.run(debug=True, port=4999)

@@ -8,7 +8,7 @@ $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
     // pega o email de quem vai fazer a questão
     id_circulo = $("#id_circulo").val();
 
-    url = 'http://' + myip + ':5000/exibir_respostas/'+id_circulo;
+    url = 'http://' + myip + ':4999/exibir_respostas/'+id_circulo;
 
     //alert(url);
     $.ajax({
@@ -43,7 +43,7 @@ $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
                     if (ultima_questao_id != resp.questao_id) { //mudou a questão?
                         // mostra a questão
                         lin += '<br>';
-                        lin += '<div class="col"><b>'+resp.questao.enunciado+"</b></col>";
+                        lin += '<div class="col"><b>'+ajustaImagens(resp.questao.enunciado)+"</b></col>";
                         lin += '</div>';
                         lin += cabecalho;
                         // atualiza a última questão
@@ -53,6 +53,11 @@ $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
                     lin += '<div class="row"><div class="col shadow rounded wood">';
                     lin += '<div class="col">';
                     lin += resp.resposta;
+
+                    // pontuação sugerida, entre 0 e 1
+                    pt = "";
+                    // gabarito de questão aberta ou lacunas, se houver
+                    gabarito = "";
 
                     if (resp.questao.type == "MultiplaEscolha") {
                         
@@ -66,11 +71,22 @@ $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
                         }
                         if (acertou) {
                             lin += " !! ACERTOU !! ";
+                            pt = 1;
                         } else {
                             lin += " _ errou _";
+                            pt = 0;
+                        }
+                    } else if (resp.questao.type == "Aberta") {
+                        gabarito = resp.questao.resposta;
+                        if (gabarito == resp.resposta) {
+                            pt = 1;
                         }
                     }
                     
+                    lin += '<input type=text size="3" id="pt'+resp.id+'" value="'+pt+'">';
+                    lin += ' <a id="lnkpt'+resp.id+'" class=".pontuar" href=#>pontuar</a>';
+                    lin += ' GAB: '+ gabarito;
+
                     lin += "</div>"; //col
                     lin += "</div>"; //row
 
@@ -277,7 +293,7 @@ $(document).on("click", ".verificar_resposta_completar", function () {
 
 function ajustaImagens(texto) {
     myip = $("#myip").text();
-    url = 'http://' + myip + ':5000/imagem/';
+    url = 'http://' + myip + ':4999/imagem/';
     return texto.replace(/<img src=/gi, "<img src=" + url);
 }
 
