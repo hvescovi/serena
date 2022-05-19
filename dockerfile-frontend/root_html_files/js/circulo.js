@@ -124,7 +124,7 @@ $(document).on("click", ".responder_questao_circulo_aberta", function () {
     var resp = $("#r" + idq).val();
 
     // é preciso fornecer uma resposta!
-    if (resp.length < 3) {
+    if (resp.length < 2) {
         alert("forneça uma resposta!");
         return false;
     }
@@ -341,7 +341,7 @@ $(function () {
     // obtém o id da questão
     //alert(eu);
 
-    var circulo = 2;
+    var circulo = 1;
     // circulo 1 = turma 301
     // circulo 2 = turma 302
 
