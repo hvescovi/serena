@@ -85,7 +85,7 @@ $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
                     
                     lin += '<input type=text size="3" id="pt'+resp.id+'" value="'+pt+'">';
                     lin += ' <a id="lnkpt'+resp.id+'" class=".pontuar" href=#>pontuar</a>';
-                    lin += ' GAB: '+ gabarito;
+                    //lin += ' GAB: '+ gabarito;
 
                     lin += "</div>"; //col
                     lin += "</div>"; //row
