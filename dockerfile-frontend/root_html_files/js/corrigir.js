@@ -1,309 +1,209 @@
-$(document).on("click", "#btnListarRespostasSemPontuacao", function () {
+// when the document is ready...
+$(function () {
 
-    $(this).prop("disabled", true);
+    $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
 
-    myip = $("#myip").text();
+        $(this).prop("disabled", true);
 
-    //alert('entrei');
-    // pega o email de quem vai fazer a questão
-    id_circulo = $("#id_circulo").val();
+        myip = $("#myip").text();
 
-    url = 'http://' + myip + ':4999/exibir_respostas/'+id_circulo;
+        //alert('entrei');
+        // pega o email de quem vai fazer a questão
+        id_circulo = $("#id_circulo").val();
 
-    //alert(url);
-    $.ajax({
-        url: url,
-        method: 'GET',
-        dataType: 'json',
-        success: function (resultado) {
+        url = 'http://' + myip + ':4999/exibir_respostas/' + id_circulo;
 
-            $('#tabela_respostas').empty();
-            //alert(resultado);
-          
-            if (resultado.message != "ok") {
-                alert("Erro: "+resultado.details);
-            } else {
+        //alert(url);
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function (resultado) {
 
-                // sucesso, vamos abrir a questão...
-                
-                resps = resultado.details;
+                $('#tabela_respostas').empty();
+                //alert(resultado);
 
-                ultima_questao_id = 0;
+                if (resultado.message != "ok") {
+                    alert("Erro: " + resultado.details);
+                } else {
 
-                
-                
-                for (i in resps) {
+                    // sucesso, vamos abrir a questão...
 
-                    resp = resps[i];
+                    resps = resultado.details;
 
-                    cabecalho = '<div class="row"><div class="col shadow rounded wood">';
-                
-                    lin = cabecalho;
+                    ultima_questao_id = 0;
 
-                    if (ultima_questao_id != resp.questao_id) { //mudou a questão?
-                        // mostra a questão
-                        lin += '<br>';
-                        lin += '<div class="col"><b>'+ajustaImagens(resp.questao.enunciado)+"</b></col>";
-                        lin += '</div>';
-                        lin += cabecalho;
-                        // atualiza a última questão
-                        ultima_questao_id = resp.questao_id;
-                    }
+                    // mostra o gabarito quando mostrar o cabeçalho de uma nova questão
+                    mostrar_gabarito = false;
 
-                    lin += '<div class="row"><div class="col shadow rounded wood">';
-                    lin += '<div class="col">';
-                    lin += resp.resposta;
+                    cabecalho = '<div class="row"><div class="col border border-info rounded wood">';
 
-                    // pontuação sugerida, entre 0 e 1
-                    pt = "";
-                    // gabarito de questão aberta ou lacunas, se houver
-                    gabarito = "";
+                    for (i in resps) {
 
-                    if (resp.questao.type == "MultiplaEscolha") {
-                        
-                        acertou = false;
-                        for (j in resp.questao.alternativas) {
-                            alt = resp.questao.alternativas[j];
-                            if (alt.id == resp.resposta) {
-                                acertou = alt.certa;
-                                lin += " => " + alt.descricao;
+                        // pega a resposta atual como objeto javascript
+                        resp = resps[i];
+
+                        lin = "";
+
+                        if (ultima_questao_id != resp.questao_id) { //vai ser exibida uma nova questão?
+                            // mostra a questão
+                            lin += '<div class="row"><div class="col border border-danger rounded mt-4">';
+                            lin += '<b>' + ajustaImagens(resp.questao.enunciado) + "</b>";
+                            lin += '</div>'; //col
+                            lin += '</div>'; //row
+
+                            // atualiza a última questão
+                            ultima_questao_id = resp.questao_id;
+                            // precisa mostrar o gabarito
+                            mostrar_gabarito = true;
+                        }
+
+                        // nova linha
+                        novaresp = cabecalho;
+
+                        novaresp += resp.resposta;
+
+                        // aparencia da pontuação (tem destaque se ainda não foi corrigida)
+                        aparencia = "";
+
+                        // gabarito padrão
+                        gabarito = "";
+
+                        if (resp.pontuacao == null) { // não tem pontuação ainda?
+                            // pontuação sugerida, entre 0 e 1
+                            pt = "";
+
+
+                            if (resp.questao.type == "MultiplaEscolha") {
+
+                                acertou = false;
+                                for (j in resp.questao.alternativas) {
+                                    alt = resp.questao.alternativas[j];
+                                    if (alt.id == resp.resposta) {
+                                        acertou = alt.certa;
+                                        novaresp += " => " + alt.descricao;
+                                    }
+                                }
+                                if (acertou) {
+                                    novaresp += " !! ACERTOU !! ";
+                                    pt = 1;
+                                } else {
+                                    novaresp += " _ errou _";
+                                    pt = 0;
+                                }
+                            } else if (resp.questao.type == "Aberta") {
+                                gabarito = resp.questao.resposta;
+                                
+                                pt = resp.pontuacao_sugerida;                                
                             }
-                        }
-                        if (acertou) {
-                            lin += " !! ACERTOU !! ";
-                            pt = 1;
+                            aparencia = ' class = "bg-warning" ';
                         } else {
-                            lin += " _ errou _";
-                            pt = 0;
+                            pt = resp.pontuacao;
+
                         }
-                    } else if (resp.questao.type == "Aberta") {
-                        gabarito = resp.questao.resposta;
-                        if (gabarito == resp.resposta) {
-                            pt = 1;
+
+                        novaresp += '<input type="text" ' + aparencia + ' size="3" id="pt' + resp.id + '" value="' + pt + '">';
+                        novaresp += ' <button id="btpt' + resp.id + '" class="pontuar_resposta">pontuar</button>';
+                        novaresp += ' <img src="images/check-circle.svg" id="corrigida' + resp.id + '" class="d-none">';
+
+                        novaresp += "</div>"; //col
+                        novaresp += "</div>"; //row
+
+                        // antes de mostrar a nova resposta: precisa mostrar gabarito?
+                        if (mostrar_gabarito) {
+                            lin += '<div class="row"><div class="col border border-warning bg-warning">';
+                            lin += '<h5 class="bg-info">GABARITO</h5>' + gabarito;
+                            lin += '</div></div>'; //col e row
+                            mostrar_gabarito = false;
                         }
+
+                        // acrescenta a resposta
+                        lin += novaresp;
+
+                        $('#tabela_respostas').append(lin);
                     }
-                    
-                    lin += '<input type=text size="3" id="pt'+resp.id+'" value="'+pt+'">';
-                    lin += ' <a id="lnkpt'+resp.id+'" class=".pontuar" href=#>pontuar</a>';
-                    //lin += ' GAB: '+ gabarito;
-
-                    lin += "</div>"; //col
-                    lin += "</div>"; //row
-
-                    $('#tabela_respostas').append(lin);
                 }
+
+            },
+            error: function () {
+                alert("ocorreu algum erro na leitura dos dados, verifique o backend");
             }
-
-        },
-        error: function () {
-            alert("ocorreu algum erro na leitura dos dados, verifique o backend");
-        }
-    });
-});
-
-$(document).on("click", ".responder_questao_circulo_aberta", function () {
-
-    // qual botão foi clicado
-    var eu = $(this).attr('id');
-    // obtém o id da questão
-    //alert(eu);
-    var idq = eu.substring(1); // b23 = botão da questão 23
-
-    // obtém a resposta
-    var resp = $("#r" + idq).val();
-
-    // é preciso fornecer uma resposta!
-    if (resp.length < 3) {
-        alert("forneça uma resposta!");
-        return false;
-    }
-
-    // pegar dados do circulo
-    id_circulo = $("#id_circulo").val();
-    id_respondente = $("#id_respondente").val();
-
-    //alert(resp);
-    // prepara os dados em json
-    var dados = JSON.stringify({ idq: idq, resposta: resp, id_respondente: id_respondente, id_circulo: id_circulo })
-
-    //alert(dados);
-    myip = $("#myip").text();
-
-    $.ajax({
-        url: 'http://' + myip + ':5000/responder_questao_circulo',
-        type: 'POST',
-        dataType: 'json', // vou receber a resposta em json,
-        data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-        //contentType: "application/json",
-        success: function (resultado) {
-            var deu_certo = resultado.message == "ok";
-
-            // diz que deu certo o envio
-            if (deu_certo) {
-                //$("#final").text("Sua resposta foi enviada!");
-                alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-
-                // volta ao começo
-                $(location).attr('href', '/circulo.html');
-
-            } else {
-                alert(resultado.message + ":" + resultado.details);
-            }
-
-        },
-        error: function () {
-            alert("ocorreu algum erro na leitura dos dados, verifique o backend");
-        }
+        });
     });
 
-});
-
-$(document).on("click", ".verificar_resposta_multipla_escolha", function () {
-
-    // qual botão foi clicado
-    var eu = $(this).attr('id');
-    // obtém o id da questão
-    //alert(eu);
-    var idq = eu.substring(1); // b23 = botão da questão 23
-
-    //alert(idq);
-    // verifica a alternativa marcada
-    var marcada = $('input[name=radiogrp' + idq + ']:checked').attr('id');
-
-    // é preciso fornecer uma resposta!
-    if (!marcada) {
-        alert("escolha uma resposta!");
-        return false;
-    }
-
-    var id_alternativa = marcada.substring(1); //r3 => 3
-    //alert(id_alternativa);
-
-    // pegar dados do circulo
-    id_circulo = $("#id_circulo").val();
-    id_respondente = $("#id_respondente").val();
-
-    //alert(resp);
-    // prepara os dados em json
-    var dados = JSON.stringify({ idq: idq, resposta: id_alternativa, id_circulo: id_circulo, id_respondente: id_respondente })
-
-    myip = $("#myip").text();
-    $.ajax({
-        url: 'http://' + myip + ':5000/responder_questao_circulo',
-        type: 'POST',
-        dataType: 'json', // vou receber a resposta em json,
-        data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-        //contentType: "application/json",
-        success: function (resultado) {
-            var deu_certo = resultado.message == "ok";
-
-            // diz que deu certo o envio
-            if (deu_certo) {
-                //$("#final").text("Sua resposta foi enviada!");
-                alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-
-                // volta ao começo
-                $(location).attr('href', '/circulo.html');
-
-            } else {
-                alert(resultado.message + ":" + resultado.details);
-            }
-        },
-        error: function () {
-            alert("ocorreu algum erro na leitura dos dados, verifique o backend");
-        }
+    $(document).on("click", ".vai", function () {
+        alert("foi");
+        // OBS: na classe do elemento HTML é só class="vai" e não class=".vai" !!!!!!!!!!!
     });
 
-});
 
-$(document).on("click", ".verificar_resposta_completar", function () {
+    $(document).on("click", ".pontuar_resposta", function () {
 
-    // qual botão foi clicado
-    var eu = $(this).attr('id');
-    // obtém o id da questão
-    //alert(eu);
-    var idq = eu.substring(1); // b23 = botão da questão 23
-    // verifica a alternativa marcada
+        // quem foi clicado
+        var eu = $(this).attr('id');
+        // obtém o id da questão
+        //alert(eu);
+        var idresp = eu.substring(4); // btpt15 => 15
 
-    // quantas lacunas existem?
-    n = $('#lacunas' + idq).val();
-
-    // pegar os valores informados
-    valores = '';
-
-    // percorrer os campos dos valores
-    for (var lac = 0; lac < n; lac++) {
-        v = $("#q" + idq + "l" + lac).val();
+        // obtém a resposta
+        var resp = $("#pt" + idresp).val();
 
         // é preciso fornecer uma resposta!
-        if (v.length <= 0) {
-            alert("preencha todas as lacunas!");
+        try {
+            pontos = parseFloat(resp);
+        }
+        catch (e) {
+            alert("Erro: " + e);
             return false;
         }
 
-        valores = valores + v;
-        // ainda não é o último valor?
-        if (lac < n - 1) {
-            // adicionar o separado
-            valores = valores + "|";
-        }
-    }
+        //alert(resp);
+        // prepara os dados em json
+        var dados = JSON.stringify({ id: idresp, pontuacao: resp })
 
-    //alert(valores);
+        //alert(dados);
+        myip = $("#myip").text();
 
-    // pegar dados do circulo
-    id_circulo = $("#id_circulo").val();
-    id_respondente = $("#id_respondente").val();
+        $.ajax({
+            url: 'http://' + myip + ':4999/pontuar_resposta',
+            type: 'POST',
+            dataType: 'json', // vou receber a resposta em json,
+            data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+            //contentType: "application/json",
+            success: function (resultado) {
+                var deu_certo = resultado.message == "ok";
 
-    // prepara os dados em json
-    var dados = JSON.stringify({ idq: idq, resposta: valores, id_circulo: id_circulo, id_respondente: id_respondente })
+                // diz que deu certo o envio
+                if (deu_certo) {
+                    //$("#final").text("Sua resposta foi enviada!");
+                    $("#corrigida" + idresp).removeClass("d-none");
+                    $("#pt" + idresp).prop('disabled', true);
+                } else {
+                    alert(resultado.message + ":" + resultado.details);
+                }
 
-    myip = $("#myip").text();
-    $.ajax({
-        url: 'http://' + myip + ':5000/responder_questao_circulo',
-        type: 'POST',
-        dataType: 'json', // vou receber a resposta em json,
-        data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-        //contentType: "application/json",
-        success: function (resultado) {
-            var deu_certo = resultado.message == "ok";
-
-            // diz que deu certo o envio
-            if (deu_certo) {
-                //$("#final").text("Sua resposta foi enviada!");
-                alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-
-                // volta ao começo
-                $(location).attr('href', '/circulo.html');
-
-            } else {
-                alert(resultado.message + ":" + resultado.details);
+            },
+            error: function () {
+                alert("ocorreu algum erro na leitura dos dados, verifique o backend");
             }
+        });
 
-        },
-        error: function () {
-            alert("ocorreu algum erro na leitura dos dados, verifique o backend");
-        }
     });
 
-});
 
 
 
-
-function ajustaImagens(texto) {
-    myip = $("#myip").text();
-    url = 'http://' + myip + ':4999/imagem/';
-    return texto.replace(/<img src=/gi, "<img src=" + url);
-}
-
+    function ajustaImagens(texto) {
+        myip = $("#myip").text();
+        url = 'http://' + myip + ':4999/imagem/';
+        return texto.replace(/<img src=/gi, "<img src=" + url);
+    }
 
 
-//$("#myip").text("192.168.15.8");
-//$("#myip").text("172.18.0.2");
 
-// when the document is ready...
-$(function () {
+    //$("#myip").text("192.168.15.8");
+    //$("#myip").text("172.18.0.2");
+
     //alert(document.URL);
     if (document.URL.startsWith("http://localhost")) {
         $("#myip").text("localhost");
@@ -341,33 +241,34 @@ $(function () {
         
     
     */
-/*
-    url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json', // vou receber a resposta em json,
-        //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-        //contentType: "application/json",
-        success: function (resultado) {
-            // coloca a resposta no gabarito
-            $("#id_respondente").val(resultado.id);
-            $("#nome_respondente").text(resultado.nome);
-            $("#email_respondente").text(resultado.email);
-            $("#questoes_respondidas").text(resultado.questoes_respondidas);
-            // alert(resultado.details);
-            //mostrar_resultado_acao(deu_certo);
-
-            $("#nome_circulo").text(resultado.nome_circulo);
-            $("#circulo_id").text(resultado.circulo_id);
-            $("#data_circulo").text(resultado.data_circulo);
+    /*
+        url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;
     
-        },
-        error: function () {
-            alert("ocorreu algum erro na leitura dos dados do círculo, verifique o backend");
-        }
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json', // vou receber a resposta em json,
+            //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+            //contentType: "application/json",
+            success: function (resultado) {
+                // coloca a resposta no gabarito
+                $("#id_respondente").val(resultado.id);
+                $("#nome_respondente").text(resultado.nome);
+                $("#email_respondente").text(resultado.email);
+                $("#questoes_respondidas").text(resultado.questoes_respondidas);
+                // alert(resultado.details);
+                //mostrar_resultado_acao(deu_certo);
+    
+                $("#nome_circulo").text(resultado.nome_circulo);
+                $("#circulo_id").text(resultado.circulo_id);
+                $("#data_circulo").text(resultado.data_circulo);
+        
+            },
+            error: function () {
+                alert("ocorreu algum erro na leitura dos dados do círculo, verifique o backend");
+            }
+    
+        });
+    */
 
-    });
-*/
 });

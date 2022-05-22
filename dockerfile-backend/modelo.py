@@ -176,8 +176,14 @@ class Resposta(db.Model):
     resposta = db.Column(db.String(254))
     timestamp = db.Column(db.DateTime(timezone=True), server_default=db.func.now()) # quando a questão foi respondida
 
+    # novo atributo: pontuação
+    pontuacao = db.Column(db.Float)
+    pontuacao_sugerida = db.Column(db.Float)
+    
     def __str__(self):
-        return str(self.questao) + "\n, por: "+str(self.respondente)+"\n resposta: " + self.resposta + " em "+ str(self.timestamp)
+        return str(self.questao) + "\n, por: "+str(self.respondente)+"\n resposta: " + \
+        self.resposta + " em "+ str(self.timestamp) + \
+        ', pontuação: '+str(self.pontuacao) +', ptsugerida: '+str(self.pontuacao_sugerida)
 
     def json(self):
         return {
@@ -187,7 +193,9 @@ class Resposta(db.Model):
             "respondente_id": self.respondente_id,
             "respondente":self.respondente.json(),
             "resposta":self.resposta,
-            "timestamp":self.timestamp
+            "timestamp":self.timestamp,
+            "pontuacao":self.pontuacao,
+            "pontuacao_sugerida":self.pontuacao_sugerida # recomendação gerada pelo sistema
         }
 
 class Completar(Questao):
