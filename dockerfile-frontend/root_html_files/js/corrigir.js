@@ -69,10 +69,12 @@ $(function () {
                         // gabarito padrão
                         gabarito = "";
 
+                        // se já houver nota, vai aparecer apenas a sugestão ao lado
+                        sugerido = "";
+
                         if (resp.pontuacao == null) { // não tem pontuação ainda?
                             // pontuação sugerida, entre 0 e 1
                             pt = "";
-
 
                             if (resp.questao.type == "MultiplaEscolha") {
 
@@ -93,17 +95,19 @@ $(function () {
                                 }
                             } else if (resp.questao.type == "Aberta") {
                                 gabarito = resp.questao.resposta;
-                                
+                                pt = resp.pontuacao_sugerida;                                
+                            } else if (resp.questao.type == "Completar") {
+                                gabarito = resp.questao.lacunas;
                                 pt = resp.pontuacao_sugerida;                                
                             }
                             aparencia = ' class = "bg-warning" ';
                         } else {
                             pt = resp.pontuacao;
-
+                            sugerido = '<span id="sugerido"'+resp.id+'"class="bg-info" title="pontuação sugerida">'+resp.pontuacao_sugerida+'</span>';
                         }
 
                         novaresp += '<input type="text" ' + aparencia + ' size="3" id="pt' + resp.id + '" value="' + pt + '">';
-                        novaresp += ' <button id="btpt' + resp.id + '" class="pontuar_resposta">pontuar</button>';
+                        novaresp += ' <button id="btpt' + resp.id + '" class="pontuar_resposta">pontuar</button> ' + sugerido;
                         novaresp += ' <img src="images/check-circle.svg" id="corrigida' + resp.id + '" class="d-none">';
 
                         novaresp += "</div>"; //col

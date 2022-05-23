@@ -71,20 +71,30 @@ def gerar_recomendacoes_respostas_sem_pontuacao():
         for r in respostas:
             if r.pontuacao is None:  # resposta sem pontuação?
                 if r.questao.type == "aberta":
-                        resposta_aluno = r.resposta
-                        gabarito = r.questao.resposta
+                    resposta_aluno = r.resposta
+                    gabarito = r.questao.resposta
 
-                        # fornecer pontuação sugerida
-                        nova = Resposta.query.get(r.id)
-                        nova.pontuacao_sugerida = SequenceMatcher(None, resposta_aluno, gabarito).ratio()
-                        db.session.commit()
+                    # fornecer pontuação sugerida
+                    nova = Resposta.query.get(r.id)
+                    nova.pontuacao_sugerida = SequenceMatcher(None, resposta_aluno, gabarito).ratio()
+                    db.session.commit()
 
-                        cont+=1
+                    cont+=1
+
                 if r.questao.type == "completar":
-                    pass
+                    resposta_aluno = r.resposta
+                    lacunas = r.questao.lacunas
+
+                    # fornecer pontuação sugerida
+                    nova = Resposta.query.get(r.id)
+                    nova.pontuacao_sugerida = SequenceMatcher(None, resposta_aluno, lacunas).ratio()
+                    db.session.commit()
+
+                    cont+=1
 
                 if r.questao.type == "multiplaescolha":
-                    pass
+                    pass # recomendação sendo feita pelo front-end
+
         response = jsonify({"message": "ok", "details": "ok:"+str(cont)+" pontuações sugeridas"})
         
     except Exception as e:
