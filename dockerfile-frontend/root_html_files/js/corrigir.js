@@ -209,13 +209,10 @@ $(function () {
     //$("#myip").text("172.18.0.2");
 
     //alert(document.URL);
-    if (document.URL.startsWith("http://localhost")) {
-        $("#myip").text("localhost");
-    } else if (document.URL.startsWith("http://k8master")) {
-        $("#myip").text("k8master.blumenau.ifc.edu.br");
-    } else {
+    if (document.URL.startsWith("http://")) {
+    //try { // tenta execução via http
         url = document.URL;
-        pos = url.search("/circulo.html");
+        pos = url.search("/corrigir.html");
         if (pos > 0) {
             protocolo = "http://"
             http = protocolo.length;
@@ -224,6 +221,10 @@ $(function () {
         } else {
             alert("ERRO: não localizei URL");
         }
+    } else {//catch(e) {
+         // protocolo de arquivo - execução local
+         $("#myip").text("localhost");
+         alert("considerando protocolo de execução de arquivo (myip = localhost)");
     }
     //$("#myip").text("k8master.blumenau.ifc.edu.br");
 
