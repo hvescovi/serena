@@ -103,5 +103,4 @@ def gerar_recomendacoes_respostas_sem_pontuacao():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-
 app.run(port=4999, debug=True)
