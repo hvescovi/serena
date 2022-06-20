@@ -809,7 +809,7 @@ def exibir_respostas_circulo(id_circulo):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-ipcontrol = True
+ipcontrol = False
 ips = []
 
 def ipok(ip):

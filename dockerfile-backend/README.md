@@ -1,3 +1,7 @@
+Execução do mysql em docker:
+docker run --detach --name=test3-mysql -e MYSQL_ROOT_PASSWORD=testando -e MYSQL_ROOT_HOST=% --publish 3306:3306 mysql/mysql-server:5.7
+
+
 Construir a imagem do container back-end:
 docker build -t hvescovi/serena:back .
 
