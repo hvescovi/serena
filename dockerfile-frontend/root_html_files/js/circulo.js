@@ -365,6 +365,7 @@ $(function () {
             $("#nome_respondente").text(resultado.nome);
             $("#email_respondente").text(resultado.email);
             $("#questoes_respondidas").text(resultado.questoes_respondidas);
+            $("#questoes_puladas").text(resultado.questoes_puladas);
             // alert(resultado.details);
             //mostrar_resultado_acao(deu_certo);
 

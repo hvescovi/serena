@@ -1,6 +1,8 @@
 from config import *
 from modelo import *
 
+# inicializa uma fila de respondentes
+fila_respondentes = []
 
 @app.route("/")
 def inicio():
@@ -368,10 +370,29 @@ def preparar_rodada(id_circulo):
         todos = db.session.query(Respondente).filter(
             Respondente.observacao == "302").all()
 
-    # escolhe um respondente
-    nquem = random.randint(1, len(todos))
+    
 
-    id_respondente = todos[nquem-1].id
+    # tenta 10 vezes
+    for i in range (1,10):
+        # escolhe um respondente
+        nquem = random.randint(1, len(todos))
+
+        # pega o id dele
+        id_respondente = todos[nquem-1].id
+
+        # print(fila_respondentes)
+        # verifica se o respondente não está na fila dos últimos 10
+        if id_respondente not in fila_respondentes:
+            # pode parar de tentar
+            break
+    
+    # adiciona o respondente na fila
+    fila_respondentes.append(id_respondente)
+
+    # se a fila encheu
+    if len(fila_respondentes) >= 10:
+        # remove o primeiro da fila, para a fila "andar"
+        fila_respondentes.pop(0)
 
     # retorna o respondente sorteado
     q = db.session.query(Respondente).filter(
@@ -390,6 +411,24 @@ def preparar_rodada(id_circulo):
     resp.update({"circulo_id": c.id,
                 "nome_circulo": c.nome,
                  "data_circulo": c.data})
+
+    # ver quantas questões a pessoa já pulou
+    # PARA FAZER TODO
+    # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
+    
+    # lista de ID's das questões respondidas
+    ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
+    
+    # lista das questões (ids) exibidas ao respondente
+    ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
+    
+    # diferença
+    # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
+    puladas = list(set(ids_exibidas) - set(ids_respondidas))
+
+    #q = query.count()
+    q = len(puladas)
+    resp.update({"questoes_puladas": q})
 
     # retornos
     ret = jsonify(resp)
