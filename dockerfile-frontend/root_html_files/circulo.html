@@ -104,8 +104,13 @@
 
         <div class="row">
             <div class="col mt-4 text-center">
-                <button id="btn_abrir_questao_circulo"
-                    class="btn btn-primary btn-lg btn-block btn_abrir_questao_circulo">Responder questão</button>
+                <span id="espacos_botao"></span>
+                <button id="btn_abrir_questao_circulo" 
+                class="btn btn-primary btn_abrir_questao_circulo">Exibir questão
+                </button>
+                <button id="btn_confirmar_eu" 
+                class="btn btn-info">SIM, meu nome está na tela, vamos lá responder!
+                </button>
             </div>
         </div>
 
@@ -135,6 +140,26 @@
 <script src="js/jquerysession.js "></script>
 <script src="js/circulo.js "></script>
 
+<script>
+    var espacos = "&nbsp; ".repeat(20);
+    n = Math.random() * 10;
+    for (var i = 0; i < n; i++) {
+        $("#espacos_botao").append(espacos);
+    }
+</script>
+
+<script>
+    $("#btn_abrir_questao_circulo").hide("slow");
+    $("#btn_confirmar_eu").show("fast");
+</script>
+<script>
+    $(document).on("click", "#btn_confirmar_eu", function () {
+        $("#btn_confirmar_eu").hide("fast");
+        $("#btn_abrir_questao_circulo").show("slow");
+        
+    });
+
+</script>
 </body>
 
 </html>

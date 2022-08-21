@@ -8,8 +8,7 @@ $(function () {
         myip = $("#myip").text();
 
         //alert('entrei');
-        // pega o email de quem vai fazer a questão
-        id_circulo = $("#id_circulo").val();
+        id_circulo = $("#circulo_id").text();
 
         url = 'http://' + myip + ':4999/exibir_respostas/' + id_circulo;
 
@@ -95,15 +94,15 @@ $(function () {
                                 }
                             } else if (resp.questao.type == "Aberta") {
                                 gabarito = resp.questao.resposta;
-                                pt = resp.pontuacao_sugerida;                                
+                                pt = resp.pontuacao_sugerida;
                             } else if (resp.questao.type == "Completar") {
                                 gabarito = resp.questao.lacunas;
-                                pt = resp.pontuacao_sugerida;                                
+                                pt = resp.pontuacao_sugerida;
                             }
                             aparencia = ' class = "bg-warning" ';
                         } else {
                             pt = resp.pontuacao;
-                            sugerido = '<span id="sugerido"'+resp.id+'"class="bg-info" title="pontuação sugerida">'+resp.pontuacao_sugerida+'</span>';
+                            sugerido = '<span id="sugerido"' + resp.id + '"class="bg-info" title="pontuação sugerida">' + resp.pontuacao_sugerida + '</span>';
                         }
 
                         novaresp += '<input type="text" ' + aparencia + ' size="3" id="pt' + resp.id + '" value="' + pt + '">';
@@ -195,6 +194,35 @@ $(function () {
     });
 
 
+    $(document).on("click", "#btnGerarSugestoes", function () {
+
+        myip = $("#myip").text();
+
+        //alert('entrei');
+        id_circulo = $("#circulo_id").text();
+
+        url = 'http://' + myip + ':4999/gerar_recomendacoes_respostas_sem_pontuacao'
+
+        //alert(url);
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function (resultado) {
+
+                if (resultado.message != "ok") {
+                    alert("Erro: " + resultado.details);
+                } else {
+                    alert("OK!! " + resultado.details);
+                }
+            },
+            error: function () {
+                alert("ocorreu algum erro na leitura dos dados, verifique o backend");
+            }
+        });
+    });
+
+
 
 
     function ajustaImagens(texto) {
@@ -210,7 +238,7 @@ $(function () {
 
     //alert(document.URL);
     if (document.URL.startsWith("http://")) {
-    //try { // tenta execução via http
+        //try { // tenta execução via http
         url = document.URL;
         pos = url.search("/corrigir.html");
         if (pos > 0) {
@@ -222,9 +250,9 @@ $(function () {
             alert("ERRO: não localizei URL");
         }
     } else {//catch(e) {
-         // protocolo de arquivo - execução local
-         $("#myip").text("localhost");
-         alert("considerando protocolo de execução de arquivo (myip = localhost)");
+        // protocolo de arquivo - execução local
+        $("#myip").text("localhost");
+        alert("considerando protocolo de execução de arquivo (myip = localhost)");
     }
     //$("#myip").text("k8master.blumenau.ifc.edu.br");
 
@@ -235,7 +263,7 @@ $(function () {
     // obtém o id da questão
     //alert(eu);
 
-    var circulo = 2;
+    var circulo = 1;
     // circulo 1 = turma 301
     // circulo 2 = turma 302
 

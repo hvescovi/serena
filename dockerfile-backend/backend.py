@@ -821,7 +821,7 @@ def get_generico(classe):
 @app.route('/get/<string:classe>/<string:id>', methods=['get'])
 def get_especifico(classe, id):
 
-    # reflexao
+    # reflexao: instanciando a classe a partir de seu nome em string
     # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
     modulo = __import__("modelo")
     refclasse = getattr(modulo, classe)
