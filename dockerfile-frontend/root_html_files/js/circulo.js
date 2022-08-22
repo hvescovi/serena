@@ -124,7 +124,7 @@ $(document).on("click", ".responder_questao_circulo_aberta", function () {
     var resp = $("#r" + idq).val();
 
     // é preciso fornecer uma resposta!
-    if (resp.length < 2) {
+    if (resp.length < 1) {
         alert("forneça uma resposta!");
         return false;
     }
@@ -140,6 +140,13 @@ $(document).on("click", ".responder_questao_circulo_aberta", function () {
     //alert(dados);
     myip = $("#myip").text();
 
+    // só desabilita após as condições de sucesso ok
+    // desabilitar o botão da resposta, após o clique ter ocorrido
+    // evitar múltiplos cliques que n-plicam as respostas
+    // implementado em tempo de aplicação da prova
+    // André respondeu 48 questões :-o
+    $("#"+eu).prop("disabled",true);
+
     $.ajax({
         url: 'http://' + myip + ':5000/responder_questao_circulo',
         type: 'POST',
@@ -151,7 +158,7 @@ $(document).on("click", ".responder_questao_circulo_aberta", function () {
 
             // diz que deu certo o envio
             if (deu_certo) {
-                //$("#final").text("Sua resposta foi enviada!");
+                $("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
                 alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                 // volta ao começo
@@ -341,7 +348,7 @@ $(function () {
     // obtém o id da questão
     //alert(eu);
 
-    var circulo = 1;
+    var circulo = 2;
     // circulo 1 = turma 301
     // circulo 2 = turma 302
 

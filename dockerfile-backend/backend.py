@@ -416,19 +416,21 @@ def preparar_rodada(id_circulo):
     # PARA FAZER TODO
     # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
     
+    # REMOVIDO para não carregar o sistema
+    # ficou lento em execução 22/08/2022, 08:00hs
     # lista de ID's das questões respondidas
-    ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
+    #ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
     
     # lista das questões (ids) exibidas ao respondente
-    ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
+    #ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
     
     # diferença
     # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
-    puladas = list(set(ids_exibidas) - set(ids_respondidas))
+    #puladas = list(set(ids_exibidas) - set(ids_respondidas))
 
     #q = query.count()
-    q = len(puladas)
-    resp.update({"questoes_puladas": q})
+    #q = len(puladas)
+    #resp.update({"questoes_puladas": q})
 
     # retornos
     ret = jsonify(resp)
