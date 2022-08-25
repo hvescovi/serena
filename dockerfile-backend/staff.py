@@ -177,8 +177,10 @@ def eliminar_respostas_duplicadas():
         print("total: ", q, ", para apagar: ", conta)
 
         # adiciona o SQL na lista de execuções
-        sqls_exclusao.append(sql_excluir1)
+        # melhor apagar primeiro o registro relacionado (N), depois o principal (1)
         sqls_exclusao.append(sql_excluir2)
+        sqls_exclusao.append(sql_excluir1)
+        
 
         # não é possível já excluir o registro, pois a tabela
         # está sendo percorrida!
