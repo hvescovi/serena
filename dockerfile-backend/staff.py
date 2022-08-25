@@ -200,4 +200,25 @@ def eliminar_respostas_duplicadas():
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
+@app.route('/gerar_nota_alunos')
+def gerar_nota_alunos():
+    notas = db.session.execute("""select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, 
+    rp.nome AS nome from resposta as r 
+    inner join respondente as rp 
+    on r.respondente_id = rp.id group by rp.id;""")
+
+    lista = []
+    for nota in notas:
+        lista.append({
+            "nota": nota["nota"],
+            "respondente": nota["nome"]
+        })
+    
+
+    ret = jsonify({"message": "ok", "details": lista})
+
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+
 app.run(port=4999, debug=True)
