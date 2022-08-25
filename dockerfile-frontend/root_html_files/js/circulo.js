@@ -218,7 +218,10 @@ $(function () {
     
         // é preciso fornecer uma resposta!
         if (!marcada) {
-            alert("escolha uma resposta!");
+            Swal.fire({
+                icon: 'error',
+                text: 'escolha uma resposta!'
+            });
             return false;
         }
     
@@ -293,7 +296,10 @@ $(function () {
     
             // é preciso fornecer uma resposta!
             if (v.length <= 0) {
-                alert("preencha todas as lacunas!");
+                Swal.fire({
+                    icon: 'error',
+                    text: 'preencha todas as lacunas'
+                });
                 return false;
             }
     
