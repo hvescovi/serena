@@ -182,7 +182,7 @@ $(function () {
                         icon: 'success',
                         title: 'OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.',
                         showConfirmButton: true,
-                        timer: 3000
+                        timer: 2500
                     });
                     
                     // volta ao começo
@@ -254,7 +254,7 @@ $(function () {
                         icon: 'success',
                         title: 'OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.',
                         showConfirmButton: true,
-                        timer: 3000
+                        timer: 2500
                     });
     
                     // volta ao começo
@@ -338,7 +338,7 @@ $(function () {
                         icon: 'success',
                         title: 'OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.',
                         showConfirmButton: true,
-                        timer: 3000
+                        timer: 2500
                     });
     
                     // volta ao começo

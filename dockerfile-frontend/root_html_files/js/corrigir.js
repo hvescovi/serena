@@ -281,7 +281,7 @@ $(function () {
             position: 'top-end',
             title: 'considerando protocolo de execução de arquivo (myip = localhost)',
             showConfirmButton: true,
-            timer: 3000
+            timer: 2500
         });
     }
     //$("#myip").text("k8master.blumenau.ifc.edu.br");
