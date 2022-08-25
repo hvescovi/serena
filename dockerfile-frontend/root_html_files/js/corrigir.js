@@ -133,7 +133,7 @@ $(function () {
 
             },
             error: function () {
-                Swal.Fire({
+                Swal.fire({
                     icon: 'error',
                     title: 'Erro:',
                     text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
@@ -198,7 +198,7 @@ $(function () {
 
             },
             error: function () {
-                Swal.Fire({
+                Swal.fire({
                     icon: 'error',
                     title: 'Erro:',
                     text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
@@ -238,7 +238,7 @@ $(function () {
                 }
             },
             error: function () {
-                Swal.Fire({
+                Swal.fire({
                     icon: 'error',
                     title: 'Erro:',
                     text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
