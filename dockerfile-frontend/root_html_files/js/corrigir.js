@@ -23,7 +23,11 @@ $(function () {
                 //alert(resultado);
 
                 if (resultado.message != "ok") {
-                    alert("Erro: " + resultado.details);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro: ',
+                        text: resultado.details
+                    });
                 } else {
 
                     // sucesso, vamos abrir a questão...
@@ -129,7 +133,11 @@ $(function () {
 
             },
             error: function () {
-                alert("ocorreu algum erro na leitura dos dados, verifique o backend");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro:',
+                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
+                });
             }
         });
     });
@@ -156,7 +164,10 @@ $(function () {
             pontos = parseFloat(resp);
         }
         catch (e) {
-            alert("Erro: " + e);
+            Swal.fire({
+                icon: 'error',
+                text: e
+            })
             return false;
         }
 
@@ -182,12 +193,16 @@ $(function () {
                     $("#corrigida" + idresp).removeClass("d-none");
                     $("#pt" + idresp).prop('disabled', true);
                 } else {
-                    alert(resultado.message + ":" + resultado.details);
+                    Swal.fire(resultado.message + ":" + resultado.details);
                 }
 
             },
             error: function () {
-                alert("ocorreu algum erro na leitura dos dados, verifique o backend");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro:',
+                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
+                });
             }
         });
 
@@ -211,13 +226,23 @@ $(function () {
             success: function (resultado) {
 
                 if (resultado.message != "ok") {
-                    alert("Erro: " + resultado.details);
+                    Swal.fire({
+                        icon: 'error',
+                        text: resultado.details
+                    });
                 } else {
-                    alert("OK!! " + resultado.details);
+                    Swal.fire({
+                        icon: 'success',
+                        text: resultado.details
+                    });
                 }
             },
             error: function () {
-                alert("ocorreu algum erro na leitura dos dados, verifique o backend");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro:',
+                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
+                });
             }
         });
     });
@@ -252,7 +277,12 @@ $(function () {
     } else {//catch(e) {
         // protocolo de arquivo - execução local
         $("#myip").text("localhost");
-        alert("considerando protocolo de execução de arquivo (myip = localhost)");
+        Swal.fire({
+            position: 'top-end',
+            title: 'considerando protocolo de execução de arquivo (myip = localhost)',
+            showConfirmButton: true,
+            timer: 2500
+        });
     }
     //$("#myip").text("k8master.blumenau.ifc.edu.br");
 
