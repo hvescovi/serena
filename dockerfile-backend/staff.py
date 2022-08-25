@@ -103,4 +103,99 @@ def gerar_recomendacoes_respostas_sem_pontuacao():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
+
+@app.route('/eliminar_respostas_duplicadas')
+def eliminar_respostas_duplicadas():
+    
+    # obter IDs de questao e respondente, das respostas duplicadas
+    ''' 
+    select count(id) q, questao_id, respondente_id
+    from resposta
+    group by questao_id, respondente_id
+    having q > 1
+    order by q desc
+    '''
+
+    # https://stackoverflow.com/questions/17972020/how-to-execute-raw-sql-in-flask-sqlalchemy-app
+    duplicados = db.session.execute('select count(id) q, questao_id, respondente_id'+\
+    ' from resposta'+\
+    ' group by questao_id, respondente_id'+\
+    ' having q > 1'+\
+    ' order by q desc')
+
+    # conta os elementos duplicados
+    contagem_geral = 0
+
+    sqls_exclusao = []
+
+    # percorre os elementos que possuem duplicação
+    for dados in duplicados:
+
+        contagem_geral += 1
+
+        # obtem os dados separadamente
+        q = dados['q']
+        qn = int(q) # versão numérica
+        questao_id = dados['questao_id']
+        respondente_id = dados['respondente_id']
+    
+        # prepara um SQL para essa resposta duplicada
+        sql = 'select id from resposta where questao_id='+\
+               str(questao_id)+' and respondente_id='+str(respondente_id)
+
+        # obtém esses registros duplicados
+        ids_respostas_duplicadas = db.session.execute(sql)
+
+        # monta os SQLs de exclusão
+        sql_excluir1 = "delete from resposta where "
+        sql_excluir2 = "delete from respostanocirculo where "
+        
+        # percorre essa lista na quantidade de ids, menos 1
+        
+        conta = 0
+        # percorre os ids
+        for ids in ids_respostas_duplicadas:
+            # adiciona o id para ser excluído
+            sql_excluir1 += "id="+str(ids['id'])
+            sql_excluir2 += "resposta_id="+str(ids['id'])
+
+            # mais um id contabilizado            
+            conta += 1
+            # ainda tem mais?
+            if conta < (qn):
+                # é o último? O último não deve ser apagado
+                if conta == (qn-1):
+                    break
+                else:
+                    # insere o OR
+                    sql_excluir1 += " OR "
+                    sql_excluir2 += " OR "
+
+        print(sql_excluir1)
+        print(sql_excluir2)
+        print("total: ", q, ", para apagar: ", conta)
+
+        # adiciona o SQL na lista de execuções
+        sqls_exclusao.append(sql_excluir1)
+        sqls_exclusao.append(sql_excluir2)
+
+        # não é possível já excluir o registro, pois a tabela
+        # está sendo percorrida!
+        #db.session.execute(sql_excluir)
+        #db.session.commit()
+    
+    # agora vamos apagar a galera
+    for detona in sqls_exclusao:
+        db.session.execute(detona)
+        db.session.commit()
+    
+
+    print("foram resolvidas duplicações de ", contagem_geral, " respondentes")
+
+    ret = jsonify({"message": "ok", "details": "registros duplicados apagados"})
+
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
 app.run(port=4999, debug=True)
