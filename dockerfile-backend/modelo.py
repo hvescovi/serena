@@ -104,6 +104,12 @@ class Respondente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(254))
     email = db.Column(db.String(254))
+    # campo observacao: 
+    # - pode conter texto livre
+    # - pode conter especificação de pertencimento a grupo
+    # - por exemplo: |g:301-2022|
+    #   respondente pertence ao grupo de alunos da 301 do ano de 2022
+    # a busca é feita pela string '|g:301-2022|'
     observacao = db.Column(db.String(254))
     identificador = db.Column(db.String(254)) # utilizado durante operação
     token = db.Column(db.String(254)) # utilizado durante operação

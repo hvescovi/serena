@@ -2,6 +2,7 @@
 
 todo:
 - [ ] cadastro de questões (CRUD)
+- [ ] reconfiguração do BD para incluir grupos (usar migration)
 - [ ] configuração CORS
 - [ ] filtros por assunto
 - [ ] token
