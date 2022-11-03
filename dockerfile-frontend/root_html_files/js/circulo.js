@@ -45,11 +45,16 @@ $(function () {
                     //alert(url);
     
                     if (quest.type == "Aberta") {
-                        lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
+                        //alert('questão: '+quest.enunciado);
+                        enun = quest.enunciado;
+                        novo = enun.replace(/\n/g, "<br>");
+                        //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
+                        lin = lin + ajustaImagens(novo); // + "(" + quest[i].type + ")"
+                        
                         lin = lin + "<br>"
                         //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
                         lin = lin + "Sua resposta: <textarea id=r" + idq + "></textarea> <br>";
-                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta">enviar resposta</button>';
+                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta" onclick="return false">enviar resposta</button>';
     
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
@@ -177,6 +182,7 @@ $(function () {
                 // diz que deu certo o envio
                 if (deu_certo) {
                     $("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
+                    /*
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
@@ -184,6 +190,8 @@ $(function () {
                         showConfirmButton: true,
                         timer: 2500
                     });
+                    */
+                   alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
                     
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
@@ -396,7 +404,7 @@ $(function () {
     // obtém o id da questão
     //alert(eu);
 
-    var circulo = 2;
+    var circulo = 1;
     // circulo 1 = turma 301
     // circulo 2 = turma 302
 
