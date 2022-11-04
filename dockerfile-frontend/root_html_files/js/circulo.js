@@ -182,16 +182,16 @@ $(function () {
                 // diz que deu certo o envio
                 if (deu_certo) {
                     $("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
-                    /*
+                    
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
                         title: 'OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.',
                         showConfirmButton: true,
-                        timer: 2500
+                        timer: 5500
                     });
-                    */
-                   alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
+                    
+                   //alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
                     
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
