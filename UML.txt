@@ -1,7 +1,21 @@
 @startuml
 
-title Questões
+skinparam class {
+BackgroundColor White
+ArrowColor SeaGreen
+BorderColor Blue
+BackgroundColor<<Nao implementado>> Wheat
+BorderColor<<Nao Implementado>> Tomato
+BackgroundColor<<Implementado Mas Sem Uso>> LightGray
+BorderColor<<Implementado Mas Sem Uso>> Blue
+}
+skinparam stereotypeCBackgroundColor YellowGreen
+skinparam stereotypeCBackgroundColor<< Faltando >> DimGray
 
+class RespondenteNoCirculo <<Nao Implementado>>
+class Assunto <<Implementado Mas Sem Uso>>
+
+title Questões
 
 abstract class Questao {
   +id: int
@@ -40,6 +54,8 @@ class Aberta {
 }
 
 class QuestaoDeProva {
+  +questao: Questao
+  +prova: Prova
   +ordem: int
   +pontos: float
 }
@@ -47,7 +63,7 @@ class QuestaoDeProva {
 class Prova {
   +id: int
   +data: string
-  +questoesDaProva: list of Questao
+  +questoesDaProva: list of Questao //nao implementado
 }
 
 class Respondente {
@@ -71,17 +87,22 @@ class Resposta {
   +respondente: Respondente
   +resposta: string
   +timestamp: datetime
+  +pontuacao: float
+  pontuacao_sugerida: float
 }
 
 class Circulo {
   +id: int
-  +nome: String
-  +data: Date
+  +nome: string
+  +data: string
   +assuntos: list of Assunto
   +respostasNoCirculo: list of Resposta
 }
 
-class RespostaDoCirculo {
+class QuestaoExibidaNoCirculo {
+  +circulo: Circulo
+  +questao: Questao
+  +respondente: Respondente
 }
 
 class Grupo {
@@ -101,7 +122,7 @@ Questao <|-- Aberta
 MultiplaEscolha --o Alternativa
 Resposta *- Respondente
 Resposta *-- Questao
-(Circulo,Resposta) .. RespostaDoCirculo
+(Circulo,Resposta) .. RespostaNoCirculo
 (Respondente,Grupo) .. RespondenteNoGrupo
 Circulo -- Assunto
 Questao -- Assunto

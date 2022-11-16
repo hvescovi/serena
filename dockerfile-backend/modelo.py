@@ -272,9 +272,9 @@ class Circulo(db.Model):
     
     #questoesNaProva = db.relationship("QuestaoNaProva")#, secondary=questoesNaProva)
     
-    # atributo para acessar questões a partir de uma prova
+    # atributo para acessar questões a partir de um circulo
     #respostasNoCirculo = db.relationship("Resposta", secondary="respostanocirculo")
-    # atributo acima substituido: utilizado backref em Circulo
+    # atributo acima substituido: utilizado backref em RespostaNoCirculo
 
     def __str__(self):
         s = self.nome + "("+str(self.id)+"), em "+self.data
@@ -314,6 +314,7 @@ class RespostaNoCirculo(db.Model):
 
     def __str__(self):
         return str(self.resposta)+" em "+str(self.circulo)
+
 
 class QuestaoExibidaNoCirculo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
