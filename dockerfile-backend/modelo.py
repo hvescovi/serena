@@ -406,7 +406,7 @@ if __name__ == "__main__":
     git = Assunto(nome = "git básico")
 
     lac1 = Completar(enunciado = "Os comandos do git para enviar programas para o repositório remoto "+\
-        "do github.com são add, commit e __________", lacunas = "push")
+        "do github.com são add, commit e ___", lacunas = "push")
     lac1.assuntos.append(git)        
 
     db.session.add(git)
@@ -439,8 +439,8 @@ if __name__ == "__main__":
     db.session.commit()
 
     # adicionar resposta ao circulo
-    rc = RespostaNoCirculo(circulo = c1, resposta = r1)
-    db.session.add(rc)
-    db.session.commit()
+    #rc = RespostaNoCirculo(circulo = c1, resposta = r1)
+    #db.session.add(rc)
+    #db.session.commit()
 
-    print("\n Teste de reposta no circulo\n"+str(rc))
+    #print("\n Teste de reposta no circulo\n"+str(rc))

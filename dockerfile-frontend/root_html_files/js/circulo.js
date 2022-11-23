@@ -7,7 +7,8 @@ $(function () {
 
     function jmessage(tipo, mensagem) {
 
-        // tenta usar biblioteca Swal
+        // tenta usar biblioteca Swal  
+        /*    
         try {
             if (tipo == "ERRO") {
                 Swal.fire({
@@ -25,13 +26,15 @@ $(function () {
                 });
             }
         } catch (error) {
+            */
             // se der erro, mostra alert simples
             alert(mensagem);
-        }
+        //}
     }
 
     $(document).on("click", "#btn_abrir_questao_circulo", function () {
 
+        
         $(this).prop("disabled", true);
 
         myip = $("#myip").text();
@@ -157,8 +160,8 @@ $(function () {
         });
     });
 
-    $(document).on("click", ".responder_questao_circulo_aberta", function () {
-
+    $(document).on("click", ".responder_questao_circulo_aberta", function () {       
+        
         // qual botão foi clicado
         var eu = $(this).attr('id');
         // obtém o id da questão
@@ -193,6 +196,7 @@ $(function () {
         // evitar múltiplos cliques que n-plicam as respostas
         // implementado em tempo de aplicação da prova
         // André respondeu 48 questões :-o
+        
         $("#" + eu).prop("disabled", true);
 
         $.ajax({
@@ -202,24 +206,20 @@ $(function () {
             data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
             //contentType: "application/json",
             success: function (resultado) {
-                var deu_certo = resultado.message == "ok";
+                
+                 var deu_certo = resultado.message == "ok";
 
                 // diz que deu certo o envio
                 if (deu_certo) {
                     $("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
 
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.',
-                        showConfirmButton: true,
-                        timer: 5500
-                    });
-
+                    jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
+                    
                     //alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                     // volta ao começo
-                    $(location).attr('href', '/circulo.html');
+                   
+                     $(location).attr('href', '/circulo.html');
 
                 } else {
                     Swal.fire(resultado.message + ":" + resultado.details);
@@ -308,7 +308,9 @@ $(function () {
 
     });
 
-    $(document).on("click", ".verificar_resposta_completar", function () {
+    $(document).on("click", ".verificar_resposta_completar", function (event) {
+
+        event.preventDefault();
 
         // qual botão foi clicado
         var eu = $(this).attr('id');
@@ -366,14 +368,8 @@ $(function () {
                 // diz que deu certo o envio
                 if (deu_certo) {
                     //$("#final").text("Sua resposta foi enviada!");
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.',
-                        showConfirmButton: true,
-                        timer: 2500
-                    });
-
+                    jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
+                    
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
 

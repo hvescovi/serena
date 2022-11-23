@@ -23,11 +23,7 @@ $(function () {
                 //alert(resultado);
 
                 if (resultado.message != "ok") {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro: ',
-                        text: resultado.details
-                    });
+                    jmessage("ERRO", resultado.details);
                 } else {
 
                     // sucesso, vamos abrir a questão...
