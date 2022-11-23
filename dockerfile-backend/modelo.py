@@ -276,10 +276,21 @@ class Circulo(db.Model):
     #respostasNoCirculo = db.relationship("Resposta", secondary="respostanocirculo")
     # atributo acima substituido: utilizado backref em RespostaNoCirculo
 
+    # filtro para buscar respondentes
+    # vai buscar quem possuir no campo observacao uma string igual a esta
+    filtro_respondente = db.Column(db.Text)
+
+    # o circulo está ativo? Por enquanto só deve haver 1 ativo
+    # 0 = não ativo
+    # 1 = ativo
+    ativo = db.Column(db.String(1))
+
     def __str__(self):
         s = self.nome + "("+str(self.id)+"), em "+self.data
         for assunto in self.assuntos:
             s = s + " > " + str(assunto)       
+        s += ", "+self.filtro_respondente
+        s += ", ativo: "+self.ativo
         return s
         
     def json(self):
@@ -288,7 +299,10 @@ class Circulo(db.Model):
             "nome": self.nome,
             "data":self.data,
             #"assuntos": self.assuntos
-            "assuntos":[a.json() for a in self.assuntos]
+            "assuntos":[a.json() for a in self.assuntos],
+            "filtro_respondente":self.filtro_respondente,
+            "ativo":self.ativo
+
         }
 
 assuntoDoCirculo = db.Table('assuntodocirculo', db.metadata,
@@ -373,7 +387,7 @@ if __name__ == "__main__":
     print(m1)
 
     # resposta
-    joao = Respondente(nome = "Joao da Silva", email="josilva@gmail.com", observacao = "PGM2 2020/1 302")
+    joao = Respondente(nome = "João da Silva", email="josilva@gmail.com", observacao = "|g:302-2022|")
     r1 = Resposta(questao=m1, respondente=joao, resposta="1")
     db.session.add(joao)
     db.session.add(r1)
@@ -389,7 +403,7 @@ if __name__ == "__main__":
     print(p1)  
 
     # questão de lacuna
-    git = Assunto(nome = "git")
+    git = Assunto(nome = "git básico")
 
     lac1 = Completar(enunciado = "Os comandos do git para enviar programas para o repositório remoto "+\
         "do github.com são add, commit e __________", lacunas = "push")
@@ -401,6 +415,7 @@ if __name__ == "__main__":
     db.session.add(lac1)
     db.session.commit()
 
+    '''
     # adicionar na prova
     qp2 = QuestaoDeProva(questao = lac1, prova = p1, ordem = 2, pontos = 0.5)
     db.session.add(qp2)
@@ -414,9 +429,10 @@ if __name__ == "__main__":
     # questoes da prova
     for q in p1.questoesDaProva:
         print("questao da prova "+p1.data+":"+str(q))
+    '''
 
     # criar um novo circulo
-    c1 = Circulo(nome="prova 1", data = "22/03/2020")
+    c1 = Circulo(nome="AV6 302", data = "24/11/2022", filtro_respondente="|g:302-2022|", ativo="1")
     c1.assuntos.append(git)
     c1.assuntos.append(pyt)
     db.session.add(c1)

@@ -4,6 +4,7 @@ from modelo import *
 # inicializa uma fila de respondentes
 fila_respondentes = []
 
+
 @app.route("/")
 def inicio():
     return "Serena: servidor backend."
@@ -26,9 +27,101 @@ def retornar_questoes():
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
+# curl localhost/preparar_rodada/1
+
+
+@app.route('/preparar_rodada/<id_circulo>')
+def preparar_rodada(id_circulo):
+    if not ipok(request.remote_addr):
+        return failed()
+
+    '''
+    Objetivo geral da rota: retornar um respondente que
+    esteja participando do circulo
+    '''
+    # carrega o circulo atual
+    circulo = Circulo.query.get(id_circulo)
+
+    # pega os respondentes do circulo
+    todos = db.session.query(Respondente).filter(
+        Respondente.observacao.contains(circulo.filtro_respondente)).all()
+
+    '''
+    if id_circulo == '1':
+        todos = db.session.query(Respondente).filter(
+            Respondente.observacao == "301").all()
+    else:
+        todos = db.session.query(Respondente).filter(
+            Respondente.observacao == "302").all()
+    '''
+
+    # tenta 10 vezes
+    for i in range(1, 10):
+        # escolhe um respondente
+        nquem = random.randint(1, len(todos))
+
+        # pega o id dele
+        id_respondente = todos[nquem-1].id
+
+        # print(fila_respondentes)
+        # verifica se o respondente não está na fila dos últimos 10
+        if id_respondente not in fila_respondentes:
+            # pode parar de tentar
+            break
+
+    # adiciona o respondente na fila
+    fila_respondentes.append(id_respondente)
+
+    # se a fila encheu
+    if len(fila_respondentes) >= 10:
+        # remove o primeiro da fila, para a fila "andar"
+        fila_respondentes.pop(0)
+
+    # retorna o respondente sorteado
+    q = db.session.query(Respondente).filter(
+        Respondente.id == id_respondente).all()
+    resp = q[0].json()
+
+    # OUTRA CONSULTA
+    # verificar quantas questões a pessoa já respondeu
+    q = Resposta.query.filter_by(respondente_id=id_respondente).count()
+
+    # adicionar no json essa quantidade de questões respondidas
+    resp.update({"questoes_respondidas": q})
+
+    # MAIS UMA CONSULTA
+
+    resp.update({"circulo_id": circulo.id,
+                "nome_circulo": circulo.nome,
+                 "data_circulo": circulo.data})
+
+    # ver quantas questões a pessoa já pulou
+    # PARA FAZER TODO
+    # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
+
+    # REMOVIDO para não carregar o sistema
+    # ficou lento em execução 22/08/2022, 08:00hs
+    # lista de ID's das questões respondidas
+    # ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
+
+    # lista das questões (ids) exibidas ao respondente
+    # ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
+
+    # diferença
+    # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
+    # puladas = list(set(ids_exibidas) - set(ids_respondidas))
+
+    # q = query.count()
+    # q = len(puladas)
+    # resp.update({"questoes_puladas": q})
+
+    # retornos
+    ret = jsonify(resp)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+
 # retornar questões com filtro
-
-
 @app.route('/retornar_questoes/<filtro>/<parametro>')
 def retornar_questoes_com_filtro(filtro, parametro):
     if not ipok(request.remote_addr):
@@ -340,7 +433,7 @@ def retornar_contagem_respostas_questao(email, questao):
             Resposta.respondente_id == alguem.id, Resposta.questao_id == questao).all()
 
         resp = len(r)
-        #contagem = Resposta.query.with_entities(Resposta.respondente_id == alguem.id, Resposta.questao_id == questao, func.count(Resposta.timestamp)).all()
+        # contagem = Resposta.query.with_entities(Resposta.respondente_id == alguem.id, Resposta.questao_id == questao, func.count(Resposta.timestamp)).all()
 
         # for q in contagem:
         #    resp.append(q)
@@ -349,91 +442,6 @@ def retornar_contagem_respostas_questao(email, questao):
 
     # jsonify é para retornar algo do tipo Response,
     # informação na qual se pode adicionar headers
-    ret.headers.add('Access-Control-Allow-Origin', '*')
-    return ret
-
-
-# curl localhost/preparar_rodada/1
-@app.route('/preparar_rodada/<id_circulo>')
-def preparar_rodada(id_circulo):
-    if not ipok(request.remote_addr):
-        return failed()
-
-    # geral: escolhe um respondente que esteja participando do circulo
-
-    # pega os respondentes do circulo
-    # HARD-CODED
-    if id_circulo == '1':
-        todos = db.session.query(Respondente).filter(
-            Respondente.observacao == "301").all()
-    else:
-        todos = db.session.query(Respondente).filter(
-            Respondente.observacao == "302").all()
-
-    
-
-    # tenta 10 vezes
-    for i in range (1,10):
-        # escolhe um respondente
-        nquem = random.randint(1, len(todos))
-
-        # pega o id dele
-        id_respondente = todos[nquem-1].id
-
-        # print(fila_respondentes)
-        # verifica se o respondente não está na fila dos últimos 10
-        if id_respondente not in fila_respondentes:
-            # pode parar de tentar
-            break
-    
-    # adiciona o respondente na fila
-    fila_respondentes.append(id_respondente)
-
-    # se a fila encheu
-    if len(fila_respondentes) >= 10:
-        # remove o primeiro da fila, para a fila "andar"
-        fila_respondentes.pop(0)
-
-    # retorna o respondente sorteado
-    q = db.session.query(Respondente).filter(
-        Respondente.id == id_respondente).all()
-    resp = q[0].json()
-
-    # OUTRA CONSULTA
-    # verificar quantas questões a pessoa já respondeu
-    q = Resposta.query.filter_by(respondente_id=id_respondente).count()
-
-    # adicionar no json essa quantidade de questões respondidas
-    resp.update({"questoes_respondidas": q})
-
-    # MAIS UMA CONSULTA
-    c = Circulo.query.get(id_circulo)
-    resp.update({"circulo_id": c.id,
-                "nome_circulo": c.nome,
-                 "data_circulo": c.data})
-
-    # ver quantas questões a pessoa já pulou
-    # PARA FAZER TODO
-    # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
-    
-    # REMOVIDO para não carregar o sistema
-    # ficou lento em execução 22/08/2022, 08:00hs
-    # lista de ID's das questões respondidas
-    #ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
-    
-    # lista das questões (ids) exibidas ao respondente
-    #ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
-    
-    # diferença
-    # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
-    #puladas = list(set(ids_exibidas) - set(ids_respondidas))
-
-    #q = query.count()
-    #q = len(puladas)
-    #resp.update({"questoes_puladas": q})
-
-    # retornos
-    ret = jsonify(resp)
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
@@ -452,12 +460,12 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # - buscar apenas questão ainda não respondida (OK)
         # - buscar apenas questões de assuntos do círculo
 
-        #q = db.session.query(Aberta).all()
-        #nq = random.randint(1,len(q))
-        #resp = q[nq-1].json()
+        # q = db.session.query(Aberta).all()
+        # nq = random.randint(1,len(q))
+        # resp = q[nq-1].json()
 
         # obter círculo
-        #circs = Circulo.query.filter(Circulo.id == id_circulo).all()
+        # circs = Circulo.query.filter(Circulo.id == id_circulo).all()
         # este circulo
         # este_circulo = circs[0] # este_circulo.assuntos
 
@@ -513,7 +521,7 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         retorno = jsonify({"message": "error", "details": str(e)})
 
     # retornos
-    #retorno = jsonify(resultado)
+    # retorno = jsonify(resultado)
     retorno.headers.add('Access-Control-Allow-Origin', '*')
     return retorno
 
@@ -716,7 +724,6 @@ def incluir_questao():
 
 @app.route('/create_token/<email>')
 def get_token(email):
-    
 
     try:
         # obter a data atual
@@ -806,7 +813,6 @@ def get_generico(classe):
     if not ipok(request.remote_addr):
         return failed()
 
-
     # reflexao
     # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
     modulo = __import__("modelo")
@@ -850,27 +856,53 @@ def exibir_respostas_circulo(id_circulo):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
+
 ipcontrol = False
 ips = []
 
+
 def ipok(ip):
     if ipcontrol:
-        ret =  (ip in ips)
+        ret = (ip in ips)
         return ret
     else:
         return True
 
+
 def failed():
     return jsonify({"message": "error", "details": "unauthorized"})
 
+
 def loadiptable():
-    f = open('/home/friend/01-github/serena/dockerfile-backend/ips.txt','r')
+    f = open('/home/friend/01-github/serena/dockerfile-backend/ips.txt', 'r')
     for x in f:
         ips.append(x[:-1])
     print(ips)
+
+
+@app.route('/circulo_ativo')
+def circulo_ativo():
+    if not ipok(request.remote_addr):
+        return failed()
+
+    # busca o primeiro circulo ativo
+    circulo = db.session.query(Circulo).filter(Circulo.ativo == "1").first()
+
+    if circulo == None:
+        resp = {"message": "erro", "details": "não há círculo ativo!"}
+    else:
+        resp = {"message": "ok"}
+        resp.update({"details": circulo.json()})
+
+    ret = jsonify(resp)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
 
 # start of backend
 
 if ipcontrol:
     loadiptable()
+
 app.run(host='0.0.0.0', debug=True)
+#app.run(host="0.0.0.0")

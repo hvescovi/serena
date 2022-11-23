@@ -40,3 +40,6 @@ db = SQLAlchemy(app)
 from datetime import datetime
 
 import hashlib
+
+# comando mágico que se tornou necessário por causa de alguma versão nova do python
+app.app_context().push()

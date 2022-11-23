@@ -5,29 +5,54 @@
 // when the document is ready...
 $(function () {
 
+    function jmessage(tipo, mensagem) {
+
+        // tenta usar biblioteca Swal
+        try {
+            if (tipo == "ERRO") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro:',
+                    text: mensagem
+                });
+            } else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: mensagem,
+                    showConfirmButton: true,
+                    timer: 2500
+                });
+            }
+        } catch (error) {
+            // se der erro, mostra alert simples
+            alert(mensagem);
+        }
+    }
+
     $(document).on("click", "#btn_abrir_questao_circulo", function () {
 
         $(this).prop("disabled", true);
-    
+
         myip = $("#myip").text();
-    
+
         //alert('entrei');
         // pega o email de quem vai fazer a questão
         id_respondente = $("#id_respondente").val();
         id_circulo = $("#id_circulo").val();
-    
+
         url = 'http://' + myip + ':5000/abrir_questao_circulo/' + id_circulo + '/' + id_respondente;
-    
+
         //alert(url);
         $.ajax({
             url: url,
             method: 'GET',
             dataType: 'json',
             success: function (resultado) {
-    
+
                 $('#tabela_questoes').empty();
                 //alert(resultado);
-              
+
                 if (resultado.message != "ok") {
                     Swal.fire({
                         icon: 'error',
@@ -35,53 +60,53 @@ $(function () {
                         text: resultado.details
                     })
                 } else {
-    
+
                     // sucesso, vamos abrir a questão...
-                    
+
                     quest = resultado.details;
                     idq = quest.id;
                     lin = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood">';
-    
+
                     //alert(url);
-    
+
                     if (quest.type == "Aberta") {
                         //alert('questão: '+quest.enunciado);
                         enun = quest.enunciado;
                         novo = enun.replace(/\n/g, "<br>");
                         //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                         lin = lin + ajustaImagens(novo); // + "(" + quest[i].type + ")"
-                        
+
                         lin = lin + "<br>"
                         //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
                         lin = lin + "Sua resposta: <textarea id=r" + idq + "></textarea> <br>";
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta" onclick="return false">enviar resposta</button>';
-    
+
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
-    
+
                         lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
                     }
-    
+
                     if (quest.type == "MultiplaEscolha") {
                         lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                         lin = lin + "<br>"
-    
-    
+
+
                         // embaralhar as alernativas
                         // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
                         quest.alternativas.sort(() => Math.random() - 0.5);
-    
+
                         for (var j in quest.alternativas) {
                             lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                         }
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">salvar resposta</button>';
-    
+
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
-    
+
                         lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
                     }
-    
+
                     if (quest.type == "Completar") {
                         // quebrar o enunciado em partes sepadas por três underlines
                         partes = quest.enunciado.split("___");
@@ -96,23 +121,23 @@ $(function () {
                                 en = en + '<input type=text id="q' + idq + 'l' + lac + '">';
                             }
                         }
-    
+
                         // acrescentar campo escondido para controle do número de lacunas
                         // se são 3 partes de texto, então são 2 lacunas
                         lin = lin + '<input type=hidden id="lacunas' + idq + '" value="' + (n - 1) + '">';
-    
+
                         // acrescentar o enunciado da questão de lacuna, com as lacunas (caixas de texto)
                         lin = lin + en;
                         lin = lin + "<br>";
-    
+
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">salvar resposta</button>';
-    
+
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
-    
+
                         lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
                     }
-    
+
                     lin = lin + "</div></div>";
                     //for (var j in quest[i].alternativas) {
                     //    lin = lin + "<br> => " + quest[i].alternativas[j].descricao;
@@ -120,7 +145,7 @@ $(function () {
                     $('#tabela_questoes').append(lin);
                     //alert(lin);
                 }
-    
+
             },
             error: function () {
                 Swal.fire({
@@ -131,18 +156,18 @@ $(function () {
             }
         });
     });
-    
+
     $(document).on("click", ".responder_questao_circulo_aberta", function () {
-    
+
         // qual botão foi clicado
         var eu = $(this).attr('id');
         // obtém o id da questão
         //alert(eu);
         var idq = eu.substring(1); // b23 = botão da questão 23
-    
+
         // obtém a resposta
         var resp = $("#r" + idq).val();
-    
+
         // é preciso fornecer uma resposta!
         if (resp.length < 1) {
             Swal.fire({
@@ -151,25 +176,25 @@ $(function () {
             })
             return false;
         }
-    
+
         // pegar dados do circulo
         id_circulo = $("#id_circulo").val();
         id_respondente = $("#id_respondente").val();
-    
+
         //alert(resp);
         // prepara os dados em json
         var dados = JSON.stringify({ idq: idq, resposta: resp, id_respondente: id_respondente, id_circulo: id_circulo })
-    
+
         //alert(dados);
         myip = $("#myip").text();
-    
+
         // só desabilita após as condições de sucesso ok
         // desabilitar o botão da resposta, após o clique ter ocorrido
         // evitar múltiplos cliques que n-plicam as respostas
         // implementado em tempo de aplicação da prova
         // André respondeu 48 questões :-o
-        $("#"+eu).prop("disabled",true);
-    
+        $("#" + eu).prop("disabled", true);
+
         $.ajax({
             url: 'http://' + myip + ':5000/responder_questao_circulo',
             type: 'POST',
@@ -178,11 +203,11 @@ $(function () {
             //contentType: "application/json",
             success: function (resultado) {
                 var deu_certo = resultado.message == "ok";
-    
+
                 // diz que deu certo o envio
                 if (deu_certo) {
                     $("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
-                    
+
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
@@ -190,16 +215,16 @@ $(function () {
                         showConfirmButton: true,
                         timer: 5500
                     });
-                    
-                   //alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-                    
+
+                    //alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
+
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
-    
+
                 } else {
                     Swal.fire(resultado.message + ":" + resultado.details);
                 }
-    
+
             },
             error: function () {
                 Swal.fire({
@@ -209,21 +234,21 @@ $(function () {
                 });
             }
         });
-    
+
     });
-    
+
     $(document).on("click", ".verificar_resposta_multipla_escolha", function () {
-    
+
         // qual botão foi clicado
         var eu = $(this).attr('id');
         // obtém o id da questão
         //alert(eu);
         var idq = eu.substring(1); // b23 = botão da questão 23
-    
+
         //alert(idq);
         // verifica a alternativa marcada
         var marcada = $('input[name=radiogrp' + idq + ']:checked').attr('id');
-    
+
         // é preciso fornecer uma resposta!
         if (!marcada) {
             Swal.fire({
@@ -232,18 +257,18 @@ $(function () {
             });
             return false;
         }
-    
+
         var id_alternativa = marcada.substring(1); //r3 => 3
         //alert(id_alternativa);
-    
+
         // pegar dados do circulo
         id_circulo = $("#id_circulo").val();
         id_respondente = $("#id_respondente").val();
-    
+
         //alert(resp);
         // prepara os dados em json
         var dados = JSON.stringify({ idq: idq, resposta: id_alternativa, id_circulo: id_circulo, id_respondente: id_respondente })
-    
+
         myip = $("#myip").text();
         $.ajax({
             url: 'http://' + myip + ':5000/responder_questao_circulo',
@@ -253,7 +278,7 @@ $(function () {
             //contentType: "application/json",
             success: function (resultado) {
                 var deu_certo = resultado.message == "ok";
-    
+
                 // diz que deu certo o envio
                 if (deu_certo) {
                     //$("#final").text("Sua resposta foi enviada!");
@@ -264,10 +289,10 @@ $(function () {
                         showConfirmButton: true,
                         timer: 2500
                     });
-    
+
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
-    
+
                 } else {
                     Swal.fire(resultado.message + ":" + resultado.details);
                 }
@@ -280,28 +305,28 @@ $(function () {
                 });
             }
         });
-    
+
     });
-    
+
     $(document).on("click", ".verificar_resposta_completar", function () {
-    
+
         // qual botão foi clicado
         var eu = $(this).attr('id');
         // obtém o id da questão
         //alert(eu);
         var idq = eu.substring(1); // b23 = botão da questão 23
         // verifica a alternativa marcada
-    
+
         // quantas lacunas existem?
         n = $('#lacunas' + idq).val();
-    
+
         // pegar os valores informados
         valores = '';
-    
+
         // percorrer os campos dos valores
         for (var lac = 0; lac < n; lac++) {
             v = $("#q" + idq + "l" + lac).val();
-    
+
             // é preciso fornecer uma resposta!
             if (v.length <= 0) {
                 Swal.fire({
@@ -310,7 +335,7 @@ $(function () {
                 });
                 return false;
             }
-    
+
             valores = valores + v;
             // ainda não é o último valor?
             if (lac < n - 1) {
@@ -318,16 +343,16 @@ $(function () {
                 valores = valores + "|";
             }
         }
-    
+
         //alert(valores);
-    
+
         // pegar dados do circulo
         id_circulo = $("#id_circulo").val();
         id_respondente = $("#id_respondente").val();
-    
+
         // prepara os dados em json
         var dados = JSON.stringify({ idq: idq, resposta: valores, id_circulo: id_circulo, id_respondente: id_respondente })
-    
+
         myip = $("#myip").text();
         $.ajax({
             url: 'http://' + myip + ':5000/responder_questao_circulo',
@@ -337,7 +362,7 @@ $(function () {
             //contentType: "application/json",
             success: function (resultado) {
                 var deu_certo = resultado.message == "ok";
-    
+
                 // diz que deu certo o envio
                 if (deu_certo) {
                     //$("#final").text("Sua resposta foi enviada!");
@@ -348,14 +373,14 @@ $(function () {
                         showConfirmButton: true,
                         timer: 2500
                     });
-    
+
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
-    
+
                 } else {
                     Swal.fire(resultado.message + ":" + resultado.details);
                 }
-    
+
             },
             error: function () {
                 Swal.fire({
@@ -365,14 +390,14 @@ $(function () {
                 });
             }
         });
-    
+
     });
-    
+
     function ajustaImagens(texto) {
         myip = $("#myip").text();
         url = 'http://' + myip + ':5000/imagem/';
         return texto.replace(/<img src=/gi, "<img src=" + url);
-    }    
+    }
 
     //alert(document.URL);
     if (document.URL.startsWith("http://localhost")) {
@@ -404,48 +429,73 @@ $(function () {
     // obtém o id da questão
     //alert(eu);
 
-    var circulo = 1;
-    // circulo 1 = turma 301
-    // circulo 2 = turma 302
+
+
+
+
+
+    
 
     myip = $("#myip").text();
-    /*
-        
-    
-    */
 
-    url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;
+    // obtém do backend qual é o círculo ativo
+    url = 'http://' + myip + ':5000/circulo_ativo';
 
     $.ajax({
         url: url,
-        type: 'GET',
-        dataType: 'json', // vou receber a resposta em json,
-        //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-        //contentType: "application/json",
+        method: 'GET',
+        dataType: 'json',
         success: function (resultado) {
-            // coloca a resposta no gabarito
-            $("#id_respondente").val(resultado.id);
-            $("#nome_respondente").text(resultado.nome);
-            $("#email_respondente").text(resultado.email);
-            $("#questoes_respondidas").text(resultado.questoes_respondidas);
-            $("#questoes_puladas").text(resultado.questoes_puladas);
-            // alert(resultado.details);
-            //mostrar_resultado_acao(deu_certo);
+            if (resultado.message == "ok") {
+                circulo = resultado.details.id;
+                //console.log("circulo: "+circulo);
 
-            $("#nome_circulo").text(resultado.nome_circulo);
-            $("#circulo_id").text(resultado.circulo_id);
-            $("#data_circulo").text(resultado.data_circulo);
-    
+                // vamos preparar a rodada
+                url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json', // vou receber a resposta em json,
+                    //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+                    //contentType: "application/json",
+                    success: function (resultado) {
+                        // coloca a resposta no gabarito
+                        $("#id_respondente").val(resultado.id);
+                        $("#nome_respondente").text(resultado.nome);
+                        $("#email_respondente").text(resultado.email);
+                        $("#questoes_respondidas").text(resultado.questoes_respondidas);
+                        $("#questoes_puladas").text(resultado.questoes_puladas);
+                        // alert(resultado.details);
+                        //mostrar_resultado_acao(deu_certo);
+
+                        $("#nome_circulo").text(resultado.nome_circulo);
+                        $("#circulo_id").text(resultado.circulo_id);
+                        $("#data_circulo").text(resultado.data_circulo);
+
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro:',
+                            text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
+                        });
+                    }
+
+                });
+
+            } else {
+                jmessage("ERRO", "Não foi possível encontrar círculo ativo: " + resultado.details);
+            }
         },
         error: function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro:',
-                text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
-            });
+            jmessage("ERRO", "Erro na leitura dos dados, verifique o backend");
         }
-
     });
+
+
+
+
 
 
     $(document).on("click", "#btnPassarVez", function () {
