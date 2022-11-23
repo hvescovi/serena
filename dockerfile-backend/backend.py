@@ -55,65 +55,70 @@ def preparar_rodada(id_circulo):
             Respondente.observacao == "302").all()
     '''
 
-    # tenta 10 vezes
-    for i in range(1, 10):
-        # escolhe um respondente
-        nquem = random.randint(1, len(todos))
+    if len(todos) == 0:
+        resp = {"message": "error", "details": "não há respondentes"}
+    else:
 
-        # pega o id dele
-        id_respondente = todos[nquem-1].id
+        # tenta 10 vezes
+        for i in range(1, 10):
+            # escolhe um respondente
+            nquem = random.randint(1, len(todos))
 
-        # print(fila_respondentes)
-        # verifica se o respondente não está na fila dos últimos 10
-        if id_respondente not in fila_respondentes:
-            # pode parar de tentar
-            break
+            # pega o id dele
+            id_respondente = todos[nquem-1].id
 
-    # adiciona o respondente na fila
-    fila_respondentes.append(id_respondente)
+            # print(fila_respondentes)
+            # verifica se o respondente não está na fila dos últimos 10
+            if id_respondente not in fila_respondentes:
+                # pode parar de tentar
+                break
 
-    # se a fila encheu
-    if len(fila_respondentes) >= 10:
-        # remove o primeiro da fila, para a fila "andar"
-        fila_respondentes.pop(0)
+        # adiciona o respondente na fila
+        fila_respondentes.append(id_respondente)
 
-    # retorna o respondente sorteado
-    q = db.session.query(Respondente).filter(
-        Respondente.id == id_respondente).all()
-    resp = q[0].json()
+        # se a fila encheu
+        if len(fila_respondentes) >= 10:
+            # remove o primeiro da fila, para a fila "andar"
+            fila_respondentes.pop(0)
 
-    # OUTRA CONSULTA
-    # verificar quantas questões a pessoa já respondeu
-    q = Resposta.query.filter_by(respondente_id=id_respondente).count()
+        # retorna o respondente sorteado
+        q = db.session.query(Respondente).filter(
+            Respondente.id == id_respondente).all()
 
-    # adicionar no json essa quantidade de questões respondidas
-    resp.update({"questoes_respondidas": q})
+        detalhes = q[0].json()
 
-    # MAIS UMA CONSULTA
+        # OUTRA CONSULTA
+        # verificar quantas questões a pessoa já respondeu
+        q = Resposta.query.filter_by(respondente_id=id_respondente).count()
 
-    resp.update({"circulo_id": circulo.id,
-                "nome_circulo": circulo.nome,
-                 "data_circulo": circulo.data})
+        # adicionar no json essa quantidade de questões respondidas
+        detalhes.update({"questoes_respondidas": q})
 
-    # ver quantas questões a pessoa já pulou
-    # PARA FAZER TODO
-    # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
+        # adicionar informações do círculo
+        detalhes.update({"circulo_id": circulo.id,
+                         "nome_circulo": circulo.nome,
+                         "data_circulo": circulo.data})
 
-    # REMOVIDO para não carregar o sistema
-    # ficou lento em execução 22/08/2022, 08:00hs
-    # lista de ID's das questões respondidas
-    # ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
+        # ver quantas questões a pessoa já pulou
+        # PARA FAZER TODO
+        # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
 
-    # lista das questões (ids) exibidas ao respondente
-    # ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
+        # REMOVIDO para não carregar o sistema
+        # ficou lento em execução 22/08/2022, 08:00hs
+        # lista de ID's das questões respondidas
+        # ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
 
-    # diferença
-    # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
-    # puladas = list(set(ids_exibidas) - set(ids_respondidas))
+        # lista das questões (ids) exibidas ao respondente
+        # ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
 
-    # q = query.count()
-    # q = len(puladas)
-    # resp.update({"questoes_puladas": q})
+        # diferença
+        # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
+        # puladas = list(set(ids_exibidas) - set(ids_respondidas))
+
+        # q = query.count()
+        # q = len(puladas)
+        # resp.update({"questoes_puladas": q})
+        resp = {"message": "ok", "details": detalhes}
 
     # retornos
     ret = jsonify(resp)
@@ -469,15 +474,34 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # este circulo
         # este_circulo = circs[0] # este_circulo.assuntos
 
-        # questões que eu respondi
-        r1 = db.session.query(Resposta.questao_id).filter(
-            Resposta.respondente_id == id_respondente)
+        # questões que eu respondi no círculo atual
+        # r1 = db.session.query(Resposta.questao_id).filter(
+        #    Resposta.respondente_id == id_respondente)
 
-        if len(r1.all()) >= 10:
+        # r1 = db.session.query(Resposta.questao_id).join(questaoDoCirculo).filter(
+        #    Resposta.respondente_id == id_respondente & questaoDoCirculo.id_questao == Resposta.questao_id)
+
+        # retornar questões que eu já respondi
+        # - que estão no círculo atual
+        # - que são questões minhas (meu respondente)
+        sql = "select questao_id from questao q, questaodocirculo qc, resposta r" +\
+                                " where q.id = qc.id_questao and qc.id_circulo = "+id_circulo+" AND r.respondente_id = "+id_respondente
+        results = db.session.execute(sql)
+        #print(sql)
+        r1 = []
+        for linha in results:
+            r1.append(linha[0])
+
+        if len(r1) >= 10:
+        #if len(r1.all()) >= 10:
             retorno = jsonify(
                 {"message": "error", "details": "Já foram respondidas 10 perguntas"})
         else:
             # obtém questões que ainda não respondi
+            # PARA FAZER: mas que sejam do círculo
+            # TODO
+            # TODO
+            # TODO
             res = Questao.query.filter(Questao.id.notin_(r1)).all()
 
             if len(res) == 0:
@@ -905,4 +929,4 @@ if ipcontrol:
     loadiptable()
 
 app.run(host='0.0.0.0', debug=True)
-#app.run(host="0.0.0.0")
+# app.run(host="0.0.0.0")

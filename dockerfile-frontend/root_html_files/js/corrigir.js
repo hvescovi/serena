@@ -1,6 +1,10 @@
 // when the document is ready...
 $(function () {
 
+    function jmessage(tipo, mensagem) {
+        alert(mensagem);
+    }
+
     $(document).on("click", "#btnListarRespostasSemPontuacao", function () {
 
         $(this).prop("disabled", true);
@@ -129,11 +133,7 @@ $(function () {
 
             },
             error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro:',
-                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
-                });
+                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
             }
         });
     });

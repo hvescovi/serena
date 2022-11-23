@@ -266,7 +266,7 @@ class Circulo(db.Model):
     data = db.Column(db.String(254))
     
     # relacionamento n x n 
-    assuntos = db.relationship("Assunto", secondary="assuntodocirculo")
+    questoes = db.relationship("Questao", secondary="questaodocirculo")
     
     #assuntos = db.Column(db.String(254)) # separados por "|"
     
@@ -287,8 +287,8 @@ class Circulo(db.Model):
 
     def __str__(self):
         s = self.nome + "("+str(self.id)+"), em "+self.data
-        for assunto in self.assuntos:
-            s = s + " > " + str(assunto)       
+        for questao in self.questoes:
+            s = s + " > " + str(questao)       
         s += ", "+self.filtro_respondente
         s += ", ativo: "+self.ativo
         return s
@@ -299,16 +299,16 @@ class Circulo(db.Model):
             "nome": self.nome,
             "data":self.data,
             #"assuntos": self.assuntos
-            "assuntos":[a.json() for a in self.assuntos],
+            "questoes":[a.json() for a in self.questoes],
             "filtro_respondente":self.filtro_respondente,
             "ativo":self.ativo
 
         }
 
-assuntoDoCirculo = db.Table('assuntodocirculo', db.metadata,
+questaoDoCirculo = db.Table('questaodocirculo', db.metadata,
     # Circulo.id como string, pois a definição vem depois!
     db.Column('id_circulo', db.Integer, db.ForeignKey(Circulo.id)),
-    db.Column('id_assunto', db.Integer, db.ForeignKey(Assunto.id))
+    db.Column('id_questao', db.Integer, db.ForeignKey(Questao.id))
 )
 
 
@@ -386,13 +386,21 @@ if __name__ == "__main__":
     db.session.commit()
     print(m1)
 
-    # resposta
+    # respondente
     joao = Respondente(nome = "João da Silva", email="josilva@gmail.com", observacao = "|g:302-2022|")
-    r1 = Resposta(questao=m1, respondente=joao, resposta="1")
     db.session.add(joao)
+    db.session.commit()
+    print(joao)
+
+    
+    '''
+    # resposta
+    r1 = Resposta(questao=m1, respondente=joao, resposta="1")
     db.session.add(r1)
     db.session.commit()
     print(r1)
+    '''
+    
 
     # prova
     p1 = Prova(data = "22/02/2020")
@@ -433,14 +441,16 @@ if __name__ == "__main__":
 
     # criar um novo circulo
     c1 = Circulo(nome="AV6 302", data = "24/11/2022", filtro_respondente="|g:302-2022|", ativo="1")
-    c1.assuntos.append(git)
-    c1.assuntos.append(pyt)
+    c1.questoes.append(lac1)
+    c1.questoes.append(m1)
     db.session.add(c1)
     db.session.commit()
+    print("Circulo:",c1)
 
+    '''
     # adicionar resposta ao circulo
-    #rc = RespostaNoCirculo(circulo = c1, resposta = r1)
-    #db.session.add(rc)
-    #db.session.commit()
-
-    #print("\n Teste de reposta no circulo\n"+str(rc))
+    rc = RespostaNoCirculo(circulo = c1, resposta = r1)
+    db.session.add(rc)
+    db.session.commit()
+    print("\n Teste de reposta no circulo\n"+str(rc))
+    '''

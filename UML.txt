@@ -12,7 +12,6 @@ BorderColor<<Implementado Mas Sem Uso>> Blue
 skinparam stereotypeCBackgroundColor YellowGreen
 skinparam stereotypeCBackgroundColor<< Faltando >> DimGray
 
-class RespondenteNoCirculo <<Nao Implementado>>
 class Assunto <<Implementado Mas Sem Uso>>
 
 title Questões
@@ -74,7 +73,7 @@ class Respondente {
   +identificador: string
   +token: string
 }
-note left of Respondente::observacao
+note right of Respondente::observacao
 Exemplo de notação de grupo, 
 a ser buscado por like em 
 consulta: |g:301-3022|
@@ -95,9 +94,14 @@ class Circulo {
   +id: int
   +nome: string
   +data: string
-  +assuntos: list of Assunto
+  +questoes: list of Questao
   +respostasNoCirculo: list of Resposta
 }
+note left of Circulo::questoes
+questões que podem ser 
+sorteadas para aparecer
+no círculo
+end note
 
 class QuestaoExibidaNoCirculo {
   +circulo: Circulo
@@ -105,17 +109,17 @@ class QuestaoExibidaNoCirculo {
   +respondente: Respondente
 }
 
-class Grupo {
+class Grupo <<Nao Implementado>> {
   +id: int
   +descricao: String
 }
 
-class RespondenteNoGrupo {
+class RespondenteNoGrupo <<Nao Implementado>> {
 }
 
 ' RELACIONAMENTOS
 
-(Questao,Prova) .. QuestaoDeProva
+QuestaoDeProva .. (Questao,Prova)
 Questao <|-- MultiplaEscolha
 Questao <|-- Completar
 Questao <|-- Aberta
@@ -124,8 +128,150 @@ Resposta *- Respondente
 Resposta *-- Questao
 (Circulo,Resposta) .. RespostaNoCirculo
 (Respondente,Grupo) .. RespondenteNoGrupo
-Circulo -- Assunto
-Questao -- Assunto
+Circulo - Questao
+Questao - Assunto
+
+
+/'
+Dwelling <|-down- Apartment: Inheritance
+Dwelling <|-down- Commune: Inheritance
+Dwelling <|-down- House: Inheritance
+Dwelling "1" *-up- "many" Window: Composition
+Dwelling "1" *-up- "many" Door: Composition
+'/
+
+@enduml@startuml
+
+skinparam class {
+BackgroundColor White
+ArrowColor SeaGreen
+BorderColor Blue
+BackgroundColor<<Nao implementado>> Wheat
+BorderColor<<Nao Implementado>> Tomato
+BackgroundColor<<Implementado Mas Sem Uso>> LightGray
+BorderColor<<Implementado Mas Sem Uso>> Blue
+}
+skinparam stereotypeCBackgroundColor YellowGreen
+skinparam stereotypeCBackgroundColor<< Faltando >> DimGray
+
+class Assunto <<Implementado Mas Sem Uso>>
+
+title Questões
+
+abstract class Questao {
+  +id: int
+  +enunciado: string
+  +autor: string
+  +data_cadastro: string
+  +assuntos: list of Assunto
+  +type: string
+  
+}
+
+class Alternativa {
+  +id: int
+  +descricao: string
+  +certa: boolean
+}
+
+class Assunto {
+  +id: int
+  +nome: string
+}
+
+class MultiplaEscolha {
+  +id: int //fk questao.id
+  +alternativas: list of Alternativa
+}
+
+class Completar {
+  +id: int //fk questao.id
+  +lacunas: string
+}
+
+class Aberta {
+  +id: int //fk questao.id
+  +resposta: string
+}
+
+class QuestaoDeProva {
+  +questao: Questao
+  +prova: Prova
+  +ordem: int
+  +pontos: float
+}
+
+class Prova {
+  +id: int
+  +data: string
+  +questoesDaProva: list of Questao //nao implementado
+}
+
+class Respondente {
+  +id: int
+  +nome: string
+  +email: string
+  +observacao: string
+  +identificador: string
+  +token: string
+}
+note right of Respondente::observacao
+Exemplo de notação de grupo, 
+a ser buscado por like em 
+consulta: |g:301-3022|
+representa aluno da turma 301 de 2022
+end note
+
+class Resposta {
+  +id: int
+  +questao: Questao
+  +respondente: Respondente
+  +resposta: string
+  +timestamp: datetime
+  +pontuacao: float
+  pontuacao_sugerida: float
+}
+
+class Circulo {
+  +id: int
+  +nome: string
+  +data: string
+  +questoes: list of Questao
+  +respostasNoCirculo: list of Resposta
+}
+note left of Circulo::questoes
+questões que podem ser 
+sorteadas para aparecer
+no círculo
+end note
+
+class QuestaoExibidaNoCirculo {
+  +circulo: Circulo
+  +questao: Questao
+  +respondente: Respondente
+}
+
+class Grupo <<Nao Implementado>> {
+  +id: int
+  +descricao: String
+}
+
+class RespondenteNoGrupo <<Nao Implementado>> {
+}
+
+' RELACIONAMENTOS
+
+QuestaoDeProva .. (Questao,Prova)
+Questao <|-- MultiplaEscolha
+Questao <|-- Completar
+Questao <|-- Aberta
+MultiplaEscolha --o Alternativa
+Resposta *- Respondente
+Resposta *-- Questao
+(Circulo,Resposta) .. RespostaNoCirculo
+(Respondente,Grupo) .. RespondenteNoGrupo
+Circulo - Questao
+Questao - Assunto
 
 
 /'

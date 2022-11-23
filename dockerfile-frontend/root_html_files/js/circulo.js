@@ -8,7 +8,8 @@ $(function () {
     function jmessage(tipo, mensagem) {
 
         // tenta usar biblioteca Swal  
-        /*    
+            
+        /*
         try {
             if (tipo == "ERRO") {
                 Swal.fire({
@@ -26,15 +27,15 @@ $(function () {
                 });
             }
         } catch (error) {
-            */
-            // se der erro, mostra alert simples
-            alert(mensagem);
+          */  
+        // se der erro, mostra alert simples
+        alert(mensagem);
         //}
     }
 
     $(document).on("click", "#btn_abrir_questao_circulo", function () {
 
-        
+
         $(this).prop("disabled", true);
 
         myip = $("#myip").text();
@@ -57,11 +58,7 @@ $(function () {
                 //alert(resultado);
 
                 if (resultado.message != "ok") {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro:',
-                        text: resultado.details
-                    })
+                    jmessage("ERRO", resultado.details);                    
                 } else {
 
                     // sucesso, vamos abrir a questão...
@@ -103,6 +100,8 @@ $(function () {
                             lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                         }
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">salvar resposta</button>';
+
+                        lin = lin + '<img src="images/carregando.gif" id="esperando" class="d-none">';
 
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
@@ -151,17 +150,13 @@ $(function () {
 
             },
             error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro:',
-                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
-                });
+                jmessage("ERRO", "ocorreu algum erro na leitura dos dados, verifique o backend");
             }
         });
     });
 
-    $(document).on("click", ".responder_questao_circulo_aberta", function () {       
-        
+    $(document).on("click", ".responder_questao_circulo_aberta", function () {
+
         // qual botão foi clicado
         var eu = $(this).attr('id');
         // obtém o id da questão
@@ -173,10 +168,7 @@ $(function () {
 
         // é preciso fornecer uma resposta!
         if (resp.length < 1) {
-            Swal.fire({
-                icon: 'error',
-                text: 'forneça um resposta!'
-            })
+            jmessage("ERRO", "forneça um resposta!");
             return false;
         }
 
@@ -196,8 +188,9 @@ $(function () {
         // evitar múltiplos cliques que n-plicam as respostas
         // implementado em tempo de aplicação da prova
         // André respondeu 48 questões :-o
-        
+
         $("#" + eu).prop("disabled", true);
+        $("#esperando").removeClass("d-none");
 
         $.ajax({
             url: 'http://' + myip + ':5000/responder_questao_circulo',
@@ -206,32 +199,32 @@ $(function () {
             data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
             //contentType: "application/json",
             success: function (resultado) {
-                
-                 var deu_certo = resultado.message == "ok";
+
+                $("#esperando").addClass("d-none");
+
+                var deu_certo = resultado.message == "ok";
 
                 // diz que deu certo o envio
                 if (deu_certo) {
                     $("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
 
                     jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-                    
+
                     //alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                     // volta ao começo
-                   
-                     $(location).attr('href', '/circulo.html');
+
+                    $(location).attr('href', '/circulo.html');
 
                 } else {
-                    Swal.fire(resultado.message + ":" + resultado.details);
+                    jmessage("ERRO", resultado.details);
                 }
 
             },
             error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro:',
-                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
-                });
+                $("#esperando").addClass("d-none");
+
+                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
             }
         });
 
@@ -251,10 +244,7 @@ $(function () {
 
         // é preciso fornecer uma resposta!
         if (!marcada) {
-            Swal.fire({
-                icon: 'error',
-                text: 'escolha uma resposta!'
-            });
+            jmessage("ERRO", 'escolha uma resposta!');
             return false;
         }
 
@@ -282,27 +272,17 @@ $(function () {
                 // diz que deu certo o envio
                 if (deu_certo) {
                     //$("#final").text("Sua resposta foi enviada!");
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.',
-                        showConfirmButton: true,
-                        timer: 2500
-                    });
+                    jmessage("ok", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
 
                 } else {
-                    Swal.fire(resultado.message + ":" + resultado.details);
+                    jmessage("ERRO", resultado.details);
                 }
             },
             error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro:',
-                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
-                });
+                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
             }
         });
 
@@ -331,10 +311,7 @@ $(function () {
 
             // é preciso fornecer uma resposta!
             if (v.length <= 0) {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'preencha todas as lacunas'
-                });
+                jmessage("ERRO", 'preencha todas as lacunas');
                 return false;
             }
 
@@ -369,21 +346,17 @@ $(function () {
                 if (deu_certo) {
                     //$("#final").text("Sua resposta foi enviada!");
                     jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-                    
+
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
 
                 } else {
-                    Swal.fire(resultado.message + ":" + resultado.details);
+                    jmessage("ERRO", resultado.details);
                 }
 
             },
             error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro:',
-                    text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
-                });
+                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
             }
         });
 
@@ -430,7 +403,7 @@ $(function () {
 
 
 
-    
+
 
     myip = $("#myip").text();
 
@@ -456,26 +429,27 @@ $(function () {
                     //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
                     //contentType: "application/json",
                     success: function (resultado) {
-                        // coloca a resposta no gabarito
-                        $("#id_respondente").val(resultado.id);
-                        $("#nome_respondente").text(resultado.nome);
-                        $("#email_respondente").text(resultado.email);
-                        $("#questoes_respondidas").text(resultado.questoes_respondidas);
-                        $("#questoes_puladas").text(resultado.questoes_puladas);
-                        // alert(resultado.details);
-                        //mostrar_resultado_acao(deu_certo);
+                        if (resultado.message == "ok") {
+                            d = resultado.details;
+                            // coloca a resposta no gabarito
+                            $("#id_respondente").val(d.id);
+                            $("#nome_respondente").text(d.nome);
+                            $("#email_respondente").text(d.email);
+                            $("#questoes_respondidas").text(d.questoes_respondidas);
+                            $("#questoes_puladas").text(d.questoes_puladas);
+                            // alert(resultado.details);
+                            //mostrar_resultado_acao(deu_certo);
 
-                        $("#nome_circulo").text(resultado.nome_circulo);
-                        $("#circulo_id").text(resultado.circulo_id);
-                        $("#data_circulo").text(resultado.data_circulo);
-
+                            $("#nome_circulo").text(d.nome_circulo);
+                            $("#circulo_id").text(d.circulo_id);
+                            $("#data_circulo").text(d.data_circulo);
+                        }
+                        else {
+                            jmessage("ERRO", resultado.details);
+                        }
                     },
                     error: function () {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro:',
-                            text: 'ocorreu algum erro na leitura dos dados, verifique o backend'
-                        });
+                        jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
                     }
 
                 });
