@@ -475,8 +475,8 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # este_circulo = circs[0] # este_circulo.assuntos
 
         # questões que eu respondi no círculo atual
-        # r1 = db.session.query(Resposta.questao_id).filter(
-        #    Resposta.respondente_id == id_respondente)
+        r1 = db.session.query(Resposta.questao_id).filter(
+            Resposta.respondente_id == id_respondente)
 
         # r1 = db.session.query(Resposta.questao_id).join(questaoDoCirculo).filter(
         #    Resposta.respondente_id == id_respondente & questaoDoCirculo.id_questao == Resposta.questao_id)
@@ -484,16 +484,17 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # retornar questões que eu já respondi
         # - que estão no círculo atual
         # - que são questões minhas (meu respondente)
-        sql = "select questao_id from questao q, questaodocirculo qc, resposta r" +\
-                                " where q.id = qc.id_questao and qc.id_circulo = "+id_circulo+" AND r.respondente_id = "+id_respondente
-        results = db.session.execute(sql)
+        
+        #sql = "select questao_id from questao q, questaodocirculo qc, resposta r" +\
+        #                        " where q.id = qc.id_questao and qc.id_circulo = "+id_circulo+" AND r.respondente_id = "+id_respondente
+        #results = db.session.execute(sql)
         #print(sql)
-        r1 = []
-        for linha in results:
-            r1.append(linha[0])
+        #r1 = []
+        #for linha in results:
+        #    r1.append(linha[0])
 
-        if len(r1) >= 10:
-        #if len(r1.all()) >= 10:
+        #if len(r1) >= 10:
+        if len(r1.all()) >= 10:
             retorno = jsonify(
                 {"message": "error", "details": "Já foram respondidas 10 perguntas"})
         else:
