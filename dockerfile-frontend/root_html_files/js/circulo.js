@@ -5,6 +5,9 @@
 // when the document is ready...
 $(function () {
 
+    // definições reusáveis neste código
+    // *********************************
+
     function jmessage(tipo, mensagem) {
 
         // tenta usar biblioteca Swal  
@@ -32,6 +35,21 @@ $(function () {
         alert(mensagem);
         //}
     }
+
+    var HTML_carregando = ' <img src="images/carregando.gif" id="carregando" height="30" class="d-none">';
+
+    function manipular_carregando(show_hide) {
+        if (show_hide == "show") {
+            $("#carregando").removeClass("d-none");
+        } else {            
+            $("#carregando").addClass("d-none");
+        }
+    }
+    
+    
+    // início dos eventos
+    // ******************
+
 
     $(document).on("click", "#btn_abrir_questao_circulo", function () {
 
@@ -65,7 +83,7 @@ $(function () {
 
                     quest = resultado.details;
                     idq = quest.id;
-                    lin = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood">';
+                    lin = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood"><font size="+2">';
 
                     //alert(url);
 
@@ -81,10 +99,14 @@ $(function () {
                         lin = lin + "Sua resposta: <textarea id=r" + idq + "></textarea> <br>";
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta" onclick="return false">enviar resposta</button>';
 
+                        lin = lin + HTML_carregando;
+
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
 
                         lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
+
+                        lin += "</font>";
                     }
 
                     if (quest.type == "MultiplaEscolha") {
@@ -97,11 +119,11 @@ $(function () {
                         quest.alternativas.sort(() => Math.random() - 0.5);
 
                         for (var j in quest.alternativas) {
-                            lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '">' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
+                            lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                         }
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">salvar resposta</button>';
 
-                        lin = lin + '<img src="images/carregando.gif" id="esperando" class="d-none">';
+                        lin = lin + HTML_carregando; //'<img src="images/carregando.gif" id="esperando" height="25">'; // class="d-none">';
 
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
@@ -133,6 +155,8 @@ $(function () {
                         lin = lin + "<br>";
 
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">salvar resposta</button>';
+
+                        lin = lin + HTML_carregando;
 
                         // contador de respostas
                         //lin = lin + '<span class="badge badge-success m-1 retornar_contagem_respostas_questao" id="cont' + idq + '">?</span>';
@@ -190,7 +214,7 @@ $(function () {
         // André respondeu 48 questões :-o
 
         $("#" + eu).prop("disabled", true);
-        $("#esperando").removeClass("d-none");
+        manipular_carregando("show");
 
         $.ajax({
             url: 'http://' + myip + ':5000/responder_questao_circulo',
@@ -200,20 +224,18 @@ $(function () {
             //contentType: "application/json",
             success: function (resultado) {
 
-                $("#esperando").addClass("d-none");
+                manipular_carregando("hide");
 
                 var deu_certo = resultado.message == "ok";
 
                 // diz que deu certo o envio
                 if (deu_certo) {
-                    $("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
+                    //$("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
 
+                    manipular_carregando("hide");
                     jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
-                    //alert("OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-
                     // volta ao começo
-
                     $(location).attr('href', '/circulo.html');
 
                 } else {
@@ -222,8 +244,7 @@ $(function () {
 
             },
             error: function () {
-                $("#esperando").addClass("d-none");
-
+                manipular_carregando("hide");
                 jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
             }
         });
@@ -260,6 +281,10 @@ $(function () {
         var dados = JSON.stringify({ idq: idq, resposta: id_alternativa, id_circulo: id_circulo, id_respondente: id_respondente })
 
         myip = $("#myip").text();
+
+        $("#" + eu).prop("disabled", true);
+        manipular_carregando("show");
+
         $.ajax({
             url: 'http://' + myip + ':5000/responder_questao_circulo',
             type: 'POST',
@@ -272,16 +297,19 @@ $(function () {
                 // diz que deu certo o envio
                 if (deu_certo) {
                     //$("#final").text("Sua resposta foi enviada!");
+                    manipular_carregando("hide");
                     jmessage("ok", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
 
                 } else {
+                    manipular_carregando("hide");
                     jmessage("ERRO", resultado.details);
                 }
             },
             error: function () {
+                manipular_carregando("hide");
                 jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
             }
         });
@@ -333,6 +361,10 @@ $(function () {
         var dados = JSON.stringify({ idq: idq, resposta: valores, id_circulo: id_circulo, id_respondente: id_respondente })
 
         myip = $("#myip").text();
+
+        $("#" + eu).prop("disabled", true);
+        manipular_carregando("show");
+        
         $.ajax({
             url: 'http://' + myip + ':5000/responder_questao_circulo',
             type: 'POST',
@@ -345,17 +377,20 @@ $(function () {
                 // diz que deu certo o envio
                 if (deu_certo) {
                     //$("#final").text("Sua resposta foi enviada!");
+                    manipular_carregando("hide");
                     jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
                     // volta ao começo
                     $(location).attr('href', '/circulo.html');
 
                 } else {
+                    manipular_carregando("hide");
                     jmessage("ERRO", resultado.details);
                 }
 
             },
             error: function () {
+                manipular_carregando("hide");
                 jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
             }
         });

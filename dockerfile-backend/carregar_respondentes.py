@@ -16,7 +16,7 @@ def insere(fonte, identificador):
         db.session.commit()
         print("\nRespondente carregado: "+str(joao))    
 
-insere(data301, "|g-301-2022|")
-insere(data302, "|g-302-2022|")
+insere(data301, "|g:301-2022|")
+insere(data302, "|g:302-2022|")
 
 print("Fim da importação")
