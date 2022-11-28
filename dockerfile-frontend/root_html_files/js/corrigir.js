@@ -266,6 +266,10 @@ $(function () {
             protocolo = "http://"
             http = protocolo.length;
             meuip = url.substring(http, pos);
+            temdoisp = meuip.search(":");
+            if (temdoisp > 0) {
+                meuip = meuip.substring(0, temdoisp);
+            }
             $("#myip").text(meuip);
         } else {
             alert("ERRO: não localizei URL");
