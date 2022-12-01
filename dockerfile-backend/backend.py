@@ -125,6 +125,120 @@ def preparar_rodada(id_circulo):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
+@app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
+def abrir_questao_circulo(id_circulo, id_respondente):
+    if not ipok(request.remote_addr):
+        return failed()
+
+    # geral: escolhe uma questao de assunto do circulo
+    resp = []
+    try:
+        # temp: retorna uma questao aberta
+        # ampliações:
+        # - outros tipos de questão (OK)
+        # - buscar apenas questão ainda não respondida (OK)
+        # - buscar apenas questões de assuntos do círculo
+
+        # q = db.session.query(Aberta).all()
+        # nq = random.randint(1,len(q))
+        # resp = q[nq-1].json()
+
+        # obter círculo
+        # circs = Circulo.query.filter(Circulo.id == id_circulo).all()
+        # este circulo
+        # este_circulo = circs[0] # este_circulo.assuntos
+
+        # questões que eu respondi no círculo atual
+        # ORIGINAL 1.0
+        #r1 = db.session.query(Resposta.questao_id).filter(
+        #    Resposta.respondente_id == id_respondente)
+
+        # r1 = db.session.query(Resposta.questao_id).join(questaoDoCirculo).filter(
+        #    Resposta.respondente_id == id_respondente & questaoDoCirculo.id_questao == Resposta.questao_id)
+
+        # retornar questões que eu já respondi
+        # - que estão no círculo atual
+        # - que são questões minhas (meu respondente)
+        
+        sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
+                    id_respondente+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
+
+        results = db.session.execute(sql)
+        #print(sql)
+        r1 = []
+        for linha in results:
+            r1.append(linha[0])
+
+        #print("tamanho:",len(r1)," r1=", r1)
+        if len(r1) >= 10:
+        #if len(r1.all()) >= 10:
+            retorno = jsonify(
+                {"message": "error", "details": "Já foram respondidas 10 perguntas"})
+        else:
+            # obtém questões que ainda não respondi
+            # PARA FAZER: mas que sejam do círculo
+            # TODO
+            # TODO
+            # TODO
+
+            # selecionar questões o círculo
+            sql2 = "select q.id from questao q, questaodocirculo qc where qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
+
+            results2 = db.session.execute(sql2)
+            print(sql)
+            r2 = []
+            for linha in results2:
+                r2.append(linha[0])        
+
+            print("r2", r2)
+            res = Questao.query.filter(Questao.id.in_(r2)).all()
+
+            if len(res) == 0:
+                retorno = jsonify(
+                    {"message": "error", "details": "Não há mais perguntas a responder"})
+            else:
+
+                # sorteia uma questão
+                nq = random.randint(1, len(res))  # questoes_ainda_nao))
+
+                # prepara a variável de questão
+                resp = ""
+
+                # obtém a questão
+                q = res[nq-1]
+
+                # faz uma conversão de tipo para obter o json
+
+                if q.type == "aberta":
+                    q.__class__ = Aberta
+                    resp = q.json()
+
+                if q.type == "completar":
+                    q.__class__ = Completar
+                    resp = q.json()
+
+                if q.type == "multiplaescolha":
+                    q.__class__ = MultiplaEscolha
+                    resp = q.json()
+
+                # registrar que a questão foi aberta, exibida na tela
+                ex = QuestaoExibidaNoCirculo(
+                    circulo_id=id_circulo, respondente_id=id_respondente, questao_id=q.id)
+                db.session.add(ex)
+                db.session.commit()
+
+                retorno = jsonify({"message": "ok", "details": resp})
+
+    except Exception as e:
+        # resposta de erro
+        retorno = jsonify({"message": "error", "details": str(e)})
+
+    # retornos
+    # retorno = jsonify(resultado)
+    retorno.headers.add('Access-Control-Allow-Origin', '*')
+    return retorno
+
+
 
 # retornar questões com filtro
 @app.route('/retornar_questoes/<filtro>/<parametro>')
@@ -450,105 +564,6 @@ def retornar_contagem_respostas_questao(email, questao):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-
-@app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
-def abrir_questao_circulo(id_circulo, id_respondente):
-    if not ipok(request.remote_addr):
-        return failed()
-
-    # geral: escolhe uma questao de assunto do circulo
-    resp = []
-    try:
-        # temp: retorna uma questao aberta
-        # ampliações:
-        # - outros tipos de questão (OK)
-        # - buscar apenas questão ainda não respondida (OK)
-        # - buscar apenas questões de assuntos do círculo
-
-        # q = db.session.query(Aberta).all()
-        # nq = random.randint(1,len(q))
-        # resp = q[nq-1].json()
-
-        # obter círculo
-        # circs = Circulo.query.filter(Circulo.id == id_circulo).all()
-        # este circulo
-        # este_circulo = circs[0] # este_circulo.assuntos
-
-        # questões que eu respondi no círculo atual
-        r1 = db.session.query(Resposta.questao_id).filter(
-            Resposta.respondente_id == id_respondente)
-
-        # r1 = db.session.query(Resposta.questao_id).join(questaoDoCirculo).filter(
-        #    Resposta.respondente_id == id_respondente & questaoDoCirculo.id_questao == Resposta.questao_id)
-
-        # retornar questões que eu já respondi
-        # - que estão no círculo atual
-        # - que são questões minhas (meu respondente)
-        
-        #sql = "select questao_id from questao q, questaodocirculo qc, resposta r" +\
-        #                        " where q.id = qc.id_questao and qc.id_circulo = "+id_circulo+" AND r.respondente_id = "+id_respondente
-        #results = db.session.execute(sql)
-        #print(sql)
-        #r1 = []
-        #for linha in results:
-        #    r1.append(linha[0])
-
-        #if len(r1) >= 10:
-        if len(r1.all()) >= 10:
-            retorno = jsonify(
-                {"message": "error", "details": "Já foram respondidas 10 perguntas"})
-        else:
-            # obtém questões que ainda não respondi
-            # PARA FAZER: mas que sejam do círculo
-            # TODO
-            # TODO
-            # TODO
-            res = Questao.query.filter(Questao.id.notin_(r1)).all()
-
-            if len(res) == 0:
-                retorno = jsonify(
-                    {"message": "error", "details": "Não há mais perguntas a responder"})
-            else:
-
-                # sorteia uma questão
-                nq = random.randint(1, len(res))  # questoes_ainda_nao))
-
-                # prepara a variável de questão
-                resp = ""
-
-                # obtém a questão
-                q = res[nq-1]
-
-                # faz uma conversão de tipo para obter o json
-
-                if q.type == "aberta":
-                    q.__class__ = Aberta
-                    resp = q.json()
-
-                if q.type == "completar":
-                    q.__class__ = Completar
-                    resp = q.json()
-
-                if q.type == "multiplaescolha":
-                    q.__class__ = MultiplaEscolha
-                    resp = q.json()
-
-                # registrar que a questão foi aberta, exibida na tela
-                ex = QuestaoExibidaNoCirculo(
-                    circulo_id=id_circulo, respondente_id=id_respondente, questao_id=q.id)
-                db.session.add(ex)
-                db.session.commit()
-
-                retorno = jsonify({"message": "ok", "details": resp})
-
-    except Exception as e:
-        # resposta de erro
-        retorno = jsonify({"message": "error", "details": str(e)})
-
-    # retornos
-    # retorno = jsonify(resultado)
-    retorno.headers.add('Access-Control-Allow-Origin', '*')
-    return retorno
 
 # curl -d '{ "idq": 2, "resposta": "git é legal", "id_respondente":1, "id_circulo":1 }' -X POST http://localhost:5000/responder_questao_circulo
 
