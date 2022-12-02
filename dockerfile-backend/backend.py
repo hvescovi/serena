@@ -4,6 +4,10 @@ from modelo import *
 # inicializa uma fila de respondentes
 fila_respondentes = []
 
+# NÚMERO DE QUESTÕES PARA RESPONDER
+# DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
+maximo_questoes = 3 # 10
+
 
 @app.route("/")
 def inicio():
@@ -55,17 +59,39 @@ def preparar_rodada(id_circulo):
             Respondente.observacao == "302").all()
     '''
 
+    
     if len(todos) == 0:
         resp = {"message": "error", "details": "não há respondentes"}
     else:
 
-        # tenta 10 vezes
-        for i in range(1, 10):
+        # quantidade de respostas no círculo - vai ser preenchida dentro do for
+        qresps = -1
+
+        # tenta 15 vezes
+        for i in range(1, 15):
             # escolhe um respondente
             nquem = random.randint(1, len(todos))
 
             # pega o id dele
             id_respondente = todos[nquem-1].id
+
+            # verifica se o respondente já respondeu 10 questões NO CIRCULOOOOOOO
+            sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
+                    str(id_respondente)+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
+
+            results = db.session.execute(sql)
+            #print(sql)
+            r1 = []
+            for linha in results:
+                r1.append(linha[0])
+
+            qresps = len(r1)
+            print("questoes respondidas", r1)
+            # já respondeu o maximo de questoes?
+            if qresps >= maximo_questoes:
+                # tenta outro
+                continue
+                # eu estava usando break aqui em vez do continue, CABEÇÃAAAAAO
 
             # print(fila_respondentes)
             # verifica se o respondente não está na fila dos últimos 10
@@ -77,7 +103,7 @@ def preparar_rodada(id_circulo):
         fila_respondentes.append(id_respondente)
 
         # se a fila encheu
-        if len(fila_respondentes) >= 10:
+        if len(fila_respondentes) >= 15: # TAMANHO DA FILA
             # remove o primeiro da fila, para a fila "andar"
             fila_respondentes.pop(0)
 
@@ -88,11 +114,15 @@ def preparar_rodada(id_circulo):
         detalhes = q[0].json()
 
         # OUTRA CONSULTA
-        # verificar quantas questões a pessoa já respondeu
-        q = Resposta.query.filter_by(respondente_id=id_respondente).count()
+        # verificar quantas questões a pessoa já respondeu NO CIRCULOOOOO TODO TODO TODO
+        # não precisa mais, já é feita a consulta antes
+        #q = Resposta.query.filter_by(respondente_id=id_respondente).count()
 
-        # adicionar no json essa quantidade de questões respondidas
-        detalhes.update({"questoes_respondidas": q})
+        if qresps == -1:
+            detalhes.update({"questoes_respondidas": qresps}) # PROBLEMA AQUI
+        else:
+            # adicionar no json essa quantidade de questões respondidas
+            detalhes.update({"questoes_respondidas": qresps})
 
         # adicionar informações do círculo
         detalhes.update({"circulo_id": circulo.id,
@@ -100,6 +130,8 @@ def preparar_rodada(id_circulo):
                          "data_circulo": circulo.data})
 
         # ver quantas questões a pessoa já pulou
+        # PRECISA SER AJUSTADO PARA CONSIDERAR APENAS O CÍRCULO ATUAL
+        # ALÉM DISSO É UMA CONSULTA A MAIS QUE ESTÁ "PESANDO" NA HORA DA EXECUÇÃO
         # PARA FAZER TODO
         # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
 
@@ -159,7 +191,6 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # retornar questões que eu já respondi
         # - que estão no círculo atual
         # - que são questões minhas (meu respondente)
-        
         sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
                     id_respondente+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
 
@@ -170,28 +201,30 @@ def abrir_questao_circulo(id_circulo, id_respondente):
             r1.append(linha[0])
 
         #print("tamanho:",len(r1)," r1=", r1)
-        if len(r1) >= 10:
+        if len(r1) >= maximo_questoes:
         #if len(r1.all()) >= 10:
             retorno = jsonify(
                 {"message": "error", "details": "Já foram respondidas 10 perguntas"})
         else:
-            # obtém questões que ainda não respondi
-            # PARA FAZER: mas que sejam do círculo
-            # TODO
-            # TODO
-            # TODO
-
-            # selecionar questões o círculo
+            # selecionar todas as questões do círculo
             sql2 = "select q.id from questao q, questaodocirculo qc where qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
 
             results2 = db.session.execute(sql2)
-            print(sql)
+            #print(sql)
             r2 = []
             for linha in results2:
                 r2.append(linha[0])        
 
-            print("r2", r2)
-            res = Questao.query.filter(Questao.id.in_(r2)).all()
+            #print("r2 (todas do círculo)", r2)
+
+            # obter complemento: questões que estão no círculo, MENOS as questões que eu já respondi 
+            # https://stackoverflow.com/questions/52417929/remove-elements-from-one-array-if-present-in-another-array-keep-duplicates-nu
+            r3 = list(set(r2) - set(r1))
+
+            #print("r3 (só as que não respondi", r3)
+
+            res = Questao.query.filter(Questao.id.in_(r3)).all()
+
 
             if len(res) == 0:
                 retorno = jsonify(

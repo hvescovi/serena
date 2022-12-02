@@ -61,9 +61,9 @@ $(function () {
         //alert('entrei');
         // pega o email de quem vai fazer a questão
         id_respondente = $("#id_respondente").val();
-        id_circulo = $("#id_circulo").val();
+        circulo_id = $("#circulo_id").text(); // está em um spam, aparecendo na tela
 
-        url = 'http://' + myip + ':5000/abrir_questao_circulo/' + id_circulo + '/' + id_respondente;
+        url = 'http://' + myip + ':5000/abrir_questao_circulo/' + circulo_id + '/' + id_respondente;
 
         //alert(url);
         $.ajax({
@@ -197,12 +197,12 @@ $(function () {
         }
 
         // pegar dados do circulo
-        id_circulo = $("#id_circulo").val();
+        circulo_id = $("#circulo_id").text();
         id_respondente = $("#id_respondente").val();
 
         //alert(resp);
         // prepara os dados em json
-        var dados = JSON.stringify({ idq: idq, resposta: resp, id_respondente: id_respondente, id_circulo: id_circulo })
+        var dados = JSON.stringify({ idq: idq, resposta: resp, id_respondente: id_respondente, id_circulo: circulo_id })
 
         //alert(dados);
         myip = $("#myip").text();
@@ -273,12 +273,12 @@ $(function () {
         //alert(id_alternativa);
 
         // pegar dados do circulo
-        id_circulo = $("#id_circulo").val();
+        circulo_id = $("#circulo_id").text();
         id_respondente = $("#id_respondente").val();
 
         //alert(resp);
         // prepara os dados em json
-        var dados = JSON.stringify({ idq: idq, resposta: id_alternativa, id_circulo: id_circulo, id_respondente: id_respondente })
+        var dados = JSON.stringify({ idq: idq, resposta: id_alternativa, id_circulo: circulo_id, id_respondente: id_respondente })
 
         myip = $("#myip").text();
 
@@ -354,11 +354,11 @@ $(function () {
         //alert(valores);
 
         // pegar dados do circulo
-        id_circulo = $("#id_circulo").val();
+        circulo_id = $("#circulo_id").text();
         id_respondente = $("#id_respondente").val();
 
         // prepara os dados em json
-        var dados = JSON.stringify({ idq: idq, resposta: valores, id_circulo: id_circulo, id_respondente: id_respondente })
+        var dados = JSON.stringify({ idq: idq, resposta: valores, id_circulo: circulo_id, id_respondente: id_respondente })
 
         myip = $("#myip").text();
 
@@ -452,7 +452,7 @@ $(function () {
         success: function (resultado) {
             if (resultado.message == "ok") {
                 circulo = resultado.details.id;
-                //console.log("circulo: "+circulo);
+                console.log("circulo ativo: "+circulo);
 
                 // vamos preparar a rodada
                 url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;

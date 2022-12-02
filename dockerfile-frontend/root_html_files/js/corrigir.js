@@ -293,13 +293,35 @@ $(function () {
     // obtém o id da questão
     //alert(eu);
 
-    var circulo = 1;
+    var circulo = 0;
     // circulo 1 = turma 301
     // circulo 2 = turma 302
 
     $("#circulo_id").text(circulo);
 
     myip = $("#myip").text();
+
+    // obtém do backend qual é o círculo ativo
+    url = 'http://' + myip + ':4999/circulo_ativo';
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        success: function (resultado) {
+            if (resultado.message == "ok") {
+                circulo = resultado.details.id;
+                $("#circulo_id").text(circulo);
+            } else {
+                jmessage("ERRO", 'não foi possível obter o círculo ativo :-(');    
+            }
+        },
+        error: function () {
+            jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
+        }
+
+    });
+
     /*
         
     
