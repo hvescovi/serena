@@ -6,7 +6,7 @@ fila_respondentes = []
 
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 3 # 10
+maximo_questoes = 4 # 10
 
 
 @app.route("/")
@@ -970,6 +970,36 @@ def circulo_ativo():
     ret = jsonify(resp)
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
+
+
+
+@app.route('/retornar_contagem_respostas_geral/<circulo_id>')
+def retornar_contagem_respostas_geral(circulo_id):
+    
+    where2 = " and rc.circulo_id = "+circulo_id
+
+    resultado = db.session.execute("""select rc.circulo_id, count(r.id) q, rte.nome
+from resposta r, respondente rte, respostanocirculo rc
+where rc.resposta_id=r.id 
+and rte.id = r.respondente_id """ + where2 + """
+group by rte.nome, rc.circulo_id 
+order by rc.circulo_id, q desc, rte.nome""")
+
+    lista = []
+    for r in resultado:
+        lista.append({
+            "circulo_id": r["circulo_id"],
+            "q": r["q"],
+            "nome": r["nome"]
+        })
+    
+    ret = jsonify({"message": "ok", "details": lista})
+
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+
+
 
 
 # start of backend
