@@ -64,7 +64,11 @@ $(function () {
                         // nova linha
                         novaresp = cabecalho;
 
-                        novaresp += resp.resposta;
+                        // TODO: remover formatação HTML da resposta
+                        // TODO
+                        // TODO
+                        semhtml = resp.resposta.replace("<", " (MENOR) ");
+                        novaresp += semhtml; //resp.resposta;
 
                         // aparencia da pontuação (tem destaque se ainda não foi corrigida)
                         aparencia = "";
@@ -97,10 +101,12 @@ $(function () {
                                     pt = 0;
                                 }
                             } else if (resp.questao.type == "Aberta") {
-                                gabarito = resp.questao.resposta;
+                                temp = resp.questao.resposta;
+                                gabarito = temp.replace("<", " (MENOR) ");
                                 pt = resp.pontuacao_sugerida;
                             } else if (resp.questao.type == "Completar") {
-                                gabarito = resp.questao.lacunas;
+                                temp = resp.questao.lacunas;
+                                gabarito = temp.replace("<", " (MENOR) ");
                                 pt = resp.pontuacao_sugerida;
                             }
                             aparencia = ' class = "bg-warning" ';
