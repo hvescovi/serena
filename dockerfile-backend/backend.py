@@ -4,6 +4,10 @@ from modelo import *
 # inicializa uma fila de respondentes
 fila_respondentes = []
 
+# NÚMERO DE QUESTÕES PARA RESPONDER
+# DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
+maximo_questoes = 4 # 10
+
 
 @app.route("/")
 def inicio():
@@ -55,17 +59,39 @@ def preparar_rodada(id_circulo):
             Respondente.observacao == "302").all()
     '''
 
+    
     if len(todos) == 0:
         resp = {"message": "error", "details": "não há respondentes"}
     else:
 
-        # tenta 10 vezes
-        for i in range(1, 10):
+        # quantidade de respostas no círculo - vai ser preenchida dentro do for
+        qresps = -1
+
+        # tenta 15 vezes
+        for i in range(1, 15):
             # escolhe um respondente
             nquem = random.randint(1, len(todos))
 
             # pega o id dele
             id_respondente = todos[nquem-1].id
+
+            # verifica se o respondente já respondeu 10 questões NO CIRCULOOOOOOO
+            sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
+                    str(id_respondente)+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
+
+            results = db.session.execute(sql)
+            #print(sql)
+            r1 = []
+            for linha in results:
+                r1.append(linha[0])
+
+            qresps = len(r1)
+            print("questoes respondidas", r1)
+            # já respondeu o maximo de questoes?
+            if qresps >= maximo_questoes:
+                # tenta outro
+                continue
+                # eu estava usando break aqui em vez do continue, CABEÇÃAAAAAO
 
             # print(fila_respondentes)
             # verifica se o respondente não está na fila dos últimos 10
@@ -77,7 +103,7 @@ def preparar_rodada(id_circulo):
         fila_respondentes.append(id_respondente)
 
         # se a fila encheu
-        if len(fila_respondentes) >= 10:
+        if len(fila_respondentes) >= 15: # TAMANHO DA FILA
             # remove o primeiro da fila, para a fila "andar"
             fila_respondentes.pop(0)
 
@@ -88,11 +114,15 @@ def preparar_rodada(id_circulo):
         detalhes = q[0].json()
 
         # OUTRA CONSULTA
-        # verificar quantas questões a pessoa já respondeu
-        q = Resposta.query.filter_by(respondente_id=id_respondente).count()
+        # verificar quantas questões a pessoa já respondeu NO CIRCULOOOOO TODO TODO TODO
+        # não precisa mais, já é feita a consulta antes
+        #q = Resposta.query.filter_by(respondente_id=id_respondente).count()
 
-        # adicionar no json essa quantidade de questões respondidas
-        detalhes.update({"questoes_respondidas": q})
+        if qresps == -1:
+            detalhes.update({"questoes_respondidas": qresps}) # PROBLEMA AQUI
+        else:
+            # adicionar no json essa quantidade de questões respondidas
+            detalhes.update({"questoes_respondidas": qresps})
 
         # adicionar informações do círculo
         detalhes.update({"circulo_id": circulo.id,
@@ -100,6 +130,8 @@ def preparar_rodada(id_circulo):
                          "data_circulo": circulo.data})
 
         # ver quantas questões a pessoa já pulou
+        # PRECISA SER AJUSTADO PARA CONSIDERAR APENAS O CÍRCULO ATUAL
+        # ALÉM DISSO É UMA CONSULTA A MAIS QUE ESTÁ "PESANDO" NA HORA DA EXECUÇÃO
         # PARA FAZER TODO
         # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
 
@@ -124,6 +156,121 @@ def preparar_rodada(id_circulo):
     ret = jsonify(resp)
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
+
+@app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
+def abrir_questao_circulo(id_circulo, id_respondente):
+    if not ipok(request.remote_addr):
+        return failed()
+
+    # geral: escolhe uma questao de assunto do circulo
+    resp = []
+    try:
+        # temp: retorna uma questao aberta
+        # ampliações:
+        # - outros tipos de questão (OK)
+        # - buscar apenas questão ainda não respondida (OK)
+        # - buscar apenas questões de assuntos do círculo
+
+        # q = db.session.query(Aberta).all()
+        # nq = random.randint(1,len(q))
+        # resp = q[nq-1].json()
+
+        # obter círculo
+        # circs = Circulo.query.filter(Circulo.id == id_circulo).all()
+        # este circulo
+        # este_circulo = circs[0] # este_circulo.assuntos
+
+        # questões que eu respondi no círculo atual
+        # ORIGINAL 1.0
+        #r1 = db.session.query(Resposta.questao_id).filter(
+        #    Resposta.respondente_id == id_respondente)
+
+        # r1 = db.session.query(Resposta.questao_id).join(questaoDoCirculo).filter(
+        #    Resposta.respondente_id == id_respondente & questaoDoCirculo.id_questao == Resposta.questao_id)
+
+        # retornar questões que eu já respondi
+        # - que estão no círculo atual
+        # - que são questões minhas (meu respondente)
+        sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
+                    id_respondente+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
+
+        results = db.session.execute(sql)
+        #print(sql)
+        r1 = []
+        for linha in results:
+            r1.append(linha[0])
+
+        #print("tamanho:",len(r1)," r1=", r1)
+        if len(r1) >= maximo_questoes:
+        #if len(r1.all()) >= 10:
+            retorno = jsonify(
+                {"message": "error", "details": "Já foram respondidas 10 perguntas"})
+        else:
+            # selecionar todas as questões do círculo
+            sql2 = "select q.id from questao q, questaodocirculo qc where qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
+
+            results2 = db.session.execute(sql2)
+            #print(sql)
+            r2 = []
+            for linha in results2:
+                r2.append(linha[0])        
+
+            #print("r2 (todas do círculo)", r2)
+
+            # obter complemento: questões que estão no círculo, MENOS as questões que eu já respondi 
+            # https://stackoverflow.com/questions/52417929/remove-elements-from-one-array-if-present-in-another-array-keep-duplicates-nu
+            r3 = list(set(r2) - set(r1))
+
+            #print("r3 (só as que não respondi", r3)
+
+            res = Questao.query.filter(Questao.id.in_(r3)).all()
+
+
+            if len(res) == 0:
+                retorno = jsonify(
+                    {"message": "error", "details": "Não há mais perguntas a responder"})
+            else:
+
+                # sorteia uma questão
+                nq = random.randint(1, len(res))  # questoes_ainda_nao))
+
+                # prepara a variável de questão
+                resp = ""
+
+                # obtém a questão
+                q = res[nq-1]
+
+                # faz uma conversão de tipo para obter o json
+
+                if q.type == "aberta":
+                    q.__class__ = Aberta
+                    resp = q.json()
+
+                if q.type == "completar":
+                    q.__class__ = Completar
+                    resp = q.json()
+
+                if q.type == "multiplaescolha":
+                    q.__class__ = MultiplaEscolha
+                    resp = q.json()
+
+                # registrar que a questão foi aberta, exibida na tela
+                ex = QuestaoExibidaNoCirculo(
+                    circulo_id=id_circulo, respondente_id=id_respondente, questao_id=q.id)
+                db.session.add(ex)
+                db.session.commit()
+
+                retorno = jsonify({"message": "ok", "details": resp})
+
+    except Exception as e:
+        # resposta de erro
+        retorno = jsonify({"message": "error", "details": str(e)})
+
+    # retornos
+    # retorno = jsonify(resultado)
+    retorno.headers.add('Access-Control-Allow-Origin', '*')
+    return retorno
+
 
 
 # retornar questões com filtro
@@ -450,105 +597,6 @@ def retornar_contagem_respostas_questao(email, questao):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-
-@app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
-def abrir_questao_circulo(id_circulo, id_respondente):
-    if not ipok(request.remote_addr):
-        return failed()
-
-    # geral: escolhe uma questao de assunto do circulo
-    resp = []
-    try:
-        # temp: retorna uma questao aberta
-        # ampliações:
-        # - outros tipos de questão (OK)
-        # - buscar apenas questão ainda não respondida (OK)
-        # - buscar apenas questões de assuntos do círculo
-
-        # q = db.session.query(Aberta).all()
-        # nq = random.randint(1,len(q))
-        # resp = q[nq-1].json()
-
-        # obter círculo
-        # circs = Circulo.query.filter(Circulo.id == id_circulo).all()
-        # este circulo
-        # este_circulo = circs[0] # este_circulo.assuntos
-
-        # questões que eu respondi no círculo atual
-        r1 = db.session.query(Resposta.questao_id).filter(
-            Resposta.respondente_id == id_respondente)
-
-        # r1 = db.session.query(Resposta.questao_id).join(questaoDoCirculo).filter(
-        #    Resposta.respondente_id == id_respondente & questaoDoCirculo.id_questao == Resposta.questao_id)
-
-        # retornar questões que eu já respondi
-        # - que estão no círculo atual
-        # - que são questões minhas (meu respondente)
-        
-        #sql = "select questao_id from questao q, questaodocirculo qc, resposta r" +\
-        #                        " where q.id = qc.id_questao and qc.id_circulo = "+id_circulo+" AND r.respondente_id = "+id_respondente
-        #results = db.session.execute(sql)
-        #print(sql)
-        #r1 = []
-        #for linha in results:
-        #    r1.append(linha[0])
-
-        #if len(r1) >= 10:
-        if len(r1.all()) >= 10:
-            retorno = jsonify(
-                {"message": "error", "details": "Já foram respondidas 10 perguntas"})
-        else:
-            # obtém questões que ainda não respondi
-            # PARA FAZER: mas que sejam do círculo
-            # TODO
-            # TODO
-            # TODO
-            res = Questao.query.filter(Questao.id.notin_(r1)).all()
-
-            if len(res) == 0:
-                retorno = jsonify(
-                    {"message": "error", "details": "Não há mais perguntas a responder"})
-            else:
-
-                # sorteia uma questão
-                nq = random.randint(1, len(res))  # questoes_ainda_nao))
-
-                # prepara a variável de questão
-                resp = ""
-
-                # obtém a questão
-                q = res[nq-1]
-
-                # faz uma conversão de tipo para obter o json
-
-                if q.type == "aberta":
-                    q.__class__ = Aberta
-                    resp = q.json()
-
-                if q.type == "completar":
-                    q.__class__ = Completar
-                    resp = q.json()
-
-                if q.type == "multiplaescolha":
-                    q.__class__ = MultiplaEscolha
-                    resp = q.json()
-
-                # registrar que a questão foi aberta, exibida na tela
-                ex = QuestaoExibidaNoCirculo(
-                    circulo_id=id_circulo, respondente_id=id_respondente, questao_id=q.id)
-                db.session.add(ex)
-                db.session.commit()
-
-                retorno = jsonify({"message": "ok", "details": resp})
-
-    except Exception as e:
-        # resposta de erro
-        retorno = jsonify({"message": "error", "details": str(e)})
-
-    # retornos
-    # retorno = jsonify(resultado)
-    retorno.headers.add('Access-Control-Allow-Origin', '*')
-    return retorno
 
 # curl -d '{ "idq": 2, "resposta": "git é legal", "id_respondente":1, "id_circulo":1 }' -X POST http://localhost:5000/responder_questao_circulo
 
@@ -922,6 +970,36 @@ def circulo_ativo():
     ret = jsonify(resp)
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
+
+
+
+@app.route('/retornar_contagem_respostas_geral/<circulo_id>')
+def retornar_contagem_respostas_geral(circulo_id):
+    
+    where2 = " and rc.circulo_id = "+circulo_id
+
+    resultado = db.session.execute("""select rc.circulo_id, count(r.id) q, rte.nome
+from resposta r, respondente rte, respostanocirculo rc
+where rc.resposta_id=r.id 
+and rte.id = r.respondente_id """ + where2 + """
+group by rte.nome, rc.circulo_id 
+order by rc.circulo_id, q desc, rte.nome""")
+
+    lista = []
+    for r in resultado:
+        lista.append({
+            "circulo_id": r["circulo_id"],
+            "q": r["q"],
+            "nome": r["nome"]
+        })
+    
+    ret = jsonify({"message": "ok", "details": lista})
+
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+
+
 
 
 # start of backend

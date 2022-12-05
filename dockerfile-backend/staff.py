@@ -12,8 +12,18 @@ def inicio():
 
 @app.route('/exibir_respostas/<id_circulo>')
 def exibir_respostas_circulo(id_circulo):
+
+    # selecionar respostas que foram respondidas no círculo
+    sql = "select r.id from resposta r, respostanocirculo rc where rc.resposta_id = r.id AND rc.circulo_id = "+id_circulo # order by q.id
+
+    results = db.session.execute(sql)
+    print(sql)
+    r1 = []
+    for linha in results:
+        r1.append(linha[0])        
+
     lista = []
-    respostas = Resposta.query.order_by(Resposta.questao_id).all()
+    respostas = Resposta.query.filter(Resposta.id.in_(r1)).all()
     for r in respostas:
         lista.append(r.json())
 
@@ -65,11 +75,11 @@ def gerar_recomendacoes_respostas_sem_pontuacao():
     # prepara a resposta padrão otimista
     response = jsonify({"message": "ok", "details": "ok"})
 
-    try:
+    try:    
         respostas = Resposta.query.order_by(Resposta.questao_id).all()
         cont = 0;
         for r in respostas:
-            if r.pontuacao is None:  # resposta sem pontuação?
+            if r.pontuacao_sugerida is None:  # resposta sem pontuação?
                 if r.questao.type == "aberta":
                     resposta_aluno = r.resposta
                     gabarito = r.questao.resposta
@@ -217,6 +227,22 @@ def gerar_nota_alunos():
 
     ret = jsonify({"message": "ok", "details": lista})
 
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+@app.route('/circulo_ativo')
+def circulo_ativo():
+    
+    # busca o primeiro circulo ativo
+    circulo = db.session.query(Circulo).filter(Circulo.ativo == "1").first()
+
+    if circulo == None:
+        resp = {"message": "erro", "details": "não há círculo ativo!"}
+    else:
+        resp = {"message": "ok"}
+        resp.update({"details": circulo.json()})
+
+    ret = jsonify(resp)
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 

@@ -1,11 +1,14 @@
 from config import *
 from modelo import *
 
+# https://csvjson.com/csv2json
+
 import json
 
 # ler arquivo json das outras coisas
-data301 = json.load(open('/home/friend/01-github/serena/dockerfile-backend/301.json'))
-data302 = json.load(open('/home/friend/01-github/serena/dockerfile-backend/302.json'))
+#data301 = json.load(open('/home/friend/01-github/serena/dockerfile-backend/301.json'))
+#data302 = json.load(open('/home/friend/01-github/serena/dockerfile-backend/302.json'))
+data202 = json.load(open('/home/friend/01-github/serena/dockerfile-backend/202.json'))
 
 def insere(fonte, identificador):
     # insere respondentes
@@ -16,7 +19,8 @@ def insere(fonte, identificador):
         db.session.commit()
         print("\nRespondente carregado: "+str(joao))    
 
-insere(data301, "|g:301-2022|")
-insere(data302, "|g:302-2022|")
+#insere(data301, "|g:301-2022|")
+#insere(data302, "|g:302-2022|")
+insere(data202, "|g:202-2022|")
 
 print("Fim da importação")
