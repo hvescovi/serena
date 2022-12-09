@@ -27,8 +27,9 @@ app = Flask(__name__)
 CORS(app) # aplicar o cross domain
 
 # execução local?
-if os.path.exists("/home/friend/01-github/serena/dockerfile-backend/"):
-    arquivobd = "/home/friend/01-github/serena/dockerfile-backend/database/serena.db"
+caminho_BD = "/home/friend/Dropbox/10-serena-BD/"
+if os.path.exists(caminho_BD):
+    arquivobd = caminho_BD + "serena.db"
 else:    
     # execução em container do docker
     arquivobd = "/database/serena.db"

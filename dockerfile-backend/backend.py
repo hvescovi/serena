@@ -6,7 +6,7 @@ fila_respondentes = []
 
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 4 # 10
+maximo_questoes = 8
 
 
 @app.route("/")
@@ -204,7 +204,7 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         if len(r1) >= maximo_questoes:
         #if len(r1.all()) >= 10:
             retorno = jsonify(
-                {"message": "error", "details": "Já foram respondidas 10 perguntas"})
+                {"message": "error", "details": "Já foram respondidas todas as questões previstas para este círculo"})
         else:
             # selecionar todas as questões do círculo
             sql2 = "select q.id from questao q, questaodocirculo qc where qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
