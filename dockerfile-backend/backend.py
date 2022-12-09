@@ -6,7 +6,7 @@ fila_respondentes = []
 
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 6
+maximo_questoes = 5
 
 
 @app.route("/")
@@ -929,7 +929,7 @@ def exibir_respostas_circulo(id_circulo):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-
+# controle de ips?
 ipcontrol = False
 ips = []
 

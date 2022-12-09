@@ -219,7 +219,20 @@ def gerar_nota_alunos():
     notas = db.session.execute("""select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, 
     rp.nome AS nome from resposta as r 
     inner join respondente as rp 
-    on r.respondente_id = rp.id group by rp.id;""")
+    on r.respondente_id = rp.id group by rp.id
+    order by c;""")
+
+    '''
+select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome 
+    from resposta as r 
+    inner join respondente as rp 
+    inner join respostanocirculo as rc
+    on r.respondente_id = rp.id AND
+    rc.resposta_id = r.id AND
+	rc.circulo_id = 4   
+    group by rp.id
+
+    ''' 
 
     lista = []
     for nota in notas:

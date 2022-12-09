@@ -123,6 +123,9 @@ $(function () {
                         novaresp += ' <button id="btpt' + resp.id + '" class="pontuar_resposta">pontuar</button> ' + sugerido;
                         novaresp += ' <img src="images/check-circle.svg" id="corrigida' + resp.id + '" class="d-none">';
 
+                        // a linha abaixo mostra o nome do respondente :-p
+                        // novaresp += ' =======> ' + resp.respondente.nome;
+
                         novaresp += "</div>"; //col
                         novaresp += "</div>"; //row
 
