@@ -13,17 +13,21 @@ def inicio():
 @app.route('/exibir_respostas/<id_circulo>')
 def exibir_respostas_circulo(id_circulo):
 
-    # selecionar respostas que foram respondidas no círculo
-    sql = "select r.id from resposta r, respostanocirculo rc where rc.resposta_id = r.id AND rc.circulo_id = "+id_circulo # order by q.id
-
+    # selecionar id's das respostas que foram respondidas no círculo
+    sql = "select r.id from resposta r, respostanocirculo rc where rc.resposta_id = r.id AND rc.circulo_id = "+id_circulo +" order by r.questao_id"
     results = db.session.execute(sql)
     print(sql)
     r1 = []
     for linha in results:
         r1.append(linha[0])        
 
+    # obter as respostas completas
     lista = []
-    respostas = Resposta.query.filter(Resposta.id.in_(r1)).all()
+    #respostas = Resposta.query.filter(Resposta.id.in_(r1)).all()
+    q = Resposta.query.filter(Resposta.id.in_(r1))
+    # order por questão :-) dá-le marco véio # https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query.order_by
+    q = q.order_by(Resposta.questao_id) 
+    respostas = q.all()
     for r in respostas:
         lista.append(r.json())
 

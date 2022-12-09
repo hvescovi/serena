@@ -74,11 +74,15 @@ $(function () {
                         aparencia = "";
 
                         // gabarito padrão
-                        gabarito = "";
+                        gabarito = "*";
 
                         // se já houver nota, vai aparecer apenas a sugestão ao lado
                         sugerido = "";
 
+
+                        //TODO: só mostra gabarito se houver respostas a pontuar
+                        // depois pode mostrar para todas as situações, 
+                        // não precisa ter essa restrição
                         if (resp.pontuacao == null) { // não tem pontuação ainda?
                             // pontuação sugerida, entre 0 e 1
                             pt = "";
