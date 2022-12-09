@@ -6,7 +6,7 @@ fila_respondentes = []
 
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 8
+maximo_questoes = 6
 
 
 @app.route("/")
