@@ -222,7 +222,7 @@ def gerar_nota_alunos():
     rp.nome AS nome from resposta as r 
     inner join respondente as rp 
     on r.respondente_id = rp.id group by rp.id
-    order by c;"""))
+    order by r.respondente_id;"""))
 
     '''
 select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome 

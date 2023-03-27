@@ -1,0 +1,4 @@
+testar aspas duplas no f
+painel de quantas questões faltam por pessoa
+confirmar envio de resposta
+formulário para cadastro de questão objetiva :-!!!
