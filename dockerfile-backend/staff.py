@@ -15,7 +15,9 @@ def exibir_respostas_circulo(id_circulo):
 
     # selecionar id's das respostas que foram respondidas no círculo
     sql = "select r.id from resposta r, respostanocirculo rc where rc.resposta_id = r.id AND rc.circulo_id = "+id_circulo +" order by r.questao_id"
-    results = db.session.execute(sql)
+    # results = db.session.execute(sql)
+    # ERRO inserido em nova versão de sqlalchemy
+    results = db.session.execute(text(sql))
     print(sql)
     r1 = []
     for linha in results:
@@ -132,11 +134,11 @@ def eliminar_respostas_duplicadas():
     '''
 
     # https://stackoverflow.com/questions/17972020/how-to-execute-raw-sql-in-flask-sqlalchemy-app
-    duplicados = db.session.execute('select count(id) q, questao_id, respondente_id'+\
+    duplicados = db.session.execute(text('select count(id) q, questao_id, respondente_id'+\
     ' from resposta'+\
     ' group by questao_id, respondente_id'+\
     ' having q > 1'+\
-    ' order by q desc')
+    ' order by q desc'))
 
     # conta os elementos duplicados
     contagem_geral = 0
@@ -159,7 +161,7 @@ def eliminar_respostas_duplicadas():
                str(questao_id)+' and respondente_id='+str(respondente_id)
 
         # obtém esses registros duplicados
-        ids_respostas_duplicadas = db.session.execute(sql)
+        ids_respostas_duplicadas = db.session.execute(text(sql))
 
         # monta os SQLs de exclusão
         sql_excluir1 = "delete from resposta where "
@@ -216,11 +218,11 @@ def eliminar_respostas_duplicadas():
 
 @app.route('/gerar_nota_alunos')
 def gerar_nota_alunos():
-    notas = db.session.execute("""select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, 
+    notas = db.session.execute(text("""select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, 
     rp.nome AS nome from resposta as r 
     inner join respondente as rp 
     on r.respondente_id = rp.id group by rp.id
-    order by c;""")
+    order by c;"""))
 
     '''
 select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome 

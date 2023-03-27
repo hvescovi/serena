@@ -44,7 +44,14 @@ def preparar_rodada(id_circulo):
     esteja participando do circulo
     '''
     # carrega o circulo atual
-    circulo = Circulo.query.get(id_circulo)
+    # MUDANÇA DE VERSÃO DO SQLALCHEMY
+    # ERRO
+    # LegacyAPIWarning: The Query.get() method is considered legacy as of the 
+    # 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. 
+    # The method is now available as Session.get() (deprecated since: 2.0) 
+    # (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    #circulo = Circulo.query.get(id_circulo)
+    circulo = db.session.get(Circulo, id_circulo)
 
     # pega os respondentes do circulo
     todos = db.session.query(Respondente).filter(
@@ -79,7 +86,12 @@ def preparar_rodada(id_circulo):
             sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
                     str(id_respondente)+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
 
-            results = db.session.execute(sql)
+            
+            # results = db.session.execute(sql)
+            # NOVO ERRO de versão sqlalchemy
+            # sqlalchemy.exc.ArgumentError: Textual SQL expression 'select q.id from questao ...' should be explicitly declared as text('select q.id from questao ...')
+            results = db.session.execute(text(sql))
+
             #print(sql)
             r1 = []
             for linha in results:
@@ -194,7 +206,8 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
                     id_respondente+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
 
-        results = db.session.execute(sql)
+        # inserido text por causa de NOVO ERRO DE VERSÃO do sqlalchemy
+        results = db.session.execute(text(sql))
         #print(sql)
         r1 = []
         for linha in results:
@@ -209,7 +222,8 @@ def abrir_questao_circulo(id_circulo, id_respondente):
             # selecionar todas as questões do círculo
             sql2 = "select q.id from questao q, questaodocirculo qc where qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
 
-            results2 = db.session.execute(sql2)
+            # inserido text por causa de NOVO ERRO DE VERSÃO do sqlalchemy
+            results2 = db.session.execute(text(sql2))
             #print(sql)
             r2 = []
             for linha in results2:
@@ -906,8 +920,15 @@ def get_especifico(classe, id):
     # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
     modulo = __import__("modelo")
     refclasse = getattr(modulo, classe)
+    
+    # ERRO nova versão sqlalchemy
+    # LegacyAPIWarning: The Query.get() method is considered legacy as 
+    # of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. 
+    # The method is now available as Session.get() (deprecated since: 2.0) 
+    # (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    #result = refclasse.query.get(id)
+    result = db.session.get(refclasse, id)
 
-    result = refclasse.query.get(id)
     resposta = jsonify(result.json())
     resposta.headers.add('Access-Control-Allow-Origin', '*')
 
@@ -978,12 +999,13 @@ def retornar_contagem_respostas_geral(circulo_id):
     
     where2 = " and rc.circulo_id = "+circulo_id
 
-    resultado = db.session.execute("""select rc.circulo_id, count(r.id) q, rte.nome
+    # inserido text por causa de NOVO ERRO DE VERSÃO do sqlalchemy
+    resultado = db.session.execute(text("""select rc.circulo_id, count(r.id) q, rte.nome
 from resposta r, respondente rte, respostanocirculo rc
 where rc.resposta_id=r.id 
 and rte.id = r.respondente_id """ + where2 + """
 group by rte.nome, rc.circulo_id 
-order by rc.circulo_id, q desc, rte.nome""")
+order by rc.circulo_id, q desc, rte.nome"""))
 
     lista = []
     for r in resultado:
