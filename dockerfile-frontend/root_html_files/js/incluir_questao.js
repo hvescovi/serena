@@ -34,6 +34,30 @@ $(function () {
             var resposta = $("#resposta").val();
             dados = JSON.stringify({ type:type, enunciado: enunciado, resposta:resposta})
         }
+        if (type == "completar") {
+            var resposta = $("#resposta").val();
+            dados = JSON.stringify({ type:type, enunciado: enunciado, lacunas:resposta})
+        }
+
+        if (type == "multiplaescolha_remodelada") {
+            var resposta = $("#resposta").val();
+            var alternativas = $("#alternativas").val().split("\n");
+            let corretas = []
+            let erradas = []
+            for(var i = 0;i < alternativas.length;i++){
+                let alt = alternativas[i];
+                // alternativa correta?
+                console.log(alt.substring(0, 4));
+                if (alt.substring(0,4) == "===>") {
+                    alt = alt.substring(4); // desconsidera a seta indicativa;
+                    corretas.push({"op":alt});
+                } else {
+                    erradas.push({"op":alt});
+                }
+            }
+            // prepara os dados :-)
+            dados = JSON.stringify({ type:type, enunciado: enunciado, corrects:corretas, wrongs:erradas})            
+        }
 
         //alert(dados);
         myip = $("#myip").text();

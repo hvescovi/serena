@@ -21,6 +21,10 @@ j) cole o conteúdo em um site para conversão csv para json
 exemplo: https://csvjson.com/csv2json
 k) clicque no botão para converter
 k) salve o conteúdo json em um arquivo .json (por exemplo, 2023_301_info.json)
+
+usar programa para importar:
+
+
 l) abrir o arquivo no dbeaver para conferir se inseriu
 OBS: está sendo usado um arquivo de endereço do dropbox
 caminho_BD = "/home/friend/Dropbox/10-serena-BD/"
@@ -35,5 +39,6 @@ quando for servir via docker, atualizar serena.db (trazer do dropbox)
 * inserir as questões (pode usar form_inserir_questao para questão aberta e completar :-)
 * inserir a questão no círculo (ainda via dbeaver)
 * ativar o círculo (campo "ativo" = 1) apenas para o círculo ativo
+* adicionar as questões no círculo!!!!
 
 

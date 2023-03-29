@@ -56,20 +56,25 @@
                     <div class="mb-3">
                         <label for="type" class="form-label">Tipo de questão:</label>
                         <select id="type" name="type" class="form-select" aria-label="Default select example">
-                            <option value="multiplaescolha">Múltipla escolha</option>
-                            <option value="completar">Completar</option>
+                            <!-- <option value="multiplaescolha">Múltipla escolha</option> -->
                             <option value="aberta" selected>Aberta</option>
+                            <option value="completar">Completar</option>
+                            <option value="multiplaescolha_remodelada">Múltipla Escolha REMODELADA :-)</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label for="lacunas" class="form-label">SE for questão de completar:</label>
-                        <input name="lacunas" type="text" class="form-control" id="lacunas">
+                        <label for="resposta" class="form-label">SE for questão aberta ou de completar:</label>
+                        <textarea name="resposta" type="text" class="form-control" id="resposta">dois</textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label for="resposta" class="form-label">SE for questão aberta:</label>
-                        <textarea name="resposta" type="text" class="form-control" id="resposta">dois</textarea>
+                        <label for="alternativas" class="form-label">SE for questão de MÚLTIPLA ESCOLHA REMODELADA ;-) começe as opções certas com um ===></label>
+                        <textarea name="alternativas" type="text" class="form-control" id="alternativas" rows="6">
+===>Essa é a opção certa
+Opção errada 1
+Opção errada 2
+===>Aqui pode ter outra opção certa</textarea>
                     </div>
 
                 </form>

@@ -1,4 +1,4 @@
-testar aspas duplas no f
 painel de quantas questões faltam por pessoa
 confirmar envio de resposta
 formulário para cadastro de questão objetiva :-!!!
+29/03/2023: falta uma tela para visualizar o círculo, ativar o certo, ver as questões que estão no círculo, ver os respondentes do círculo

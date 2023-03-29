@@ -789,9 +789,30 @@ def incluir_questao():
                     nova.alternativas.append(a)
                 except:
                     pass  # acabaram as alternativas
-
+        elif dados['type'] == "multiplaescolha_remodelada":
+            nova = MultiplaEscolha()
+            # percorre as alternativas certas
+            for alt in dados['corrects']:
+                a = Alternativa()
+                a.descricao = alt["op"]
+                a.certa = True # é certa :-)
+                db.session.add(a)
+                db.session.commit()
+                nova.alternativas.append(a)
+            # percorre as alternativas erradas
+            for alt in dados['wrongs']:
+                a = Alternativa()
+                a.descricao = alt["op"]
+                a.certa = False # é errada >-(
+                db.session.add(a)
+                db.session.commit()
+                nova.alternativas.append(a)            
+             
         # comum para todas as questões
         nova.enunciado = dados['enunciado']
+        now = datetime.now()
+        nova.data_cadastro = now.strftime("%d/%m/%Y, %H:%M:%S")
+        nova.autor = "Hylson"
 
         db.session.add(nova)
         db.session.commit()

@@ -7,6 +7,8 @@ from flask import Flask, jsonify, request, send_file#, Response
 from flask_sqlalchemy import SQLAlchemy
 import os
 from sqlalchemy import func, update, text
+from datetime import datetime # para obter data do cadastro da questão
+
 # NOVO ERRO
 # 27/03/2023
 # sqlalchemy.exc.ArgumentError: Textual SQL expression 'select q.id from questao ...' should be explicitly declared as text('select q.id from questao ...')
