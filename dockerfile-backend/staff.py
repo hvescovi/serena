@@ -218,11 +218,25 @@ def eliminar_respostas_duplicadas():
 
 @app.route('/gerar_nota_alunos')
 def gerar_nota_alunos():
+    
+    '''
     notas = db.session.execute(text("""select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, 
     rp.nome AS nome from resposta as r 
     inner join respondente as rp 
     on r.respondente_id = rp.id group by rp.id
     order by r.respondente_id;"""))
+'''
+
+    notas = db.session.execute(text("""
+select round(SUM(r.pontuacao) * 10 / COUNT(r.pontuacao),2) AS nota, rp.nome AS nome, rc.circulo_id  
+    from resposta as r 
+    inner join respondente as rp 
+    inner join respostanocirculo as rc
+    on r.respondente_id = rp.id AND
+    rc.resposta_id = r.id 
+    group by rp.id, rc.circulo_id 
+    order by rc.circulo_id desc, nome
+"""))
 
     '''
 select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome 
@@ -240,7 +254,8 @@ select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome
     for nota in notas:
         lista.append({
             "nota": nota["nota"],
-            "respondente": nota["nome"]
+            "respondente": nota["nome"],
+            "circulo":nota['circulo_id']
         })
     
 
