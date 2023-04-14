@@ -670,7 +670,7 @@ def imagem(nome):
     if not ipok(request.remote_addr):
         return failed()
 
-    filename = 'imagens_questoes/'+nome
+    filename = caminho_imagens+nome
     return send_file(filename, mimetype='image/png')
 
 
