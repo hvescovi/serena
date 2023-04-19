@@ -98,7 +98,7 @@ def preparar_rodada(id_circulo):
                 r1.append(linha[0])
 
             qresps = len(r1)
-            print("questoes respondidas", r1)
+            # print("questoes respondidas", r1)
             # já respondeu o maximo de questoes?
             if qresps >= maximo_questoes:
                 # tenta outro

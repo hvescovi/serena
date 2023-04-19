@@ -42,7 +42,7 @@ def exibir_respostas_circulo(id_circulo):
 @app.route('/imagem/<nome>')
 def imagem(nome):
 
-    filename = 'imagens_questoes/'+nome
+    filename = caminho_imagens+nome
     return send_file(filename, mimetype='image/png')
 
 
