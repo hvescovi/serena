@@ -6,7 +6,7 @@ fila_respondentes = []
 
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 5
+maximo_questoes = 10
 
 
 @app.route("/")
@@ -718,117 +718,9 @@ def retornar_questao(id_questao):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-# curl -d '{ "idq": 1, "enunciado":"ok mudou", "autor": "eu", "data_cadastro":"1/1/2020", "resposta":"ok valeu" }' -X POST http://localhost:5000/alterar_questao
-
-
-@app.route('/alterar_questao', methods=['post'])
-def alterar_questao():
-    if not ipok(request.remote_addr):
-        return failed()
-
-    # prepara a resposta padrão otimista
-    response = jsonify({"message": "ok", "details": "ok"})
-    try:
-        # pega os dados informados
-        dados = request.get_json(force=True)
-
-        # verifica o tipo de questão
-        if dados['type'] == "aberta":
-            stmt = db.session.update(Questao).where(Questao.id == 5).\
-                values(enunciado=dados['enunciado'],
-                       autor=dados['autor'],
-                       data_cadastro=dados['data_cadastro'],
-                       resposta=dados['resposta'])
-            db.session.commit()
-
-    except Exception as e:
-        # resposta de erro
-        response = jsonify({"message": "error", "details": str(e)})
-
-    # informa que outras origens podem acessar os dados desde servidor/serviço
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    # retorno!
-    return response
-
-
-@app.route('/incluir_questao', methods=['POST'])
-def incluir_questao():
-    if not ipok(request.remote_addr):
-        return failed()
-
-    # prepara a resposta padrão otimista
-    response = jsonify({"message": "ok", "details": "ok"})
-    try:
-        # pega os dados informados
-        dados = request.get_json()
-
-        nova = None
-
-        # verifica o tipo de questão
-        if dados['type'] == "aberta":
-            nova = Aberta()
-            nova.resposta = dados['resposta']
-        elif dados['type'] == "completar":
-            nova = Completar()
-            nova.lacunas = dados['lacunas']
-        elif dados['type'] == "multiplaescolha":
-            nova = MultiplaEscolha()
-            for i in range(1, 10):
-                desc = 'a'+str(i)+'_descricao'
-                try:  # sera que tem essa alternativa?
-                    a = Alternativa()
-                    # aqui dá erro se não houve a altenativa
-                    a.descricao = dados[desc]
-                    tmp = dados['a'+str(i)+'_certa']
-                    if tmp.upper() == "TRUE":
-                        a.certa = True
-                    else:
-                        a.certa = False
-                    db.session.add(a)
-                    db.session.commit()
-                    nova.alternativas.append(a)
-                except:
-                    pass  # acabaram as alternativas
-        elif dados['type'] == "multiplaescolha_remodelada":
-            nova = MultiplaEscolha()
-            # percorre as alternativas certas
-            for alt in dados['corrects']:
-                a = Alternativa()
-                a.descricao = alt["op"]
-                a.certa = True # é certa :-)
-                db.session.add(a)
-                db.session.commit()
-                nova.alternativas.append(a)
-            # percorre as alternativas erradas
-            for alt in dados['wrongs']:
-                a = Alternativa()
-                a.descricao = alt["op"]
-                a.certa = False # é errada >-(
-                db.session.add(a)
-                db.session.commit()
-                nova.alternativas.append(a)            
-             
-        # comum para todas as questões
-        nova.enunciado = dados['enunciado']
-        now = datetime.now()
-        nova.data_cadastro = now.strftime("%d/%m/%Y, %H:%M:%S")
-        nova.autor = "Hylson"
-
-        db.session.add(nova)
-        db.session.commit()
-
-    except Exception as e:
-        # resposta de erro
-        response = jsonify({"message": "error", "details": str(e)})
-
-    # informa que outras origens podem acessar os dados desde servidor/serviço
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    # retorno!
-    return response
 
 
 # curl localhost:5000/get_token/hvescovi@gmail.com
-
 
 @app.route('/create_token/<email>')
 def get_token(email):

@@ -63,7 +63,7 @@ $(function () {
         myip = $("#myip").text();
 
         $.ajax({
-            url: 'http://' + myip + ':5000/incluir_questao',
+            url: 'http://' + myip + ':4999/incluir_questao',
             type: 'POST',
             dataType: 'json', // vou receber a resposta em json,
             data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
@@ -148,38 +148,6 @@ $(function () {
     $("#circulo_id").text(circulo);
 
     myip = $("#myip").text();
-    /*
-        
     
-    */
-    /*
-        url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;
-    
-        $.ajax({
-            url: url,
-            type: 'GET',
-            dataType: 'json', // vou receber a resposta em json,
-            //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-            //contentType: "application/json",
-            success: function (resultado) {
-                // coloca a resposta no gabarito
-                $("#id_respondente").val(resultado.id);
-                $("#nome_respondente").text(resultado.nome);
-                $("#email_respondente").text(resultado.email);
-                $("#questoes_respondidas").text(resultado.questoes_respondidas);
-                // alert(resultado.details);
-                //mostrar_resultado_acao(deu_certo);
-    
-                $("#nome_circulo").text(resultado.nome_circulo);
-                $("#circulo_id").text(resultado.circulo_id);
-                $("#data_circulo").text(resultado.data_circulo);
-        
-            },
-            error: function () {
-                alert("ocorreu algum erro na leitura dos dados do círculo, verifique o backend");
-            }
-    
-        });
-    */
 
 });
