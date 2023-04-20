@@ -384,5 +384,26 @@ def incluir_questao():
     # retorno!
     return response
 
+@app.route('/question')
+def retornar_questoes():
+    resp = []
+    questoes = Questao.query.all()
+    for q in questoes:
+        resp.append(q.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    return jsonify(retorno)
+
+@app.route('/circle')
+def circle():
+    resp = []
+    dados = Circulo.query.all()
+    for q in dados:
+        resp.append(q.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    return jsonify(retorno)
 
 app.run(port=4999, debug=True)
