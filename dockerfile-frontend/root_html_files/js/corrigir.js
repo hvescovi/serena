@@ -94,7 +94,7 @@ $(function () {
                                     alt = resp.questao.alternativas[j];
                                     if (alt.id == resp.resposta) {
                                         acertou = alt.certa;
-                                        novaresp += " => " + alt.descricao;
+                                        novaresp += " => " + ajustaImagens(alt.descricao);
                                     }
                                 }
                                 if (acertou) {

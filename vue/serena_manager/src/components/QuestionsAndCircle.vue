@@ -27,8 +27,13 @@
 
         <div v-if="questions.length">
             <div class="card" v-for="q in questions" :key="q.id">
-                <input type="radio" v-model="selected_question" value="{{ q.id }}" name="selected_question"/> {{ q.id }} 
-                {{ q.enunciado }}
+
+                <hr/>
+
+                <input type="radio" v-model="selected_question" 
+                    value="{{ q.id }}" name="selected_question"/> {{ q.id }} 
+                <div v-html="q.enunciado"/>
+                
             </div>
         </div>
         <p v-if="error">{{ error }}</p>
