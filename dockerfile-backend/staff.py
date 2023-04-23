@@ -253,10 +253,17 @@ select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome
     lista = []
     for nota in notas:
         lista.append({
-            "nota": nota["nota"],
-            "respondente": nota["nome"],
-            "circulo":nota['circulo_id']
+            "nota": nota[0], # nota["nota"],
+            "respondente": nota[1], # nota["nome"],
+            "circulo":nota[2] #nota['circulo_id']
         })
+
+    '''
+    erro novo
+    "nota": nota["nota"],
+  File "lib/sqlalchemy/cyextension/resultproxy.pyx", line 68, in sqlalchemy.cyextension.resultproxy.BaseRow.__getitem__
+TypeError: tuple indices must be integers or slices, not str
+    '''
     
 
     ret = jsonify({"message": "ok", "details": lista})
@@ -406,4 +413,18 @@ def circle():
     retorno.update({"details":resp})
     return jsonify(retorno)
 
-app.run(port=4999, debug=True)
+app.run(port=4999) #, debug=True)
+
+'''
+contagem de respostas por respondente:
+
+select count(resposta) AS q, rp.nome AS nome 
+    from resposta as r 
+    inner join respondente as rp 
+    inner join respostanocirculo as rc
+    on r.respondente_id = rp.id AND
+    rc.resposta_id = r.id AND
+	rc.circulo_id = 9   
+    group by rp.id
+    
+    '''

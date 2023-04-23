@@ -70,6 +70,9 @@ $(function () {
                         semhtml = resp.resposta.replace("<", " (MENOR) ");
                         novaresp += semhtml; //resp.resposta;
 
+                        // substituir quebra de linha por <br>
+                        novaresp = novaresp.replace(new RegExp('\r?\n','g'), '<br>');
+
                         // aparencia da pontuação (tem destaque se ainda não foi corrigida)
                         aparencia = "";
 
@@ -83,43 +86,47 @@ $(function () {
                         //TODO: só mostra gabarito se houver respostas a pontuar
                         // depois pode mostrar para todas as situações, 
                         // não precisa ter essa restrição
-                        if (resp.pontuacao == null) { // não tem pontuação ainda?
-                            // pontuação sugerida, entre 0 e 1
-                            pt = "";
 
-                            if (resp.questao.type == "MultiplaEscolha") {
+                        // pontuação sugerida, entre 0 e 1
+                        pt = "";
 
-                                acertou = false;
-                                for (j in resp.questao.alternativas) {
-                                    alt = resp.questao.alternativas[j];
-                                    if (alt.id == resp.resposta) {
-                                        acertou = alt.certa;
-                                        novaresp += " => " + ajustaImagens(alt.descricao);
-                                    }
+                        if (resp.questao.type == "MultiplaEscolha") {
+
+                            acertou = false;
+                            for (j in resp.questao.alternativas) {
+                                alt = resp.questao.alternativas[j];
+                                if (alt.id == resp.resposta) {
+                                    acertou = alt.certa;
+                                    novaresp += " => " + ajustaImagens(alt.descricao);
                                 }
-                                if (acertou) {
-                                    novaresp += " !! ACERTOU !! ";
-                                    pt = 1;
-                                } else {
-                                    novaresp += " _ errou _";
-                                    pt = 0;
-                                }
-                            } else if (resp.questao.type == "Aberta") {
-                                temp = resp.questao.resposta;
-                                gabarito = temp.replace("<", " (MENOR) ");
-                                pt = resp.pontuacao_sugerida;
-                            } else if (resp.questao.type == "Completar") {
-                                temp = resp.questao.lacunas;
-                                gabarito = temp.replace("<", " (MENOR) ");
-                                pt = resp.pontuacao_sugerida;
                             }
-                            aparencia = ' class = "bg-warning" ';
-                        } else {
+                            if (acertou) {
+                                novaresp += " !! ACERTOU !! ";
+                                pt = 1;
+                            } else {
+                                novaresp += " _ errou _";
+                                pt = 0;
+                            }
+                        } else if (resp.questao.type == "Aberta") {
+                            temp = resp.questao.resposta;
+                            gabarito = temp.replace("<", " (MENOR) ");
+                            pt = resp.pontuacao_sugerida;
+                        } else if (resp.questao.type == "Completar") {
+                            temp = resp.questao.lacunas;
+                            gabarito = temp.replace("<", " (MENOR) ");
+                            pt = resp.pontuacao_sugerida;
+                        }
+                        aparencia = ' class = "bg-warning" ';
+
+                        if (resp.pontuacao != null) { // já tem pontuação?
+                            aparencia = ''; // volta aparência branca
+
+                            // já tem resposta
                             pt = resp.pontuacao;
                             sugerido = '<span id="sugerido"' + resp.id + '"class="bg-info" title="pontuação sugerida">' + resp.pontuacao_sugerida + '</span>';
                         }
 
-                        novaresp += '<input type="text" ' + aparencia + ' size="3" id="pt' + resp.id + '" value="' + pt + '">';
+                        novaresp += ' <input type="text" ' + aparencia + ' size="3" id="pt' + resp.id + '" value="' + pt + '">';
                         novaresp += ' <button id="btpt' + resp.id + '" class="pontuar_resposta">pontuar</button> ' + sugerido;
                         novaresp += ' <img src="images/check-circle.svg" id="corrigida' + resp.id + '" class="d-none">';
 
@@ -326,7 +333,7 @@ $(function () {
                 circulo = resultado.details.id;
                 $("#circulo_id").text(circulo);
             } else {
-                jmessage("ERRO", 'não foi possível obter o círculo ativo :-(');    
+                jmessage("ERRO", 'não foi possível obter o círculo ativo :-(');
             }
         },
         error: function () {
