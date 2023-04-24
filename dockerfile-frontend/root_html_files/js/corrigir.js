@@ -64,14 +64,21 @@ $(function () {
                         // nova linha
                         novaresp = cabecalho;
 
-                        // TODO: remover formatação HTML da resposta
-                        // TODO
-                        // TODO
-                        semhtml = resp.resposta.replace("<", " (MENOR) ");
+                        // ESCAPE the html
+                        // https://stackoverflow.com/questions/40211475/javascript-jquery-how-to-get-html-and-display-html-including-tags
+                        // 
+
+                        semhtml = resp.resposta.replaceAll("<", "&lt;");
+                        semhtml = semhtml.replaceAll(">", "&gt;");
+
+                        if (resp.questao.type != "MultiplaEscolha") {
+                            semhtml = '<pre>' + semhtml + '</pre>';
+                        }
+                        
                         novaresp += semhtml; //resp.resposta;
 
                         // substituir quebra de linha por <br>
-                        novaresp = novaresp.replace(new RegExp('\r?\n','g'), '<br>');
+                        //novaresp = novaresp.replace(new RegExp('\r?\n','g'), '<br>');
 
                         // aparencia da pontuação (tem destaque se ainda não foi corrigida)
                         aparencia = "";
@@ -109,11 +116,15 @@ $(function () {
                             }
                         } else if (resp.questao.type == "Aberta") {
                             temp = resp.questao.resposta;
-                            gabarito = temp.replace("<", " (MENOR) ");
+                            temp = temp.replaceAll("<", "&lt;");
+                            temp = temp.replaceAll(">", "&gt;");
+                            gabarito = '<pre>' + temp + '</pre>'; //.replace("<", " (MENOR) ");
                             pt = resp.pontuacao_sugerida;
                         } else if (resp.questao.type == "Completar") {
                             temp = resp.questao.lacunas;
-                            gabarito = temp.replace("<", " (MENOR) ");
+                            temp = temp.replaceAll("<", "&lt;");
+                            temp = temp.replaceAll(">", "&gt;");
+                            gabarito = '<pre>' + temp + '</pre>'; //.replace("<", " (MENOR) ");
                             pt = resp.pontuacao_sugerida;
                         }
                         aparencia = ' class = "bg-warning" ';
