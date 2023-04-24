@@ -7,7 +7,9 @@ export default {
       questions: [],
       operation: "",
       message: "",
-      selected_question: "",
+      selected_question: 0,
+      error: "",
+      selected_circle: 0
     }
   },
   methods: {
@@ -27,6 +29,23 @@ export default {
           .catch(error => {
             this.error = error;
           });
+      } else if (this.operation == "add") {
+        console.log(this.selected_circle);
+        console.log(this.selected_question);
+        
+        axios.post('http://localhost:4999/questions_circle/'+this.selected_question+'/'+this.selected_circle)
+        .then(response => {
+          console.log(response);
+          if (response.data.result == 'ok') {
+            this.message = "Questão incluída no círculo, com sucesso!";
+          } else {
+            this.message = response.data.details;
+          }
+        })
+        .catch(error => {
+          this.mensagem = error;
+        });
+        
       }
     }
   },
@@ -36,10 +55,12 @@ export default {
       .then(json => {
 
         if (json.result == 'ok') {
-          this.circle = json.details;
+          this.circles = json.details;
+          // TODO: precisa atualizar o selected_circle!!!
+          // nao sei porque ele não faz automaticamente :-/          
         } else {
           // está mascarando o erro, melhorar essa parte depois
-          this.questions = []
+          this.circles = []
         }
       })
       .catch(error => {

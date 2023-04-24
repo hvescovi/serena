@@ -413,7 +413,20 @@ def circle():
     retorno.update({"details":resp})
     return jsonify(retorno)
 
-app.run(port=4999) #, debug=True)
+# curl localhost:4999/questions_circle/91/10 -X POST
+@app.route("/questions_circle/<int:q>/<int:c>", methods=['post'])
+def questions_circle_add(q, c):
+    try:
+        circulo = db.session.get(Circulo, c) # load the circle
+        question = db.session.get(Questao, q) # load the question
+        circulo.questoes.append(question)
+        db.session.commit() # update the list of questions in the circle
+        return jsonify({"result":"ok", "details":"ok"})
+    except Exception as e:
+        return jsonify({"result": "error", "details": str(e)})
+
+
+app.run(port=4999, debug=True)
 
 '''
 contagem de respostas por respondente:
