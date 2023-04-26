@@ -74,7 +74,7 @@ $(function () {
                         if (resp.questao.type != "MultiplaEscolha") {
                             semhtml = '<pre>' + semhtml + '</pre>';
                         }
-                        
+
                         novaresp += semhtml; //resp.resposta;
 
                         // substituir quebra de linha por <br>
@@ -142,7 +142,11 @@ $(function () {
                         novaresp += ' <img src="images/check-circle.svg" id="corrigida' + resp.id + '" class="d-none">';
 
                         // a linha abaixo mostra o nome do respondente :-p
-                        // novaresp += ' =======> ' + resp.respondente.nome;
+                        /*
+                        if (resp.respondente.nome == "KAUÃ VINICIUS DE MIRANDA") {
+                            novaresp += ' =======> ' + resp.respondente.nome;
+                        }
+                        */
 
                         novaresp += "</div>"; //col
                         novaresp += "</div>"; //row
