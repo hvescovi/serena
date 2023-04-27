@@ -147,6 +147,8 @@ $(function () {
                             novaresp += ' =======> ' + resp.respondente.nome;
                         }
                         */
+                        
+                        //novaresp += ' =======> ' + resp.respondente.nome;
 
                         novaresp += "</div>"; //col
                         novaresp += "</div>"; //row
