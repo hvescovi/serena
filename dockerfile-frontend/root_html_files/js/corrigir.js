@@ -143,7 +143,7 @@ $(function () {
 
                         // a linha abaixo mostra o nome do respondente :-p
                         /*
-                        if (resp.respondente.nome == "KAUÃ VINICIUS DE MIRANDA") {
+                        if (resp.respondente.nome == "VINICIUS FRIEDRICH BLAU") {
                             novaresp += ' =======> ' + resp.respondente.nome;
                         }
                         */
