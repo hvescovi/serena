@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-import ajustarImagens from '../scripts/utils.js';
-
 export default {
   data() {
     return {
