@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import ajustarImagens from '../scripts/utils.js';
+
 export default {
   data() {
     return {
@@ -20,6 +22,15 @@ export default {
           .then(json => {
             console.log(json);
             if (json.result == 'ok') {
+              // modifica enunciado para consertar a URL da imagem
+              var url = 'http://localhost:4999/imagem/';              
+              for (let i in json.details) {
+                var en = json.details[i].enunciado;
+                en = en.replace(/<img src=/gi, "<img src=" + url);
+                console.log(en);
+                json.details[i].enunciado = en;
+              }
+              // retorna as questões
               this.questions = json.details;
             } else {
               // está mascarando o erro, melhorar essa parte depois

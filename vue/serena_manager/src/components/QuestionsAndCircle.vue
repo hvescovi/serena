@@ -44,7 +44,7 @@
 
                 <input type="radio" v-model="selected_question"
                  :value="q.id" name="selected_question" /> {{ q.id }}
-                <div v-html="q.enunciado" />
+                <div v-html="q.enunciado"/>
 
             </div>
             
