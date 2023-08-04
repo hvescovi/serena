@@ -11,7 +11,7 @@ $(function () {
     function jmessage(tipo, mensagem) {
 
         // tenta usar biblioteca Swal  
-            
+
         /*
         try {
             if (tipo == "ERRO") {
@@ -30,7 +30,7 @@ $(function () {
                 });
             }
         } catch (error) {
-          */  
+          */
         // se der erro, mostra alert simples
         alert(mensagem);
         //}
@@ -41,12 +41,12 @@ $(function () {
     function manipular_carregando(show_hide) {
         if (show_hide == "show") {
             $("#carregando").removeClass("d-none");
-        } else {            
+        } else {
             $("#carregando").addClass("d-none");
         }
     }
-    
-    
+
+
     // início dos eventos
     // ******************
 
@@ -76,7 +76,7 @@ $(function () {
                 //alert(resultado);
 
                 if (resultado.message != "ok") {
-                    jmessage("ERRO", resultado.details);                    
+                    jmessage("ERRO", resultado.details);
                 } else {
 
                     // sucesso, vamos abrir a questão...
@@ -207,47 +207,53 @@ $(function () {
         //alert(dados);
         myip = $("#myip").text();
 
-        // só desabilita após as condições de sucesso ok
-        // desabilitar o botão da resposta, após o clique ter ocorrido
-        // evitar múltiplos cliques que n-plicam as respostas
-        // implementado em tempo de aplicação da prova
-        // André respondeu 48 questões :-o
+        // confirma se quer mesmo responder
+        var confirma = confirm("Confirma o envio de sua resposta?");
+        if (confirma == true) {
 
-        $("#" + eu).prop("disabled", true);
-        manipular_carregando("show");
+            // só desabilita após as condições de sucesso ok
+            // desabilitar o botão da resposta, após o clique ter ocorrido
+            // evitar múltiplos cliques que n-plicam as respostas
+            // implementado em tempo de aplicação da prova
+            // André respondeu 48 questões :-o
 
-        $.ajax({
-            url: 'http://' + myip + ':5000/responder_questao_circulo',
-            type: 'POST',
-            dataType: 'json', // vou receber a resposta em json,
-            data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-            //contentType: "application/json",
-            success: function (resultado) {
+            $("#" + eu).prop("disabled", true);
+            manipular_carregando("show");
 
-                manipular_carregando("hide");
-
-                var deu_certo = resultado.message == "ok";
-
-                // diz que deu certo o envio
-                if (deu_certo) {
-                    //$("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
+            $.ajax({
+                url: 'http://' + myip + ':5000/responder_questao_circulo',
+                type: 'POST',
+                dataType: 'json', // vou receber a resposta em json,
+                data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+                //contentType: "application/json",
+                success: function (resultado) {
 
                     manipular_carregando("hide");
-                    jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
 
-                    // volta ao começo
-                    $(location).attr('href', '/circulo.html');
+                    var deu_certo = resultado.message == "ok";
 
-                } else {
-                    jmessage("ERRO", resultado.details);
+                    // diz que deu certo o envio
+                    if (deu_certo) {
+                        //$("#final").html("<h5>Sua resposta está sendo enviada, aguarde até aparecer o ALERT de confirmação.</h5>");
+
+                        manipular_carregando("hide");
+                        jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
+
+                        // volta ao começo
+                        $(location).attr('href', '/circulo.html');
+
+                    } else {
+                        jmessage("ERRO", resultado.details);
+                    }
+
+                },
+                error: function () {
+                    manipular_carregando("hide");
+                    jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
                 }
+            });
 
-            },
-            error: function () {
-                manipular_carregando("hide");
-                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
-            }
-        });
+        }
 
     });
 
@@ -282,37 +288,45 @@ $(function () {
 
         myip = $("#myip").text();
 
-        $("#" + eu).prop("disabled", true);
-        manipular_carregando("show");
+        //alert("AQUI VAMOS NÓS");
 
-        $.ajax({
-            url: 'http://' + myip + ':5000/responder_questao_circulo',
-            type: 'POST',
-            dataType: 'json', // vou receber a resposta em json,
-            data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-            //contentType: "application/json",
-            success: function (resultado) {
-                var deu_certo = resultado.message == "ok";
+        // confirma se quer mesmo responder
+        var confirma = confirm("Confirma o envio de sua resposta?");
+        if (confirma == true) {
 
-                // diz que deu certo o envio
-                if (deu_certo) {
-                    //$("#final").text("Sua resposta foi enviada!");
+            // desabilita o botão de resposta
+            $("#" + eu).prop("disabled", true);
+            manipular_carregando("show");
+
+            $.ajax({
+                url: 'http://' + myip + ':5000/responder_questao_circulo',
+                type: 'POST',
+                dataType: 'json', // vou receber a resposta em json,
+                data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+                //contentType: "application/json",
+                success: function (resultado) {
+                    var deu_certo = resultado.message == "ok";
+
+                    // diz que deu certo o envio
+                    if (deu_certo) {
+                        //$("#final").text("Sua resposta foi enviada!");
+                        manipular_carregando("hide");
+                        jmessage("ok", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
+
+                        // volta ao começo
+                        $(location).attr('href', '/circulo.html');
+
+                    } else {
+                        manipular_carregando("hide");
+                        jmessage("ERRO", resultado.details);
+                    }
+                },
+                error: function () {
                     manipular_carregando("hide");
-                    jmessage("ok", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-
-                    // volta ao começo
-                    $(location).attr('href', '/circulo.html');
-
-                } else {
-                    manipular_carregando("hide");
-                    jmessage("ERRO", resultado.details);
+                    jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
                 }
-            },
-            error: function () {
-                manipular_carregando("hide");
-                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
-            }
-        });
+            });
+        }
 
     });
 
@@ -362,38 +376,45 @@ $(function () {
 
         myip = $("#myip").text();
 
-        $("#" + eu).prop("disabled", true);
-        manipular_carregando("show");
-        
-        $.ajax({
-            url: 'http://' + myip + ':5000/responder_questao_circulo',
-            type: 'POST',
-            dataType: 'json', // vou receber a resposta em json,
-            data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-            //contentType: "application/json",
-            success: function (resultado) {
-                var deu_certo = resultado.message == "ok";
+        // confirma se quer mesmo responder
+        var confirma = confirm("Confirma o envio de sua resposta?");
+        if (confirma == true) {
 
-                // diz que deu certo o envio
-                if (deu_certo) {
-                    //$("#final").text("Sua resposta foi enviada!");
+
+            $("#" + eu).prop("disabled", true);
+            manipular_carregando("show");
+
+            $.ajax({
+                url: 'http://' + myip + ':5000/responder_questao_circulo',
+                type: 'POST',
+                dataType: 'json', // vou receber a resposta em json,
+                data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+                //contentType: "application/json",
+                success: function (resultado) {
+                    var deu_certo = resultado.message == "ok";
+
+                    // diz que deu certo o envio
+                    if (deu_certo) {
+                        //$("#final").text("Sua resposta foi enviada!");
+                        manipular_carregando("hide");
+                        jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
+
+                        // volta ao começo
+                        $(location).attr('href', '/circulo.html');
+
+                    } else {
+                        manipular_carregando("hide");
+                        jmessage("ERRO", resultado.details);
+                    }
+
+                },
+                error: function () {
                     manipular_carregando("hide");
-                    jmessage("OK", "OBRIGADO! Sua resposta foi enviada. Clique em OK e quando aparecer o nome da próxima pessoa, chame-a para responder.");
-
-                    // volta ao começo
-                    $(location).attr('href', '/circulo.html');
-
-                } else {
-                    manipular_carregando("hide");
-                    jmessage("ERRO", resultado.details);
+                    jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
                 }
+            });
 
-            },
-            error: function () {
-                manipular_carregando("hide");
-                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
-            }
-        });
+        } // fim if confirma responder
 
     });
 
@@ -452,7 +473,7 @@ $(function () {
         success: function (resultado) {
             if (resultado.message == "ok") {
                 circulo = resultado.details.id;
-                console.log("circulo ativo: "+circulo);
+                console.log("circulo ativo: " + circulo);
 
                 // vamos preparar a rodada
                 url = 'http://' + myip + ':5000/preparar_rodada/' + circulo;

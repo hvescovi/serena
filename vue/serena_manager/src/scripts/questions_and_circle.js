@@ -14,18 +14,18 @@ export default {
   },
   methods: {
     action_questions_and_circle() {
-      if (this.operation == "list") {
+      if (this.operation == "list") { // list all questions
         fetch('http://localhost:4999/question')
           .then(response => response.json())
           .then(json => {
-            console.log(json);
+            //console.log(json);
             if (json.result == 'ok') {
               // modifica enunciado para consertar a URL da imagem
               var url = 'http://localhost:4999/imagem/';              
               for (let i in json.details) {
                 var en = json.details[i].enunciado;
                 en = en.replace(/<img src=/gi, "<img src=" + url);
-                console.log(en);
+                //console.log(en);
                 json.details[i].enunciado = en;
               }
               // retorna as questões
@@ -38,10 +38,9 @@ export default {
           .catch(error => {
             this.error = error;
           });
-      } else if (this.operation == "add") {
-        console.log(this.selected_circle);
+      } else if (this.operation == "add") { // add question to a circle
         console.log(this.selected_question);
-        
+        console.log(this.selected_circle);
         axios.post('http://localhost:4999/questions_circle/'+this.selected_question+'/'+this.selected_circle)
         .then(response => {
           console.log(response);
