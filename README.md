@@ -1,7 +1,7 @@
 # serena
 
 todo:
-- [ ] vinculação de questões ao círculo
+- [ok mas tem que melhorar] vinculação de questões ao círculo
 - [ ] definição, no círculo, do número de questões a serem respondidas
 - [ ] definição de níveis de questão no círculo (ex: duas fáceis, três médias, uma difícil)
 - [ ] permitir usar aspas duplas na especificação de imagens, em comandos HTML img src

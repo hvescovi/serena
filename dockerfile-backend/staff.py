@@ -414,6 +414,7 @@ def circle():
     return jsonify(retorno)
 
 # curl localhost:4999/questions_circle/91/10 -X POST
+# add question to the circle!
 @app.route("/questions_circle/<int:q>/<int:c>", methods=['post'])
 def questions_circle_add(q, c):
     try:

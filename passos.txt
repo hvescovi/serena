@@ -11,8 +11,6 @@ CADASTRO DE QUESTÕES
 * se for resposta aberta ou de completar, informar a resposta
 * O formulário vem preenchido com dados de exemplo.
 
-
-
 VINCULAR AS QUESTÕES A UM CÍRCULO:
 1) criar o círculo que vai mostrar as questões
   a) acessar o banco de dados e criar o círculo na tabela circulo :-/
@@ -29,9 +27,7 @@ VINCULAR AS QUESTÕES A UM CÍRCULO:
   f) clicar no botão "Do it!"
     f.1) pode ir no banco de dados e verificar se realmente incluiu o vínculo da questão na tabela questaodocirculo
   g) voltar ao passo e) enquanto desejar incluir outras questões no círculo
-
-
-  
+ 
 TESTAR O ACESSO ÀS QUESTÕES NA VISÃO DE ALUNO:
 1) rodar o backend.py
 2) iniciar um servidor web na pasta de páginas html: serena/dockerfile-frontend/root_html_files
@@ -41,4 +37,12 @@ TESTAR O ACESSO ÀS QUESTÕES NA VISÃO DE ALUNO:
 4) cada visualização de questão insere 1 registro na tabela questao_exibida_no_circulo
 5) cada resposta insere 1 registro na tabela resposta e 1 registro na tabela respostanocirculo
 6) as tabelas dos itens 4) e 5) devem ter os registros apagados depois que os testes forem feitos, referente às questões de teste; em geral, basta observar o timestamp e o circulo_id para saber quais foram os novos registros de teste
-7) 
+
+=> na prática, acaba sendo mais prático usar o curl:
+curl localhost:4999/questions_circle/129/14 -X POST
+
+ALTERAR O NÚMERO DE QUESTÕES QUE OS ALUNOS VÃO RESPONDER
+a) o número de questões que serão respondidas pelos alunos está no início do arquivo backend.py; deve-se alterar para o número de questões que vão ser respondidas. No futuro isso será agregado ao círculo (essa informação virá do círculo).
+
+DEFINIR O CÍRCULO ATIVO
+acessar tabela circulo, há um campo "ativo", apenas um registro deve ter esse campo igual a 1

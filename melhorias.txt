@@ -1,4 +1,4 @@
 painel de quantas questões faltam por pessoa
 confirmar envio de resposta
 29/03/2023: falta uma tela para visualizar o círculo, ativar o certo, ver as questões que estão no círculo, ver os respondentes do círculo
-15/06/2023: demanda antiga: confirmar antes de enviar as respostas. Isso é útil em questões dissertativas, caso o usuário pressione enter sem querer.
+15/06/2023: demanda antiga: confirmar antes de enviar as respostas. Isso é útil em questões dissertativas, caso o usuário pressione enter sem querer. OK, feito em 04/08/2023.
