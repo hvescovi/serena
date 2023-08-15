@@ -216,8 +216,8 @@ def eliminar_respostas_duplicadas():
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-@app.route('/gerar_nota_alunos')
-def gerar_nota_alunos():
+@app.route('/gerar_nota_alunos/<int:c>')
+def gerar_nota_alunos(c):
     
     '''
     notas = db.session.execute(text("""select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, 
@@ -227,16 +227,19 @@ def gerar_nota_alunos():
     order by r.respondente_id;"""))
 '''
 
-    notas = db.session.execute(text("""
-select round(SUM(r.pontuacao) * 10 / COUNT(r.pontuacao),2) AS nota, rp.nome AS nome, rc.circulo_id  
+    sql = f'''
+    select round(SUM(r.pontuacao) * 10 / COUNT(r.pontuacao),2) AS nota, 
+            rp.nome AS nome, rc.circulo_id  
     from resposta as r 
     inner join respondente as rp 
     inner join respostanocirculo as rc
     on r.respondente_id = rp.id AND
     rc.resposta_id = r.id 
+    and rc.circulo_id={c}
     group by rp.id, rc.circulo_id 
     order by rc.circulo_id desc, nome
-"""))
+    '''
+    notas = db.session.execute(text(sql))
 
     '''
 select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome 
@@ -261,11 +264,11 @@ select SUM(r.pontuacao) * 10 / COUNT(r.pontuacao) AS nota, rp.nome AS nome
     '''
     erro novo
     "nota": nota["nota"],
-  File "lib/sqlalchemy/cyextension/resultproxy.pyx", line 68, in sqlalchemy.cyextension.resultproxy.BaseRow.__getitem__
+  File "lib/sqlalchemy/cyextension/resultproxy.pyx", line 68, 
+  in sqlalchemy.cyextension.resultproxy.BaseRow.__getitem__
 TypeError: tuple indices must be integers or slices, not str
     '''
     
-
     ret = jsonify({"message": "ok", "details": lista})
 
     ret.headers.add('Access-Control-Allow-Origin', '*')
@@ -427,6 +430,23 @@ def questions_circle_add(q, c):
         return jsonify({"result": "error", "details": str(e)})
 
 
+# retornar informações sobre um círculo
+@app.route('/circulo/<int:c>')
+def circulo_info(c):
+    
+    # busca o primeiro circulo ativo
+    circulo = db.session.query(Circulo).filter(Circulo.id == c).first()
+
+    if circulo == None:
+        resp = {"message": "erro", "details": "o círculo especificado não existe!"}
+    else:
+        resp = {"message": "ok"}
+        resp.update({"details": circulo.json()})
+
+    ret = jsonify(resp)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
 app.run(port=4999, debug=True)
 
 '''
@@ -442,3 +462,4 @@ select count(resposta) AS q, rp.nome AS nome
     group by rp.id
     
     '''
+
