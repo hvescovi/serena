@@ -1,0 +1,21 @@
+todo:
+[ ] definição, no círculo, do número de questões a serem respondidas
+[ ] definição de níveis de questão no círculo (ex: duas fáceis, três médias, uma difícil)
+[ ] permitir usar aspas duplas na especificação de imagens, em comandos HTML img src
+[ ] documentação exibindo diagrama de classes fragmentado que caiba em uma página A4
+[ ] reconfiguração do BD para incluir grupos (usar migration)
+[ ] configuração CORS
+[ ] filtros por assunto
+[ ] token
+[ ] novos tipos de questão
+[ ] falta painel de quantas questões faltam por pessoa (07/08/2023)
+[ ] 29/03/2023 falta tela para ver as questões que estão no círculo
+[ ] 29/03/2023 falta tela para ver os respondentes do círculo
+[ ] sugestão Gustavo 07/08/2023: iniciar com questões objetivas, para fazer avaliação diagnótica; se errar muito, selecionar questões mais fáceis no decorrer.
+[ ] sugestão de melhoria (07/08/2023): após certo percentual de respostas realizadas, botão para listar respondentes e permitir escolha, em vez de continuar sorteando e mostra vários que ainda não responderam
+[ ] havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
+
+[ok] cadastro de questões (C)
+[parcial] vinculação de questões ao círculo
+[ok] confirmar envio de resposta (29/03/2023); demanda antiga: confirmar antes de enviar as respostas. Isso é útil em questões dissertativas, caso o usuário pressione enter sem querer. Feito em 04/08/2023.
+[ok] 29/03/2023: tela para visualizar os círculo e definir o círculo ativo; RESOLVIDO: dá pra fazer no vue

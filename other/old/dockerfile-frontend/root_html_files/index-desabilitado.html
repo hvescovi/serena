@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<!--
+
+    "google login with javascript" => search in Google
+
+    open: https://developers.google.com/identity/sign-in/web
+    after, button Get Started => https://developers.google.com/identity/sign-in/web/sign-in
+
+-->
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/meuestilo.css">
+
+    <!-- google sign-in -->
+    <!-- https://developers.google.com/identity/sign-in/web/sign-in -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="523415345044-d0c904843j1aj1nsu8bkfvjcim42e2fe.apps.googleusercontent.com">
+
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Serena</title>
+</head>
+
+<body>
+
+
+    <!-- barra de navegação -->
+    <nav class="navbar navbar-expand-sm navbar-light wood">
+
+        <!-- logo da aplicação -->
+
+        <img src="images/eyes.jpg" width="15%" class="navbar-brand rounded-circle">
+
+        <!-- botão que aparece quando reduz -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav1" aria-controls="nav1" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- esconder os menus quando reduzir -->
+        <div class="collapse navbar-collapse" id="nav1">
+            <div class="navbar-nav">
+                <div class="nav-item">
+                    <button class="btn btn-primary" id="btn_listar_questoes">Exibir Questões</button>
+                </div>
+
+                <!-- botão de login do google -->
+                <div class="g-signin2 nav-item" data-onsuccess="onSignIn"></div>
+
+                <!-- link (com aparência de botão) de logout do google -->
+                <a href="#" onclick="signOut();" class="btn btn-primary" role="button">Logout</a>
+
+                <script>
+                    function signOut() {
+                        var auth2 = gapi.auth2.getAuthInstance();
+                        auth2.signOut().then(function() {
+                            console.log('User signed out.');
+                        });
+                        // limpar sessao
+                        $.session.remove("user_name");
+                        $.session.remove("user_email");
+
+                    }
+                </script>
+
+            </div>
+        </div>
+
+        <span class="navbar-text">
+
+            <!-- tooltip -->
+            <span data-toggle="tooltip" title="Sistema Aberto de Perguntas">Serena</span>, em <span id="myip"></span>
+        <br><span id="user_name" class="invisible"></span><br>
+        <span id="user_email" class="invisible"></span>
+
+        <!-- texto do tooltip 
+
+        <div class="tooltip bs-tooltip-top" role="tooltip">
+            <div class="arrow"></div>
+            <div class="tooltip-inner">
+                <u>S</u>ist<u>e</u>ma Abe<u>r</u>to de P<u>e</u>rgu<u>n</u>t<u>a</u>s
+            </div>
+        </div>
+    -->
+        </span>
+        <!-- navbar-text -->
+    </nav>
+
+    <div class="container mt-2 mx-auto p-2 lightblue rounded shadow">
+
+        <div class="row">
+            <div class="col text-center">
+                <div id="foto"></div>
+            </div>
+            <div class="col text-center">
+                <div id="meu_nome"></div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col text-center">
+                <b>Filtro</b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <input type=checkbox id="naofeitas">Exibir apenas questões ainda não respondidas por mim
+            </div>
+            <!--
+            <div class="col">
+                Assunto: <select id="assunto">
+                    <option>todos</option>
+                    <option>git</option>
+                    <option>bootstrap</option>
+                </select>
+
+            </div>
+            -->
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mt-4">
+            <div id="tabela_questoes" class="container-fluid">
+                <!-- área dinâmica de exibição -->
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+</body>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<script src="js/jquery-3.4.1.min.js "></script>
+<script src="js/jquerysession.js "></script>
+<script src="js/meuscript.js "></script>
+
+</body>
+
+</html>

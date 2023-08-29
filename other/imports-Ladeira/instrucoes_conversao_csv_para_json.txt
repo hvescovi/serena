@@ -1,0 +1,8 @@
+0) fazer um backup do BD do serena, em dropbox / secrets, para possível reversão se necessário
+1) os campos devem ser nome, email e observação, separados por tab, sem primeira linha de títulos
+2) usar (exemplo):
+bash csv-to-json-v2.sh teste_2023_301_info.csv > teste_2023_301_info_gerado_com_sh_v2.json
+será gerado o arquivo .json, que poderá ser usado para carregar os respondentes
+3) carregar os respondentes:
+python3 carregar_respondentes_NOVO_PADRAO_Ladeira.py ../imports-Ladeira/teste_2023_301_info_gerado_com_sh_v2.json 
+

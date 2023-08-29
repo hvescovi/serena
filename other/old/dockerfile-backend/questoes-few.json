@@ -1,0 +1,51 @@
+{
+    "questoes": [
+
+        {
+            "id": 1,
+            "enunciado": "Cite três vantagens de se utilizar o Bootstrap.",
+            "autor": "Erick José Heiler, 301 info 2020 | Lucas Vinicius Maske, 301 info 2020",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "14/03/2020",
+            "type": "AbertaMultiplasRespostas",
+            "respostas": [
+                "O processo de estilizar e personalizar a página se torna mais simples, já que ele vem com blocos de código prontos para usar.",
+                "Ele não é apenas fácil de usar, mas também acelera o desenvolvimento",
+                "O Bootstrap faz os aplicativos móveis se ajustarem na resolução da tela de maneira apropriada, para o seu layout não parecer uma bagunça visto em dispositivos móveis"
+            ]
+        },
+        {
+            "id": 2,
+            "enunciado": "Qual é o parâmetro do comando git que permite realizar a fusão (ou mesclagem) de arquivos, mediante situação de conflitos originados de modificações no mesmo arquivo em locais diferentes (repositórios remoto e local)?",
+            "autor": "Hylson",
+            "assuntos": ["git"],
+            "data_cadastro": "16/03/2020",
+            "type": "MultiplaEscolha",
+            "alternativas": [
+                { "descricao": "add", "certa": false },
+                { "descricao": "commit", "certa": false },
+                { "descricao": "push", "certa": false },
+                { "descricao": "merge", "certa": true },
+                { "descricao": "pull", "certa": false }
+            ]
+        },
+        {
+            "id": 3,
+            "enunciado": "Informe os principais componentes do bootstrap que podem ser utilizados para construir um layout semelhante ao site apresentado a seguir: <img src=img/site1.png alt='site exemplo'>",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "16/03/2020",
+            "type": "Aberta",
+            "resposta": "classes row e col para grid; rounded-pill para deixar elementos em formato arredondado; h1, h2, h3... para letras grandes; m-3 ou similar para adicionar margem às imagens."
+        },
+        {
+            "id": 4,
+            "enunciado": "Há uma classe do bootstrap chamada ___ que permite deixar as linhas de uma tabela do HTML com cores alternadas. Outra classe útil se chama ___ e faz com que a tabela apareça com fundo preto.",
+            "autor": "Hylson",
+            "assuntos": ["bootstrap"],
+            "data_cadastro": "16/03/2020",
+            "type": "Completar",
+            "lacunas": "table-striped | table-dark"
+        }
+    ]
+}
