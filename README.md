@@ -5,14 +5,14 @@
 Aqui estão informações básicas sobre o uso da ferramenta Serena.
 
 
-### Cadastro de questões (pasta /admin)
+### Cadastro de questões
 
 Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
 
 1) criar questões em formato textual simples, em arquivo txt (sugestão)
 2) fazer backup do banco de dados, que deve estar em pasta privada; usar data invertida para facilitar ordenação
-3) rodar `staff.py` (em /admin, backend administrativo que roda apenas em localhost, na porta 4999)
-4) acessar a interface de cadastro de questões: `form_inserir_questao.html` (em /admin, pode acessar sem servidor web, diretamente no arquivo)
+3) rodar `staff.py` (em /run/admin, backend administrativo que roda apenas em localhost, na porta 4999)
+4) acessar a interface de cadastro de questões: `form_inserir_questao.html` (em /run/admin, pode acessar sem servidor web, diretamente no arquivo)
 5) incluir as questões
 
 	a) preencher enunciado
@@ -62,7 +62,7 @@ Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
 ### Testar o acesso às questões na visão de aluno (pasta /run):
 
 1) rodar o `backend.py` (roda na porta 5000 em IP de rede local)
-2) iniciar um servidor web na pasta de páginas `html`: `serena/dockerfile-frontend/root_html_files`
+2) iniciar um servidor web na pasta de páginas `html`: `/run`
 	
     a) pode-se usar o comando: `python3 -m http.server`
     
