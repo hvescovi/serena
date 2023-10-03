@@ -24,6 +24,7 @@ Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
 * se for resposta aberta ou de completar, informar a resposta
 * O formulário vem preenchido com dados de exemplo.
 
+* NA PRÁTICA, é melhor criar uma ou duas questões, seguir os passos adiante, fazer o teste das questões (verificar se estão sendo exibidas corretamente) e depois incluir mais questões.
 
 ### Víncular as questões a um círculo (pasta /other/vue/serena_manager)
 
@@ -71,7 +72,7 @@ Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
 3) acessar a página pelo IP da máquina. Exemplo: `192.168.5.178:8000`
 4) cada visualização de questão insere um registro na tabela `questao_exibida_no_circulo`
 5) cada resposta insere um registro na tabela `resposta` e um registro na tabela `respostanocirculo`
-6) as tabelas dos itens 4 e 5 devem ter os registros apagados depois que os testes forem feitos, referente às questões de teste; em geral, basta observar o `timestamp` e o `circulo_id` para saber quais foram os novos registros de teste
+6) as 3 tabelas dos itens 4 e 5 devem ter os registros apagados depois que os testes forem feitos, referente às questões de teste; em geral, basta observar o `timestamp` e o `circulo_id` para saber quais foram os novos registros de teste
 
 
 
