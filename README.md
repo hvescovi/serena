@@ -60,6 +60,9 @@ Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
 
 ```curl localhost:4999/questions_circle/129/14 -X POST```
 
+    h) para questões de incluam imagens, incluir as imagens em uma subpasta privada, que pode ficar no mesmo local no qual se encontra o banco de dados.
+
+
 ### Testar o acesso às questões na visão de aluno (pasta /run):
 
 1) rodar o `backend.py` (roda na porta 5000 em IP de rede local)
