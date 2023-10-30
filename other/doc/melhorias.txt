@@ -1,4 +1,5 @@
 todo:
+[ ] (30/10/2023) exportação de questões, com as respectivas respostas ou com a medida de correção
 [ ] definição, no círculo, do número de questões a serem respondidas
 [ ] definição de níveis de questão no círculo (ex: duas fáceis, três médias, uma difícil)
 [ ] permitir usar aspas duplas na especificação de imagens, em comandos HTML img src

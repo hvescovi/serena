@@ -6,7 +6,7 @@ fila_respondentes = []
 
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 4
+maximo_questoes = 10
 # maximo_questoes = 8 # para os círculo 13 e 14
 
 
