@@ -1,6 +1,9 @@
 todo:
 [ ] (30/10/2023) exportação e importação de questões, com as respectivas respostas ou com a medida de correção. Como critério, poderia ser usado o enunciado da questão, com auxílio de uma medida de similaridade com outras questões. Assim, por exemplo, eu não importaria duas vezes a mesma questão, ou uma muito parecida. Em resumo, o gerenciamento de questões no sistema é algo que deve ser priorizado, pois as questões são os itens de maior valor no sistema. As respostas dos alunos são também itens valorosos, pois ajustam a questão em relação ao nível de dificuldade.
 [ ] definição, no círculo, do número de questões a serem respondidas
+[ ] 11/11/2023: tela de edição de questões
+[ ] 11/11/2023: tela de edição de questões no círculo
+[ ] 11/11/2023: relatório de todas as questões com descrição completa; opcional: exibir resposta
 [ ] definição de níveis de questão no círculo (ex: duas fáceis, três médias, uma difícil)
 [ ] permitir usar aspas duplas na especificação de imagens, em comandos HTML img src
 [ ] 11/11/2023 - uso de <script> em questões: não é exibido; precisa utilizar &lt;script&gt; para exibir a tag script.
