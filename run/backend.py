@@ -6,7 +6,7 @@ fila_respondentes = []
 
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 10
+maximo_questoes = 5
 # maximo_questoes = 8 # para os círculo 13 e 14
 
 
@@ -202,8 +202,12 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         # retornar questões que eu já respondi
         # - que estão no círculo atual
         # - que são questões minhas (meu respondente)
-        sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
-                    id_respondente+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
+        sql = "select q.id from questao q, resposta r, questaodocirculo qc, respostanocirculo rc where r.respondente_id = "+\
+                    id_respondente+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo +" and rc.resposta_id=r.id and rc.circulo_id="+id_circulo #order by q.id
+
+                    # and rc.resposta_id=r.id and rc.circulo_id=17
+
+        # XXX
 
         # inserido text por causa de NOVO ERRO DE VERSÃO do sqlalchemy
         results = db.session.execute(text(sql))
