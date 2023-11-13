@@ -83,10 +83,8 @@ def preparar_rodada(id_circulo):
             # pega o id dele
             id_respondente = todos[nquem-1].id
 
-            # verifica se o respondente já respondeu 10 questões NO CIRCULOOOOOOO
-            sql = "select q.id from questao q, resposta r, questaodocirculo qc where r.respondente_id = "+\
-                    str(id_respondente)+" AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = "+id_circulo # order by q.id
-
+            # verifica se o respondente já respondeu "n" questões NO CIRCULOOOOOOO
+            sql = f"select q.id from questao q, resposta r, questaodocirculo qc, respostanocirculo rc where r.respondente_id = {id_respondente} AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = {id_circulo} AND rc.resposta_id = r.id AND rc.circulo_id = {id_circulo}"
             
             # results = db.session.execute(sql)
             # NOVO ERRO de versão sqlalchemy
