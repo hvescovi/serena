@@ -32,17 +32,36 @@ def retornar_questoes():
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-# curl localhost/preparar_rodada/1
-
-
-@app.route('/preparar_rodada/<id_circulo>')
-def preparar_rodada(id_circulo):
+@app.route('/preparar_rodada/<id_circulo>/<id_respondente>')
+def preparar_rodada(id_circulo, id_respondente):
     if not ipok(request.remote_addr):
         return failed()
 
     '''
     Objetivo geral da rota: retornar um respondente que
     esteja participando do circulo
+
+    se id_respondente == 0 => sorteia o respondente (modo círculo)
+    se não, usa aquele respondente informado (modo linha)
+
+    exemplo de saída:
+
+    curl localhost:5000/preparar_rodada/17
+        
+    {
+    "details": {
+        "circulo_id": 17,
+        "data_circulo": "13/11/2023",
+        "email": "yasminalvesdesouza27@gmail.com",
+        "id": 111,
+        "nome": "YASMIN VICTORIA ALVES DE SOUZ",
+        "nome_circulo": "AV5 301 2023",
+        "observacao": "|g:301-2023|",
+        "questoes_respondidas": 10
+    },
+    "message": "ok"
+    }
+
     '''
     # carrega o circulo atual
     # MUDANÇA DE VERSÃO DO SQLALCHEMY
@@ -72,101 +91,121 @@ def preparar_rodada(id_circulo):
         resp = {"message": "error", "details": "não há respondentes"}
     else:
 
-        # quantidade de respostas no círculo - vai ser preenchida dentro do for
-        qresps = -1
-
-        # tenta 15 vezes
-        for i in range(1, 15):
-            # escolhe um respondente
-            nquem = random.randint(1, len(todos))
-
-            # pega o id dele
-            id_respondente = todos[nquem-1].id
-
-            # verifica se o respondente já respondeu "n" questões NO CIRCULOOOOOOO
-            sql = f"select q.id from questao q, resposta r, questaodocirculo qc, respostanocirculo rc where r.respondente_id = {id_respondente} AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = {id_circulo} AND rc.resposta_id = r.id AND rc.circulo_id = {id_circulo}"
-            
-            # results = db.session.execute(sql)
-            # NOVO ERRO de versão sqlalchemy
-            # sqlalchemy.exc.ArgumentError: Textual SQL expression 'select q.id from questao ...' should be explicitly declared as text('select q.id from questao ...')
-            results = db.session.execute(text(sql))
-
-            #print(sql)
-            r1 = []
-            for linha in results:
-                r1.append(linha[0])
-
-            qresps = len(r1)
-            # print("questoes respondidas", r1)
-            # já respondeu o maximo de questoes?
-            if qresps >= maximo_questoes:
-                # tenta outro
-                continue
-                # eu estava usando break aqui em vez do continue, CABEÇÃAAAAAO
-
-            # print(fila_respondentes)
-            # verifica se o respondente não está na fila dos últimos 10
-            if id_respondente not in fila_respondentes:
-                # pode parar de tentar
-                break
-
-        # adiciona o respondente na fila
-        fila_respondentes.append(id_respondente)
-
-        # se a fila encheu
-        if len(fila_respondentes) >= 15: # TAMANHO DA FILA
-            # remove o primeiro da fila, para a fila "andar"
-            fila_respondentes.pop(0)
-
-        # retorna o respondente sorteado
-        q = db.session.query(Respondente).filter(
-            Respondente.id == id_respondente).all()
-
-        detalhes = q[0].json()
-
-        # OUTRA CONSULTA
-        # verificar quantas questões a pessoa já respondeu NO CIRCULOOOOO TODO TODO TODO
-        # não precisa mais, já é feita a consulta antes
-        #q = Resposta.query.filter_by(respondente_id=id_respondente).count()
-
-        if qresps == -1:
-            detalhes.update({"questoes_respondidas": qresps}) # PROBLEMA AQUI
+        # não foi informado respondente?
+        if not id_respondente:
+            resp = {"message": "error", "details": "não foi informado o modo da rodada (parâmetro id_respondente) "}
         else:
-            # adicionar no json essa quantidade de questões respondidas
-            detalhes.update({"questoes_respondidas": qresps})
 
-        # adicionar informações do círculo
-        detalhes.update({"circulo_id": circulo.id,
-                         "nome_circulo": circulo.nome,
-                         "data_circulo": circulo.data})
+            # declaração padrão do escolhido
+            escolhido = id_respondente
 
-        # ver quantas questões a pessoa já pulou
-        # PRECISA SER AJUSTADO PARA CONSIDERAR APENAS O CÍRCULO ATUAL
-        # ALÉM DISSO É UMA CONSULTA A MAIS QUE ESTÁ "PESANDO" NA HORA DA EXECUÇÃO
-        # PARA FAZER TODO
-        # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
+            # modo círculo (sorteio)?
+            if id_respondente == "0":
 
-        # REMOVIDO para não carregar o sistema
-        # ficou lento em execução 22/08/2022, 08:00hs
-        # lista de ID's das questões respondidas
-        # ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
+                # quantidade de respostas no círculo - vai ser preenchida dentro do for
+                qresps = -1
 
-        # lista das questões (ids) exibidas ao respondente
-        # ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
+                # tenta 15 vezes
+                for i in range(1, 15):
+                    # escolhe um respondente
+                    nquem = random.randint(1, len(todos))
 
-        # diferença
-        # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
-        # puladas = list(set(ids_exibidas) - set(ids_respondidas))
+                    # pega o id dele
+                    id_respondente_TMP = todos[nquem-1].id
 
-        # q = query.count()
-        # q = len(puladas)
-        # resp.update({"questoes_puladas": q})
-        resp = {"message": "ok", "details": detalhes}
+                    # verifica se o respondente já respondeu "n" questões NO CIRCULOOOOOOO
+                    sql = f"select q.id from questao q, resposta r, questaodocirculo qc, respostanocirculo rc where r.respondente_id = {id_respondente_TMP} AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = {id_circulo} AND rc.resposta_id = r.id AND rc.circulo_id = {id_circulo}"
+                    
+                    # results = db.session.execute(sql)
+                    # NOVO ERRO de versão sqlalchemy
+                    # sqlalchemy.exc.ArgumentError: Textual SQL expression 'select q.id from questao ...' should be explicitly declared as text('select q.id from questao ...')
+                    results = db.session.execute(text(sql))
+
+                    #print(sql)
+                    r1 = []
+                    for linha in results:
+                        r1.append(linha[0])
+
+                    qresps = len(r1)
+                    # print("questoes respondidas", r1)
+                    # já respondeu o maximo de questoes?
+                    if qresps >= maximo_questoes:
+                        # tenta outro
+                        continue
+                        # eu estava usando break aqui em vez do continue, CABEÇÃAAAAAO
+
+                    # print(fila_respondentes)
+                    # verifica se o respondente não está na fila dos últimos 10
+                    if id_respondente_TMP not in fila_respondentes:
+                        # pode parar de tentar
+                        break
+
+                # adiciona o respondente na fila
+                fila_respondentes.append(id_respondente_TMP)
+
+                # se a fila encheu
+                if len(fila_respondentes) >= 15: # TAMANHO DA FILA
+                    # remove o primeiro da fila, para a fila "andar"
+                    fila_respondentes.pop(0)
+
+                # atualiza: o escolhido é o sorteado
+                escolhido = id_respondente_TMP
+
+            # retorna o respondente sorteado
+            q = db.session.query(Respondente).filter(
+                Respondente.id == escolhido).all()
+
+            detalhes = q[0].json()
+
+            # OUTRA CONSULTA
+            # verificar quantas questões a pessoa já respondeu NO CIRCULOOOOO TODO TODO TODO
+            # não precisa mais, já é feita a consulta antes
+            #q = Resposta.query.filter_by(respondente_id=id_respondente).count()
+
+            if qresps == -1:
+                detalhes.update({"questoes_respondidas": qresps}) # PROBLEMA AQUI
+            else:
+                # adicionar no json essa quantidade de questões respondidas
+                detalhes.update({"questoes_respondidas": qresps})
+
+            # adicionar informações do círculo
+            detalhes.update({"circulo_id": circulo.id,
+                            "nome_circulo": circulo.nome,
+                            "data_circulo": circulo.data})
+
+            # ver quantas questões a pessoa já pulou
+            # PRECISA SER AJUSTADO PARA CONSIDERAR APENAS O CÍRCULO ATUAL
+            # ALÉM DISSO É UMA CONSULTA A MAIS QUE ESTÁ "PESANDO" NA HORA DA EXECUÇÃO
+            # PARA FAZER TODO
+            # https://stackoverflow.com/questions/26182027/how-to-use-not-in-clause-in-sqlalchemy-orm-query
+
+            # REMOVIDO para não carregar o sistema
+            # ficou lento em execução 22/08/2022, 08:00hs
+            # lista de ID's das questões respondidas
+            # ids_respondidas = db.session.query(Resposta.questao_id).filter(Resposta.respondente_id == id_respondente).all()
+
+            # lista das questões (ids) exibidas ao respondente
+            # ids_exibidas = db.session.query(QuestaoExibidaNoCirculo.questao_id).filter(QuestaoExibidaNoCirculo.respondente_id == id_respondente).all()
+
+            # diferença
+            # https://stackoverflow.com/questions/41125909/python-find-elements-in-one-list-that-are-not-in-the-other
+            # puladas = list(set(ids_exibidas) - set(ids_respondidas))
+
+            # q = query.count()
+            # q = len(puladas)
+            # resp.update({"questoes_puladas": q})
+            resp = {"message": "ok", "details": detalhes}
 
     # retornos
     ret = jsonify(resp)
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
+
+# curl localhost/preparar_rodada/1
+# manter compatibilidade da versão círculo
+@app.route('/preparar_rodada/<id_circulo>')
+def preparar_rodada_padrao(id_circulo):
+    return preparar_rodada(id_circulo, "0")
 
 @app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
 def abrir_questao_circulo(id_circulo, id_respondente):
