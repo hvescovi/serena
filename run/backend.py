@@ -99,12 +99,12 @@ def preparar_rodada(id_circulo, id_respondente):
             # declaração padrão do escolhido
             escolhido = id_respondente
 
+            # quantidade de respostas no círculo - vai ser preenchida dentro do for
+            qresps = -1
+
             # modo círculo (sorteio)?
             if id_respondente == "0":
-
-                # quantidade de respostas no círculo - vai ser preenchida dentro do for
-                qresps = -1
-
+    
                 # tenta 15 vezes
                 for i in range(1, 15):
                     # escolhe um respondente
@@ -150,6 +150,26 @@ def preparar_rodada(id_circulo, id_respondente):
 
                 # atualiza: o escolhido é o sorteado
                 escolhido = id_respondente_TMP
+
+            else:
+                id_respondente_TMP = escolhido
+
+                # código duplicado embaixo !!!!!!!!!!!!
+
+                # verifica se o respondente já respondeu "n" questões NO CIRCULOOOOOOO
+                sql = f"select q.id from questao q, resposta r, questaodocirculo qc, respostanocirculo rc where r.respondente_id = {id_respondente_TMP} AND r.questao_id=q.id AND qc.id_questao = q.id AND qc.id_circulo = {id_circulo} AND rc.resposta_id = r.id AND rc.circulo_id = {id_circulo}"
+                
+                # results = db.session.execute(sql)
+                # NOVO ERRO de versão sqlalchemy
+                # sqlalchemy.exc.ArgumentError: Textual SQL expression 'select q.id from questao ...' should be explicitly declared as text('select q.id from questao ...')
+                results = db.session.execute(text(sql))
+
+                #print(sql)
+                r1 = []
+                for linha in results:
+                    r1.append(linha[0])
+
+                qresps = len(r1)
 
             # retorna o respondente sorteado
             q = db.session.query(Respondente).filter(
@@ -955,7 +975,7 @@ def retornar_contagem_respostas_geral(circulo_id):
     where2 = " and rc.circulo_id = "+circulo_id
 
     # inserido text por causa de NOVO ERRO DE VERSÃO do sqlalchemy
-    resultado = db.session.execute(text("""select rc.circulo_id, count(r.id) q, rte.nome
+    resultado = db.session.execute(text("""select rc.circulo_id, count(r.id) q, rte.nome, rte.id
 from resposta r, respondente rte, respostanocirculo rc
 where rc.resposta_id=r.id 
 and rte.id = r.respondente_id """ + where2 + """
@@ -965,9 +985,10 @@ order by rc.circulo_id, q desc, rte.nome"""))
     lista = []
     for r in resultado:
         lista.append({
-            "circulo_id": r["circulo_id"],
-            "q": r["q"],
-            "nome": r["nome"]
+            "circulo_id": r[0], # r["circulo_id"], => deu erro: TypeError: tuple indices must be integers or slices, not str
+            "q": r[1], # r["q"],
+            "nome": r[2], # r["nome"]
+            "id" : r[3]
         })
     
     ret = jsonify({"message": "ok", "details": lista})
