@@ -87,7 +87,7 @@ $(function () {
         var id_resp = id.substring(5);
         // guarda na sessão
         sessionStorage.setItem("id_quem_responde", id_resp);
-        alert("guardei: "+id_resp);
+        //alert("guardei: "+id_resp);
         $(this).append(" ESCOLHIDO => <a href=circulo.html>INICIAR</a>");
 
     });
