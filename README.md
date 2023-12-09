@@ -56,7 +56,7 @@ Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
         
   	g) voltar ao passo "e)" enquanto desejar incluir outras questões no círculo
  
- => na prática, acaba sendo mais prático usar o `curl`, especificando o círculo e o id da questão a ser adicionada:
+ => na prática, acaba sendo mais prático usar o `curl`, especificando o id da questão a ser adicionada e o círculo :
 
 ```curl localhost:4999/questions_circle/129/14 -X POST```
 
