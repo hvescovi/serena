@@ -1000,8 +1000,41 @@ order by rc.circulo_id, q desc, rte.nome"""))
     return ret
 
 
+@app.route('/retornar_contagem_questoes_puladas/<circulo_id>')
+def retornar_contagem_questoes_puladas(circulo_id):
+    
+    resultado = db.session.execute(text(f"""select * from questao_exibida_no_circulo qenc where 
+        qenc.circulo_id = {circulo_id} and 
+        (qenc.questao_id,qenc.respondente_id) not IN 
+        (select r.questao_id, r.respondente_id from resposta r, respostanocirculo rc 
+        where r.questao_id = rc.resposta_id
+        order by r.questao_id )
+        order by qenc.respondente_id """))
 
+    '''
+    exemplo result:
+    id, circulo_id, questao_id, respondente_id
+    3985	19	159	53
+    3875	19	157	57
+    3915	19	157	57
+    3925	19	157	57
+    3899	19	159	61
+    3922	19	159	61
+    3959	19	159	61
+    '''
+    lista = []
+    for r in resultado:
+        lista.append({
+            "resposta_id": r[0],
+            "circulo_id": r[1],
+            "questao_id": r[2], 
+            "respondente_id" : r[3]
+        })
+    
+    ret = jsonify({"message": "ok", "details": lista})
 
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
 
 # start of backend
 

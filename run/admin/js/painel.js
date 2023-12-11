@@ -117,9 +117,45 @@ $(function () {
                                 var lin = `<tr>
                                 <td>${resp.nome}</td>
                                 <td>${resp.q}</td>
+                                <td  id="pulos_${resp.id}"></td>
                                 </tr>`;
                                 $("#tabela").append(lin);
                             }
+
+
+
+                            // obter info sobre pulos
+                            url = 'http://' + myip + ':5000/retornar_contagem_questoes_puladas/' + circulo;
+
+                            $.ajax({
+                                url: url,
+                                type: 'GET',
+                                dataType: 'json', // vou receber a resposta em json,
+                                //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+                                //contentType: "application/json",
+                                success: function (resultado) {
+                                    if (resultado.message == "ok") {
+                                        // percorre os resultados
+                                        for (var resp of resultado.details) {
+                                            // localiza o respondente
+                                            var ele = $("#pulos_"+resp.respondente_id);
+                                            // adiciona info
+                                            ele.append(" | " + resp.questao_id);
+                                        }
+                                        
+                                    }
+                                    else {
+                                        jmessage("ERRO", resultado.details);
+                                    }
+                                },
+                                error: function () {
+                                    jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
+                                }
+
+                            });
+
+
+
                             
                         }
                         else {
