@@ -1,5 +1,12 @@
 import axios from 'axios';
 
+const backendIP = import.meta.env.VUE_APP_BASE_URL;
+
+console.log(import.meta.env.VUE_APP_BASE_URL);
+console.log(import.meta.env.MODE);
+console.log(import.meta.env.TITLE);
+console.log(import.meta.env.BASE_URL);
+
 export default {
   data() {
     return {
@@ -15,13 +22,13 @@ export default {
   methods: {
     action_questions_and_circle() {
       if (this.operation == "list") { // list all questions
-        fetch('http://localhost:4999/question')
+        fetch(backendIP+'/question')
           .then(response => response.json())
           .then(json => {
             //console.log(json);
             if (json.result == 'ok') {
               // modifica enunciado para consertar a URL da imagem
-              var url = 'http://localhost:4999/imagem/';              
+              var url = backendIP+'/imagem/';              
               for (let i in json.details) {
                 var en = json.details[i].enunciado;
                 en = en.replace(/<img src=/gi, "<img src=" + url);
@@ -41,7 +48,7 @@ export default {
       } else if (this.operation == "add") { // add question to a circle
         console.log(this.selected_question);
         console.log(this.selected_circle);
-        axios.post('http://localhost:4999/questions_circle/'+this.selected_question+'/'+this.selected_circle)
+        axios.post(backendIP+'/questions_circle/'+this.selected_question+'/'+this.selected_circle)
         .then(response => {
           console.log(response);
           if (response.data.result == 'ok') {
@@ -58,7 +65,7 @@ export default {
     }
   },
   mounted() {
-    fetch('http://localhost:4999/circle')
+    fetch(backendIP+'/circle')
       .then(response => response.json())
       .then(json => {
 
