@@ -1,11 +1,17 @@
 import axios from 'axios';
 
-const backendIP = import.meta.env.VUE_APP_BASE_URL;
-
+// vars are only packed when the system is built
+// $ vue-cli-service build
 console.log(import.meta.env.VUE_APP_BASE_URL);
 console.log(import.meta.env.MODE);
 console.log(import.meta.env.TITLE);
 console.log(import.meta.env.BASE_URL);
+
+var backendIP = "http://localhost:4999"
+if (import.meta.env.VUE_APP_BASE_URL) {
+  backendIP = import.meta.env.VUE_APP_BASE_URL
+} 
+
 
 export default {
   data() {
