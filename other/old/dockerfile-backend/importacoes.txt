@@ -4,22 +4,19 @@ b) copiar os nomes da página
 c) colar no Google Calc
 d) excluir linhas iniciais, até o nome do primeiro aluno
 e) se os nomes colados com matrícula aparecem na coluna a, use esta fórmula na coluna B, para obter os nomes:
-=REGEXEXTRACT(A1;"[A-Z]+")
-f) se os nomes colados com matrícula aparecem na coluna a, use esta fórmula na coluna C, para obter as matrículas:
-=REGEXEXTRACT(A1;"[0-9]+")
-g) copie os emails da lista de emails do participantes da turma
+=REGEXEXTRACT(A1;"([A-ZÀ-ÖØ-Ý;\s]*[^0-9])")
+f) copie os emails da lista de emails do participantes da turma (menu Turma > Participantes, ao final da plagina clique em " Lista de E-mail dos discentes da turma"; seleciene todos os emails e copie)
 i) cole na planilha (coluna C);
 ii) transforme a lista de emails em colunas (menu Dados > Dividir texto em colunas)
 iii) transforme as colunas em linhas: marcar as colunas, copiar, depois menu Editar > Colar Especial > Dados Transpostos
 iv) apague os emails excedentes das colunas
-v) na coluna D, informe a "turma" dos alunos, entre "|". Esse será o filtro usado nos círculos. Exemplo: |g:301-2023|
+NAO ==> v) na coluna D, informe a "turma" dos alunos, entre "|". Esse será o filtro usado nos círculos. Exemplo: |g:301-2023|
 significa: grupo de alunos da 301, de 2023
-h) insira na primeira linha da planilha este cabeçalho:
-nome, email, observacao
-i) copie o conteúdo das células da planilha entre B1 e Dn (n = número de registros)
+h) insira na primeira linha da planilha, informando os valores: nome e email nas colunas B e C, respectivamente
+i) copie o conteúdo das células da planilha entre B1 e Cn (n = número de registros)
 j) cole o conteúdo em um site para conversão csv para json
 exemplo: https://csvjson.com/csv2json
-k) clicque no botão para converter
+k) clique no botão para converter
 k) salve o conteúdo json em um arquivo .json (por exemplo, 2023_301_info.json)
 
 usar programa para importar:

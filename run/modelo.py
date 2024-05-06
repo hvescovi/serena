@@ -285,12 +285,16 @@ class Circulo(db.Model):
     # 1 = ativo
     ativo = db.Column(db.String(1))
 
+    # added in 06 may 2024
+    maximo_questoes = db.Column(db.Integer)
+
     def __str__(self):
         s = self.nome + "("+str(self.id)+"), em "+self.data
         for questao in self.questoes:
             s = s + " > " + str(questao)       
         s += ", "+self.filtro_respondente
         s += ", ativo: "+self.ativo
+        s += ", maximo_questoes: "+str(self.maximo_questoes)
         return s
         
     def json(self):
@@ -301,7 +305,8 @@ class Circulo(db.Model):
             #"assuntos": self.assuntos
             "questoes":[a.json() for a in self.questoes],
             "filtro_respondente":self.filtro_respondente,
-            "ativo":self.ativo
+            "ativo":self.ativo,
+            "maxquest" : str(self.maximo_questoes)
 
         }
 

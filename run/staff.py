@@ -447,6 +447,40 @@ def circulo_info(c):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
+
+@app.route('/incluir_respondentes', methods=['POST'])
+def incluir_respondentes():
+        
+    retorno = ""
+    
+    # prepara a resposta padrão otimista
+    response = jsonify({"message": "ok", "details": "ok"})
+    try:
+        # pega os dados informados
+        dados = request.get_json()      
+
+        # insere respondentes
+        for q in dados['students']:
+            # estudante já existe?
+            estudante = db.session.query(Respondente).filter(Respondente.nome == q["nome"]).first()
+            # ele não existe mesmo?
+            if estudante == None:
+                # adiciona!
+                joao = Respondente(nome = q['nome'], email=q['email'], observacao = q['observacao'])
+                db.session.add(joao)
+                db.session.commit()
+                retorno += "\nRespondente carregado: "+str(joao)
+            else:
+                retorno += "\nRespondente já estava cadastrado: "+str(estudante)
+        return jsonify({"result":"ok", "details":"+retorno+"})
+    except Exception as e:
+        retorno += str(e)
+        return jsonify({"result": "error", "details":"+retorno+"})
+ 
+
+
+
+
 app.run(port=4999, debug=True)
 
 '''

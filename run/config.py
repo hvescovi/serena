@@ -27,6 +27,10 @@ from flask_cors import CORS # permitir back receber json do front
 # configurações e ambiente
 #
 
+# https://csvjson.com/csv2json
+import json
+import sys
+
 # configurações
 app = Flask(__name__)
 CORS(app) # aplicar o cross domain

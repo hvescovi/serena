@@ -7,9 +7,10 @@ from modelo import *
 # inicializa uma fila de respondentes
 fila_respondentes = []
 
+# FEITO!! 06 may 2024
 # NÚMERO DE QUESTÕES PARA RESPONDER
 # DEPOIS PRECISA VIRAR UM PARÂMETRO :-)
-maximo_questoes = 6
+maximo_questoes = 10
 # maximo_questoes = 8 # para os círculo 13 e 14
 
 
@@ -75,6 +76,10 @@ def preparar_rodada(id_circulo, id_respondente):
     # (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
     #circulo = Circulo.query.get(id_circulo)
     circulo = db.session.get(Circulo, id_circulo)
+
+    # ATUALIZA o máximo de questões, agora (06 may 2024)
+    # dependente do círculo
+    maximo_questoes = circulo.maximo_questoes
 
     # pega os respondentes do circulo
     todos = db.session.query(Respondente).filter(
@@ -269,7 +274,11 @@ def abrir_questao_circulo(id_circulo, id_respondente):
 
                     # and rc.resposta_id=r.id and rc.circulo_id=17
 
-        # XXX
+        
+        # ATUALIZA o máximo de questões, agora (06 may 2024)
+        # dependente do círculo
+        circulo = db.session.get(Circulo, id_circulo)
+        maximo_questoes = circulo.maximo_questoes      
 
         # inserido text por causa de NOVO ERRO DE VERSÃO do sqlalchemy
         results = db.session.execute(text(sql))
@@ -303,7 +312,6 @@ def abrir_questao_circulo(id_circulo, id_respondente):
             #print("r3 (só as que não respondi", r3)
 
             res = Questao.query.filter(Questao.id.in_(r3)).all()
-
 
             if len(res) == 0:
                 retorno = jsonify(
