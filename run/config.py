@@ -3,7 +3,7 @@
 
 # SERENA	Sistema abERto pErguNtAs
 
-from flask import Flask, jsonify, request, send_file#, Response
+from flask import Flask, jsonify, request, send_file, render_template #, Response
 from flask_sqlalchemy import SQLAlchemy
 import os
 from sqlalchemy import func, update, text
@@ -32,7 +32,8 @@ import json
 import sys
 
 # configurações
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/assets", static_folder='templates/assets')
+
 CORS(app) # aplicar o cross domain
 
 # execução local?

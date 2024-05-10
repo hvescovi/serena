@@ -5,9 +5,15 @@ from difflib import SequenceMatcher  # similaridade entre strings
 # https://stackoverflow.com/questions/17388213/find-the-similarity-metric-between-two-strings
 
 
-@app.route("/")
-def inicio():
+@app.route("/test")
+def test():
     return "Serena: servidor backend staff."
+
+@app.route('/')
+def vue():
+    return render_template("index.html")
+
+
 
 
 @app.route('/exibir_respostas/<id_circulo>')
@@ -477,7 +483,6 @@ def incluir_respondentes():
         retorno += str(e)
         return jsonify({"result": "error", "details":"+retorno+"})
  
-
 
 
 
