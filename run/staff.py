@@ -14,8 +14,6 @@ def vue():
     return render_template("index.html")
 
 
-
-
 @app.route('/exibir_respostas/<id_circulo>')
 def exibir_respostas_circulo(id_circulo):
 
