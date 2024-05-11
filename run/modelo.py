@@ -48,6 +48,9 @@ class Questao(db.Model):
     # o nome precisa ser type
     type = db.Column(db.String(50))
     
+    # inserted in 11 may 2024
+    textual_id = db.Column(db.Text)
+
     __mapper_args__ = {
         'polymorphic_identity':'questao', 
         'polymorphic_on':type
@@ -96,6 +99,7 @@ class MultiplaEscolha(Questao):
             "data_cadastro":self.data_cadastro,
             # assuntos...
             "type":self.__class__.__name__,
+            "textual_id":self.textual_id,
             # específico desse tipo de questão
                 "alternativas":[alternativa.json() for alternativa in self.alternativas]
         }
@@ -226,8 +230,9 @@ class Completar(Questao):
             "autor": self.autor,
             #"assunto": self.assunto,
             "data_cadastro": self.data_cadastro,
-            # assuntos ...
+            
             "type": self.__class__.__name__,
+            "textual_id":self.textual_id,
             # específico desse tipo de questão
             "lacunas":self.lacunas
         }
@@ -256,6 +261,7 @@ class Aberta(Questao):
             "data_cadastro":self.data_cadastro,
 #   assuntos = db.relationship("Assunto", secondary="assuntodaquestao")         
             "type":self.__class__.__name__,
+            "textual_id":self.textual_id,
             # específico desse tipo de questão
             "resposta": self.resposta
         }  
@@ -306,7 +312,7 @@ class Circulo(db.Model):
             "questoes":[a.json() for a in self.questoes],
             "filtro_respondente":self.filtro_respondente,
             "ativo":self.ativo,
-            "maxquest" : str(self.maximo_questoes)
+            "maximo_questoes" : str(self.maximo_questoes)
 
         }
 

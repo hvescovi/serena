@@ -24,6 +24,7 @@ abstract class Questao {
   +data_cadastro: string
   +assuntos: list of Assunto
   +type: string
+  +textual_id: string
   
 }
 
@@ -76,6 +77,7 @@ class Circulo {
   +data: string
   +questoes: list of Questao
   +respostasNoCirculo: list of Resposta
+  +maximo_questoes: int
 }
 note left of Circulo::questoes
 questões que podem ser 
