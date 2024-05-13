@@ -5,7 +5,7 @@ todo:
 [ ] 13 may 2024: em vez de saltar questão, guardar para uma repescagem (passar e depois trazê-la novamente); "adiar"
 
 [ ] 13 may 2024: sistema multiusuário, mais de um círculo ativo
-ideia: 
+ideia:
 i) tela para ativação do círculo;nessa tela, pede senha do círculo que deseja ativar; depois, armazena em sessionStorage o ID do círculo que está sendo executado ali (cifrado/hash)
 
 [ ] 13 may 2024: sistema multiusuário, login para docente
