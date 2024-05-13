@@ -1,26 +1,55 @@
 todo:
-[ ] (30/10/2023) exportação e importação de questões, com as respectivas respostas ou com a medida de correção. Como critério, poderia ser usado o enunciado da questão, com auxílio de uma medida de similaridade com outras questões. Assim, por exemplo, eu não importaria duas vezes a mesma questão, ou uma muito parecida. Em resumo, o gerenciamento de questões no sistema é algo que deve ser priorizado, pois as questões são os itens de maior valor no sistema. As respostas dos alunos são também itens valorosos, pois ajustam a questão em relação ao nível de dificuldade.
-[ ] definição, no círculo, do número de questões a serem respondidas
+
+[ ] 13 may 2024: revisão de respostas
+
+[ ] 13 may 2024: em vez de saltar questão, guardar para uma repescagem (passar e depois trazê-la novamente); "adiar"
+
+[ ] 13 may 2024: sistema multiusuário, mais de um círculo ativo
+ideia: 
+i) tela para ativação do círculo;nessa tela, pede senha do círculo que deseja ativar; depois, armazena em sessionStorage o ID do círculo que está sendo executado ali (cifrado/hash)
+
+[ ] 13 may 2024: sistema multiusuário, login para docente
+
+[ ] 30/10/2023: exportação e importação de questões, com as respectivas respostas ou com a medida de correção. Como critério, poderia ser usado o enunciado da questão, com auxílio de uma medida de similaridade com outras questões. Assim, por exemplo, eu não importaria duas vezes a mesma questão, ou uma muito parecida. Em resumo, o gerenciamento de questões no sistema é algo que deve ser priorizado, pois as questões são os itens de maior valor no sistema. As respostas dos alunos são também itens valorosos, pois ajustam a questão em relação ao nível de dificuldade.
+
 [ ] 11/11/2023: tela de edição de questões
+
 [ ] 11/11/2023: tela de edição de questões no círculo
-[ ] 11/11/2023: relatório de todas as questões com descrição completa; opcional: exibir resposta
+
+[ ] 13 may 2024: listar questões com alternativas!
+
+[ ] 13 may 2024: listar questões com respostas!
+
 [ ] definição de níveis de questão no círculo (ex: duas fáceis, três médias, uma difícil)
 [ ] permitir usar aspas duplas na especificação de imagens, em comandos HTML img src
-[ ] 11/11/2023 - uso de <script> em questões: não é exibido; precisa utilizar &lt;script&gt; para exibir a tag script.
-[ ] documentação exibindo diagrama de classes fragmentado que caiba em uma página A4
-[ ] reconfiguração do BD para incluir grupos (usar migration)
-[ ] configuração CORS
-[ ] filtros por assunto
-[ ] token
-[ ] novos tipos de questão
-[ ] falta painel de quantas questões faltam por pessoa (07/08/2023)
+[ ] 11/11/2023: uso de <script> em questões: não é exibido; precisa utilizar &lt;script&gt; para exibir a tag script.
+[ ] 2023: documentação exibindo diagrama de classes fragmentado que caiba em uma página A4
+[ ] 2023: reconfiguração do BD para incluir grupos (usar migration)
+[ ] 2023: configuração CORS
+[ ] 2023: filtros por assunto
+[ ] 2023: token
+[ ] 2023: novos tipos de questão
+
 [ ] 29/03/2023 falta tela para ver as questões que estão no círculo
+
 [ ] 29/03/2023 falta tela para ver os respondentes do círculo
-[ ] sugestão Gustavo 07/08/2023: iniciar com questões objetivas, para fazer avaliação diagnótica; se errar muito, selecionar questões mais fáceis no decorrer.
-[ ] sugestão de melhoria (07/08/2023): após certo percentual de respostas realizadas, botão para listar respondentes e permitir escolha, em vez de continuar sorteando e mostra vários que ainda não responderam
-[ ] havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
+
+[ ] sugestão Gustavo 07/08/2023: iniciar com questões objetivas, para fazer avaliação diagnótisca; se errar muito, selecionar questões mais fáceis no decorrer.
+
+[ ] 2023: havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
+
+[ok] 11/11/2023: relatório de todas as questões com descrição completa
+
+[ok] 2023: vinculação de questões ao círculo
+
+[ok, in 10 may 2024] definição, no círculo, do número de questões a serem respondidas
 
 [ok] cadastro de questões (C)
-[parcial] vinculação de questões ao círculo
+
 [ok] confirmar envio de resposta (29/03/2023); demanda antiga: confirmar antes de enviar as respostas. Isso é útil em questões dissertativas, caso o usuário pressione enter sem querer. Feito em 04/08/2023.
+
 [ok] 29/03/2023: tela para visualizar os círculo e definir o círculo ativo; RESOLVIDO: dá pra fazer no vue
+
+[ok em 13/05/2024] painel de quantas questões faltam por pessoa (07/08/2023)
+
+[ok 13 may 2024] sugestão de melhoria (07/08/2023): após certo percentual de respostas realizadas, botão para listar respondentes e permitir escolha, em vez de continuar sorteando e mostra vários que ainda não responderam => foi criado link HARD "escolher" para fixar respondente
