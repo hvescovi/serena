@@ -451,6 +451,7 @@ def circulo_info(c):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
+# curl -d '{.....}' -H 'Content-Type:application/json' localhost:4999/incluir_respondentes
 
 @app.route('/incluir_respondentes', methods=['POST'])
 def incluir_respondentes():
@@ -470,16 +471,16 @@ def incluir_respondentes():
             # ele não existe mesmo?
             if estudante == None:
                 # adiciona!
-                joao = Respondente(nome = q['nome'], email=q['email'], observacao = q['observacao'])
+                joao = Respondente(nome = q['nome'], email=q['email']) # , observacao = q['observacao'])
                 db.session.add(joao)
                 db.session.commit()
-                retorno += "\nRespondente carregado: "+str(joao)
+                retorno += ";Respondente carregado: "+str(joao)
             else:
-                retorno += "\nRespondente já estava cadastrado: "+str(estudante)
-        return jsonify({"result":"ok", "details":"+retorno+"})
+                retorno += ";Respondente já estava cadastrado: "+str(estudante)
+        return jsonify({"result":"ok", "details":retorno})
     except Exception as e:
         retorno += str(e)
-        return jsonify({"result": "error", "details":"+retorno+"})
+        return jsonify({"result": "error", "details":retorno})
  
 
 

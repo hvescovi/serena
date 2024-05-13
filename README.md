@@ -26,15 +26,25 @@ Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
 
 * NA PRÁTICA, é melhor criar uma ou duas questões, seguir os passos adiante, fazer o teste das questões (verificar se estão sendo exibidas corretamente) e depois incluir mais questões.
 
-### Víncular as questões a um círculo (pasta /other/vue/serena_manager)
 
-1) criar o círculo que vai mostrar as questões
-	
-    a) acessar o banco de dados e criar o círculo na tabela circulo (tarefa ainda manual, infelizmente; TODO: melhorar isso!)
+### Vincular respondentes
+
+1) copiar do SIGAA :-) preparar csv
+
+2) Importar
+
+3) (DBEaver - tabela) Associar círculo na observação (exemplo: |g:poo2-bcc-2024-1|)
+
+### Criar círculo que vai mostrar as questões
+
+1) Acessar o banco de dados e criar o círculo na tabela circulo (tarefa ainda manual, infelizmente; TODO: melhorar isso!)
     
-    b) definir o círculo como `ativo=1` (deixar os outros com `0`)
-    
-2) incluir as questões no círculo
+2) Definir o círculo como `ativo=1` (deixar os outros com `0`)
+
+
+### Vincular as questões a um círculo (pasta /other/vue/serena_manager)
+
+1) incluir as questões no círculo
 	
     a) executar o servidor vue (terminal)
     
