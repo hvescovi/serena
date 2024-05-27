@@ -294,6 +294,10 @@ class Circulo(db.Model):
     # added in 06 may 2024
     maximo_questoes = db.Column(db.Integer)
 
+    # added in 27 may 2024
+    autor = db.Column(db.Text)
+    senha = db.Column(db.Text)
+
     def __str__(self):
         s = self.nome + "("+str(self.id)+"), em "+self.data
         for questao in self.questoes:

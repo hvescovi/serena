@@ -25,8 +25,12 @@ abstract class Questao {
   +assuntos: list of Assunto
   +type: string
   +textual_id: string
-  
 }
+
+note right of Questao::autor
+login do autor da questão
+exemplo: hvescovi
+end note
 
 class Alternativa {
   +descricao: string
@@ -77,12 +81,22 @@ class Circulo {
   +data: string
   +questoes: list of Questao
   +respostasNoCirculo: list of Resposta
+  +filtro_respondente: text
+  +ativo: varchar[1]
   +maximo_questoes: int
+  +autor: text
+  +senha: text
 }
 note left of Circulo::questoes
 questões que podem ser 
 sorteadas para aparecer
 no círculo
+end note
+
+note left of Circulo::filtro_respondente
+especifica quais respondentes 
+participarão do círculo
+exemplo: |g:poo2-bcc-2024-1|
 end note
 
 class QuestaoExibidaNoCirculo {
@@ -91,6 +105,16 @@ class QuestaoExibidaNoCirculo {
   +respondente: Respondente
 }
 
+class Usuario {
+  +login: text
+  +email: text
+  +observacao: text
+}
+
+note right of Usuario::login
+equivale a 'autor' em Questao
+exemplo: hvescovi
+end note
 
 ' RELACIONAMENTOS
 
