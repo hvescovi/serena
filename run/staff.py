@@ -14,6 +14,7 @@ def vue():
     return render_template("index.html")
 
 
+
 @app.route('/exibir_respostas/<id_circulo>')
 def exibir_respostas_circulo(id_circulo):
 
@@ -465,7 +466,8 @@ def incluir_respondentes():
         dados = request.get_json()      
 
         # insere respondentes
-        for q in dados['students']:
+        #for q in dados['students']:
+        for q in dados:
             # estudante já existe?
             estudante = db.session.query(Respondente).filter(Respondente.nome == q["nome"]).first()
             # ele não existe mesmo?

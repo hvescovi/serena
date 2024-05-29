@@ -66,11 +66,11 @@ Para cadastrar questões no Serena, é necessário seguir os passos abaixo:
         
   	g) voltar ao passo "e)" enquanto desejar incluir outras questões no círculo
  
- => na prática, acaba sendo mais prático usar o `curl`, especificando o id da questão a ser adicionada e o círculo :
+ 2) na prática, acaba sendo mais prático usar o `curl`, especificando o id da questão a ser adicionada e o círculo :
 
 ```curl localhost:4999/questions_circle/129/14 -X POST```
 
-    h) para questões de incluam imagens, incluir as imagens em uma subpasta privada, que pode ficar no mesmo local no qual se encontra o banco de dados.
+    h) para questões de incluam imagens, incluir as imagens em uma subpasta privada chamada "question_images", que fica no mesmo local no qual se encontra o banco de dados.
 
 
 ### Testar o acesso às questões na visão de aluno (pasta /run):

@@ -6,6 +6,4 @@ será gerado o arquivo .json, que poderá ser usado para carregar os respondente
 3) carregar os respondentes:
 python3 carregar_respondentes_NOVO_PADRAO_Ladeira.py ../imports-Ladeira/teste_2023_301_info_gerado_com_sh_v2.json 
 
-OP2 (novo)
-1) ver planilha importação serena poo2 2024-1
-2) importar via rota web
+

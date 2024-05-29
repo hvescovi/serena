@@ -1,0 +1,38 @@
+1) ver planilha importação serena poo2 2024-1
+-  no sigaa, acessar: Menu Turma Virtual > Diário Eletrônico > Lista de Presença
+- copiar a tabela toda (com os nomes dos alunos)
+- colar especial na planilha modelo (ctrl+shift+v)
+- apagar as linhas acima dos nomes dos alunos
+- usar essa fórmula para extrair os nomes dos alunos (arrancar a matrícula que aparece junto):
+  =REGEXEXTRACT(A2;"([A-ZÀ-ÖØ-Ý;\s]*[^0-9])")
+- no sigaa,turma > participantes > clicar: Lista de E-mail dos discentes da turma
+- copiar os emails
+- colar na planilha
+- usar: Dados > Dividir texto em colunas
+  separador: ponto-e-vírgula
+- marcar todos os emails (colunas)
+- copiar
+- Editar > Colar especial > Dados transpostos  
+- apagar emails das colunas
+- inserir cabeçalhos "nome" e "email" na linha 1
+- copiar ao colunas nome e email
+- colar em https://csvjson.com/csv2json
+- clicar "Convert"
+- copiar o json para a memória
+- acessar: https://codebeautify.org/jsonminifier
+- minimizar o josn, copiar o json minimizado para a memória
+2) importar via rota web:
+curl -d '{.....}' -H 'Content-Type:application/json' localhost:4999/incluir_respondentes
+- substituir o {.....} pelo json copiado
+- executar
+- copiar o resultado- colar em uma guia do google planilha
+- remover conteúdos adicionais, deixar apenas informação de "details"
+- Dividir o texto em colunas
+- Colar especial > Dados transpostos
+- marcar quem já estava cadastrado, para adicionar o identificador do círculo
+- marcar nesses respondentes o identificador do círculo (direto no BD :-/ )
+FIM
+
+exemplo:
+curl -d '[{"nome":"ALESSANDRO ANDEL SILVA PEREIRA","email":"alesandro.andel@gmail.com"},{"nome":"ANDRÉ REIF CONRADT","email":"landreconradtl@gmail.com"},{"nome":"ANTONIO LUIS MOREIRA LIMA","email":"antonioluismoreiralima01@gmail.com"},{"nome":"ARTHUR FRANCISCO CARUSO","email":"arthur.c1245965@gmail.com"},{"nome":"BÁRBARA MÜLLER","email":"barbaram2627@gmail.com"},{"nome":"BARTOLOMEU MARQUES PEREIRA","email":"bmp.17@hotmail.com"},{"nome":"BEATRIZ FERREIRA DOS SANTOS","email":"beatrizferreiradossantos2005@gmail.com"},{"nome":"BERNARDO BARROS DA SILVA CIPOLLA","email":"bernardobarros559@gmail.com"},{"nome":"BERNARDO DE LIMA MACHADO","email":"bernardolmacha@gmail.com"},{"nome":"CAUÃ FELIPE DE FRANÇA NASCIMENTO","email":"caua.ffranca@gmail.com"},{"nome":"DIEGO ALVES STIEHLER","email":"nao@informado.com"},{"nome":"ELIÉZER DA SILVA","email":"eliezerdasilva2005@gmail.com"},{"nome":"ERICK PROVESI DE MORAES","email":"erickprovesi@gmail.com"},{"nome":"FREDERICO VOLKMANN","email":"fredericovolkmann19@gmail.com"},{"nome":"GUILHERME HEINRICH DOS SANTOS","email":"gui.santos.04@hotmail.com"},{"nome":"GUSTAVO HENRIQUE ROEPKE","email":"gustavoh.roepke@gmail.com"},{"nome":"HELTON PATRÍCIO DE SOUZA","email":"heltonpsouza@gmail.com"},{"nome":"IORAN WIELE","email":"ioran.wiele8@gmail.com"},{"nome":"JACKSON SANTOS ARAUJO DA SILVA","email":"jackinho2000@gmail.com"},{"nome":"JAIRO CAETANO JUNIOR","email":"jairojunior841@gmail.com"},{"nome":"JOAO DANIEL CARVALHO GARCIA","email":"joaodanielgarcia@hotmail.com"},{"nome":"JOAO OLIVEIRA SANTOS","email":"joaooliveira234@gmail.com"},{"nome":"JULIA CARMONA GUEDES GUIMARAES","email":"cacau.carmona@live.com"},{"nome":"LARA LIESENBERG","email":"laraliesenberg@gmail.com"},{"nome":"LEANDERSON LUIZ DE SOUZA NASCIMENTO","email":"leandersonsouzaultra@gmail.com"},{"nome":"LUCAS ROBERTO DA SILVA","email":"betolucas72@gmail.com"},{"nome":"LUIS EDUARDO ZIMATH","email":"luizeduardozimath@gmail.com"},{"nome":"MARIA TERESA BAPTISTELLA DA SILVA","email":"mariateresabds@gmail.com"},{"nome":"MARIANA GUILANDE PRADO","email":"marianaguilande2005@gmail.com"},{"nome":"MATHEUS LOBO DE SOUSA","email":"mlobo0108@gmail.com"},{"nome":"MATHEUS MARCHI MORO","email":"marchimm2003@gmail.com"},{"nome":"MATHEUS WILLIAM JOENCK","email":"matheuswilliamjoenck@gmail.com"},{"nome":"MIQUEIAS DE MELO LOBO","email":"miqueias.lobo@ifc.edu.br"},{"nome":"RAFAEL VILICEV ITALIANO","email":"italianorafa@gmail.com"},{"nome":"SARAH LOUISE SABEL","email":"sarahlouisesabel@gmail.com"},{"nome":"SUELEM CARLA DO NASCIMENTO MARTINS","email":"suelemnascinto@gmail.com"},{"nome":"TAINÁ SANTOS DE LIMA MELLO","email":"tatthyneoqeav@gmail.com"},{"nome":"VINICIUS VINCENT VOIGT THOMPSON","email":"twistercraft0@gmail.com"},{"nome":"VITOR GABRIEL GONÇALVES COELHO","email":"vitorg.gcoelho@gmail.com"},{"nome":"YGOR ANTUNES","email":"ygorantunes99@gmail.com"}]' -H 'Content-Type:application/json' localhost:4999/incluir_respondentes
+
