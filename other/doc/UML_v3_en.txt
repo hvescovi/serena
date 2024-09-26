@@ -1,0 +1,143 @@
+@startuml
+
+skinparam class {
+BackgroundColor White
+ArrowColor SeaGreen
+BorderColor Blue
+BackgroundColor<<Not implemented>> Wheat
+BorderColor<<Not implemented>> Tomato
+BackgroundColor<<Implemented But Unused>> LightGray
+BorderColor<<Implemented But Unused>> Blue
+}
+skinparam stereotypeCBackgroundColor YellowGreen
+skinparam stereotypeCBackgroundColor<< Missing >> DimGray
+
+<style>
+class {
+  FontSize 20
+}
+</style>
+
+abstract class Question {
+  +statement: string
+  +author: string
+  +registration_date: string
+  +matters: list of Matter
+  +type: string
+  +textual_id: string
+}
+
+note right of Question::author
+question author login
+example: hvescovi
+end note
+
+class Alternative {
+  +description: string
+  +right: boolean
+}
+
+class MultipleChoice {
+  +alternatives: list of Alternative
+}
+
+class GapFill {
+  +gaps: string
+}
+
+class Open {
+  +answer: string
+}
+
+class Respondent {
+  +name: string
+  +email: string
+  +observation: string
+  +identifier: string
+  +token: string
+}
+
+/'
+note right of Respondent::observation
+Example of group notation,
+to be searched for by like in
+query: |g:301-3022|
+represents student of
+class 301 of 2022
+end note
+'/
+
+class Answer {
+  +question: Question
+  +respondent: Respondent
+  +answer: string
+  +timestamp: datetime
+  +score: float
+  suggested_score: float
+}
+
+class Circle {
+  +name: string
+  +date: string
+  +questions: list of Question
+  +answers_in_circle: list of Answer
+  +respondent_filter: text
+  +active: varchar[1]
+  +max_questions: int
+  +author: text
+  +password: text
+}
+note left of Circle::questions
+questions that can be
+drawn to appear
+in the circle
+end note
+
+note left of Circle::respondent_filter
+specifies which respondents
+will participate in the circle
+example: |g:poo2-bcc-2024-1|
+end note
+
+class QuestionShowedInCircle {
+  +circulo: Circle
+  +question: Question
+  +respondent: Respondent
+}
+
+class User {
+  +login: text
+  +email: text
+  +observation: text
+}
+
+note right of User::login
+same as 'author' in Question
+example: hvescovi
+end note
+
+' RELATIONSHIPS
+
+Question <|-- MultipleChoice
+Question <|-- GapFill
+Question <|-- Open
+MultipleChoice o-- Alternative
+
+Answer *- Respondent
+Answer *-- Question
+(Circle,Answer) .. AnswerInCircle
+
+QuestionShowedInCircle *- Question
+QuestionShowedInCircle *-- Circle
+QuestionShowedInCircle *- Respondent
+Circle o- Question
+
+/'
+Dwelling <|-down- Apartment: Inheritance
+Dwelling <|-down- Commune: Inheritance
+Dwelling <|-down- House: Inheritance
+Dwelling "1" *-up- "many" Window: Composition
+Dwelling "1" *-up- "many" Door: Composition
+'/
+
+@enduml@startuml
