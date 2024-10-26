@@ -138,7 +138,7 @@ $(function () {
                         }
 
                         novaresp += ' <input type="text" ' + aparencia + ' size="3" id="pt' + resp.id + '" value="' + pt + '">';
-                        novaresp += ' <button id="btpt' + resp.id + '" class="pontuar_resposta">pontuar</button> ' + sugerido;
+                        novaresp += ' <button id="btpt' + resp.id + '" class="pontuar_resposta">assign grade</button> ' + sugerido;
                         novaresp += ' <img src="images/check-circle.svg" id="corrigida' + resp.id + '" class="d-none">';
 
                         // a linha abaixo mostra o nome do respondente :-p
@@ -156,7 +156,7 @@ $(function () {
                         // antes de mostrar a nova resposta: precisa mostrar gabarito?
                         if (mostrar_gabarito) {
                             lin += '<div class="row"><div class="col border border-warning bg-warning">';
-                            lin += '<h5 class="bg-info">GABARITO</h5>' + gabarito;
+                            lin += '<h5 class="bg-info">CORRECT ANSWER</h5>' + gabarito;
                             lin += '</div></div>'; //col e row
                             mostrar_gabarito = false;
                         }

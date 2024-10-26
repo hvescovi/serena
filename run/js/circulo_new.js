@@ -96,8 +96,8 @@ $(function () {
 
                         lin = lin + "<br>"
                         //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
-                        lin = lin + "Sua resposta: <textarea cols=100 rows=8 id=r" + idq + "></textarea> <br>";
-                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta" onclick="return false">enviar resposta</button>';
+                        lin = lin + "Your answer: <textarea cols=100 rows=8 id=r" + idq + "></textarea> <br>";
+                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta" onclick="return false">send answer</button>';
 
                         lin = lin + HTML_carregando;
 
@@ -121,7 +121,7 @@ $(function () {
                         for (var j in quest.alternativas) {
                             lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                         }
-                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">salvar resposta</button>';
+                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">send answer</button>';
 
                         lin = lin + HTML_carregando; //'<img src="images/carregando.gif" id="esperando" height="25">'; // class="d-none">';
 
@@ -154,7 +154,7 @@ $(function () {
                         lin = lin + en;
                         lin = lin + "<br>";
 
-                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">salvar resposta</button>';
+                        lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_completar">send answer</button>';
 
                         lin = lin + HTML_carregando;
 
