@@ -20,10 +20,12 @@
 
             <p><span class="destaque">Action</span> to do:</p>
             <p>
-                <input type="radio" v-model="operation" value="define_circle" name="define_circle" />Define active circle
+                <input type="radio" v-model="operation" value="define_circle" name="define_circle" />Define active
+                circle
             </p>
             <p>
-                <input type="radio" v-model="operation" value="add" name="operation" />Add question to the checked circle
+                <input type="radio" v-model="operation" value="add" name="operation" />Add question to the checked
+                circle
             </p>
             <p>
                 <input type="radio" v-model="operation" value="list" name="operation" />List all questions
@@ -39,13 +41,24 @@
 
                 <div class="enunciado_sty">
                     <span class="big_title">
-                        <input type="radio" v-model="selected_question" :value="q.id" name="selected_question" /> {{ q.id }}
+                        <input type="radio" v-model="selected_question" :value="q.id" name="selected_question" /> {{
+                        q.id }}
                     </span>
 
                     <hr />
 
                     <div v-html="q.enunciado" class="question_title">
                     </div>
+
+
+                    <div v-if="q.type == 'MultiplaEscolha'">
+
+                        <div v-for="a in q.alternativas" :key="a.descricao">
+                            <span v-if="a.certa">===></span> {{ a.descricao }} <br>
+                        </div>
+
+                    </div>
+
                 </div>
 
 
