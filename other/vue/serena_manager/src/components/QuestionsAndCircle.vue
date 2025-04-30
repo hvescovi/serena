@@ -52,11 +52,17 @@
 
 
                     <div v-if="q.type == 'MultiplaEscolha'">
-
                         <div v-for="a in q.alternativas" :key="a.descricao">
                             <span v-if="a.certa">===></span> {{ a.descricao }} <br>
                         </div>
+                    </div>
 
+                    <div v-if="q.type == 'Aberta'">
+                        {{ q.resposta }}
+                    </div>
+
+                    <div v-if="q.type == 'Completar'">
+                        <pre></pr.>{{ q.lacunas }}</pre>
                     </div>
 
                 </div>
