@@ -62,7 +62,7 @@
                     </div>
 
                     <div v-if="q.type == 'Completar'">
-                        <pre></pr.>{{ q.lacunas }}</pre>
+                        <pre>{{ q.lacunas }}</pre>
                     </div>
 
                 </div>
