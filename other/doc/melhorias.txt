@@ -1,24 +1,21 @@
 todo:
 
-[ ] 13 may 2024: revisão de respostas
-
-[ ] 13 may 2024: em vez de saltar questão, guardar para uma repescagem (passar e depois trazê-la novamente); "adiar"
-
 [ ] 13 may 2024: sistema multiusuário, mais de um círculo ativo
 ideia:
 i) tela para ativação do círculo;nessa tela, pede senha do círculo que deseja ativar; depois, armazena em sessionStorage o ID do círculo que está sendo executado ali (cifrado/hash)
 
 [ ] 13 may 2024: sistema multiusuário, login para docente
 
+[ ] 13 may 2024: revisão de respostas
+
+[ ] 13 may 2024: em vez de saltar questão, guardar para uma repescagem (passar e depois trazê-la novamente); "adiar"
+[ ] 2023: havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
+
 [ ] 30/10/2023: exportação e importação de questões, com as respectivas respostas ou com a medida de correção. Como critério, poderia ser usado o enunciado da questão, com auxílio de uma medida de similaridade com outras questões. Assim, por exemplo, eu não importaria duas vezes a mesma questão, ou uma muito parecida. Em resumo, o gerenciamento de questões no sistema é algo que deve ser priorizado, pois as questões são os itens de maior valor no sistema. As respostas dos alunos são também itens valorosos, pois ajustam a questão em relação ao nível de dificuldade.
 
 [ ] 11/11/2023: tela de edição de questões
 
 [ ] 11/11/2023: tela de edição de questões no círculo
-
-[ ] 13 may 2024: listar questões com alternativas!
-
-[ ] 13 may 2024: listar questões com respostas!
 
 [ ] definição de níveis de questão no círculo (ex: duas fáceis, três médias, uma difícil)
 [ ] permitir usar aspas duplas na especificação de imagens, em comandos HTML img src
@@ -36,7 +33,8 @@ i) tela para ativação do círculo;nessa tela, pede senha do círculo que desej
 
 [ ] sugestão Gustavo 07/08/2023: iniciar com questões objetivas, para fazer avaliação diagnótisca; se errar muito, selecionar questões mais fáceis no decorrer.
 
-[ ] 2023: havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
+[x] 13 may 2024: listar questões com alternativas! FEITO em 29/05/2025
+[x] 13 may 2024: listar questões com respostas! FEITO em 29/05/2025
 
 [ok] 11/11/2023: relatório de todas as questões com descrição completa
 
