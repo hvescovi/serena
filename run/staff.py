@@ -487,7 +487,7 @@ def incluir_respondentes():
 
 
 
-app.run(port=4999) #, debug=True)
+app.run(port=4999, debug=True)
 
 '''
 contagem de respostas por respondente:

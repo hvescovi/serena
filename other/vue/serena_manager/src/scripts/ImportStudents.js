@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { StudentsCsvToJson } from './utils.js'
 
 // vars are only packed when the system is built
 // $ vue-cli-service build
@@ -18,11 +19,17 @@ export default {
     return {
       message: "",
       error: "",
-      StudentsList: ""
+      StudentsList: "AMANDA PAZIANOTI HORST,amanda.horst07@gmail.com,|g:optweb-301-2025|\nANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|"
     }
   },
   methods: {
-    ImportStudents() {
+    action_ImportStudents() {
+
+      // AMANDA PAZIANOTI HORST,amanda.horst07@gmail.com,|g:optweb-301-2025|
+
+      console.log(StudentsCsvToJson(this.StudentsList));
+
+      /*
         axios.post(backendIP+'/incluir_respondentes')
         .then(response => {
           //console.log(response);
@@ -32,6 +39,8 @@ export default {
         .catch(error => {
           this.mensagem = error;
         });
+*/
+
     }
   }
 };
