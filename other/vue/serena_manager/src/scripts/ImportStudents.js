@@ -11,7 +11,7 @@ console.log(import.meta.env.BASE_URL);
 var backendIP = "http://localhost:4999"
 if (import.meta.env.VUE_APP_BASE_URL) {
   backendIP = import.meta.env.VUE_APP_BASE_URL
-} 
+}
 
 
 export default {
@@ -27,19 +27,24 @@ export default {
 
       // AMANDA PAZIANOTI HORST,amanda.horst07@gmail.com,|g:optweb-301-2025|
 
-      console.log(StudentsCsvToJson(this.StudentsList));
+      let paraEnviar = StudentsCsvToJson(this.StudentsList);
+      //console.log(StudentsCsvToJson(this.StudentsList));
 
-      /*
-        axios.post(backendIP+'/incluir_respondentes')
+      axios.post(backendIP + '/incluir_respondentes',
+        paraEnviar,
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
         .then(response => {
           //console.log(response);
           //if (response.data.result == 'ok') {
-            this.message = response.data.details;
+          this.message = response.data.details;
         })
         .catch(error => {
           this.mensagem = error;
         });
-*/
+
 
     }
   }
