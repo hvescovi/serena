@@ -1,4 +1,5 @@
 <template>
+
     <div id="div_questions_and_circle">
         <form @submit.prevent="action_questions_and_circle" id="form_questions_and_circle">
             <p>

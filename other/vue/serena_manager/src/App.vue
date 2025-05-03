@@ -2,13 +2,25 @@
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
 import QuestionsAndCircle from './components/QuestionsAndCircle.vue'
+import ImportStudents from './components/ImportStudents.vue'
 </script>
 
 <template>
+
+  <header>
+    <nav>
+      <RouterLink to="/">Início :-)</RouterLink>
+      <RouterLink to="/import">Importar</RouterLink>
+    </nav>
+  </header>
+
   <main>
     <!-- <TheWelcome />-->
-  <QuestionsAndCircle />
+    <RouterView />
+    <!--<QuestionsAndCircle />
+    <ImportStudents /> -->
   </main>
+
 </template>
 
 <style scoped>
@@ -38,6 +50,6 @@ header {
     flex-wrap: wrap;
   }
 
-  
+
 }
 </style>

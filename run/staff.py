@@ -452,7 +452,7 @@ def circulo_info(c):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-# curl -d '{.....}' -H 'Content-Type:application/json' localhost:4999/incluir_respondentes
+# curl -d '[{"nome":"AMANDA PAZIANOTI HORST", "email":"amanda.horst07@gmail.com", "observacao":"|g:optweb-301-2025|"},{"nome":"ANTONIO HENRIQUE ROHLING FROEHNER","email":"rf.antonio2007@gmail.com", "observacao":"|g:optweb-301-2025|"}]' -H 'Content-Type:application/json' localhost:4999/incluir_respondentes
 
 @app.route('/incluir_respondentes', methods=['POST'])
 def incluir_respondentes():
@@ -473,7 +473,7 @@ def incluir_respondentes():
             # ele não existe mesmo?
             if estudante == None:
                 # adiciona!
-                joao = Respondente(nome = q['nome'], email=q['email']) # , observacao = q['observacao'])
+                joao = Respondente(nome = q['nome'], email=q['email'], observacao = q['observacao'])
                 db.session.add(joao)
                 db.session.commit()
                 retorno += ";Respondente carregado: "+str(joao)
@@ -487,7 +487,7 @@ def incluir_respondentes():
 
 
 
-app.run(port=4999, debug=True)
+app.run(port=4999) #, debug=True)
 
 '''
 contagem de respostas por respondente:
