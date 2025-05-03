@@ -40,7 +40,8 @@
             <button>Do it!</button>
         </form>
 
-        <input v-model="message" disabled>
+        <textarea v-model="message">
+        </textarea>
 
     </div>
 </template>
