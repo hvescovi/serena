@@ -507,6 +507,28 @@ def add(classe):
         # informar mensagem de erro :-(
         return jsonify({"result": "error", "details": str(e)})
 
+@app.route("/list/<string:classe>", methods=['GET'])
+def generic_list(classe):
+    resp = []
+    if classe == "Circulo":
+        dados = Circulo.query.all()
+    for q in dados:
+        resp.append(q.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    return jsonify(retorno)
+
+
+@app.route("/delete/Circulo/<string:nome>", methods=['DELETE'])
+def delete_circulo(nome):
+    # Delete by nome
+    ...
+
+@app.route("/update/Circulo/<string:nome>", methods=['PUT'])
+def update_circulo(nome):
+    # Update data
+    ...
 
 app.run(port=4999, debug=True)
 

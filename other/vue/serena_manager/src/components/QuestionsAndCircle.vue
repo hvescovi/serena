@@ -6,7 +6,7 @@
                 Active circle:
             <div v-if="circles.length">
                 <div class="card" v-for="c in circles" :key="c.id">
-                    <input type="radio" v-model="selected_circle" name="selected_circle" :checked="c.ativo == 1"
+                    <input type="radio" v-model="selected_circle" name="selected_circle" :checked="c.ativo == '1'"
                         :value="c.id" />
                     {{ c.id }}) {{ c.nome }}
                 </div>
@@ -35,14 +35,14 @@
             <button>Do it!</button>
         </form>
 
-        <input v-model="message">
+        <textarea v-model="message"></textarea>
 
         <div v-if="questions.length">
             <div class="card" v-for="q in questions" :key="q.id">
 
                 <div class="enunciado_sty">
                     <span class="big_title">
-                        <input type="radio" v-model="selected_question" :value="q.id" name="selected_question" /> {{
+                        <input type="checkbox" v-model="checkedOptions" :value="q.id" name="checkedOptions" :id="q.id" /> {{
                         q.id }}
                     </span>
 

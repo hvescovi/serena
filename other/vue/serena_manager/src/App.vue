@@ -1,6 +1,6 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+//import HelloWorld from './components/HelloWorld.vue'
+//import TheWelcome from './components/TheWelcome.vue'
 import QuestionsAndCircle from './components/QuestionsAndCircle.vue'
 import ImportStudents from './components/ImportStudents.vue'
 </script>
@@ -11,10 +11,12 @@ import ImportStudents from './components/ImportStudents.vue'
     <nav>
       <RouterLink to="/">Início :-)</RouterLink>
       <RouterLink to="/import">Importar</RouterLink>
+      <RouterLink to="/crudCircle">Gerenciar Círculos</RouterLink>
     </nav>
   </header>
 
   <main>
+    <hr>
     <!-- <TheWelcome />-->
     <RouterView />
     <!--<QuestionsAndCircle />
@@ -24,6 +26,7 @@ import ImportStudents from './components/ImportStudents.vue'
 </template>
 
 <style scoped>
+/*
 header {
   line-height: 1.5;
 }
@@ -49,7 +52,6 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
-
-
 }
+  */
 </style>

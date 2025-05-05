@@ -2,10 +2,12 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 
 import QuestionsAndCircle from './components/QuestionsAndCircle.vue'
 import ImportStudents from './components/ImportStudents.vue'
+import crudCircle from './components/crudCircle.vue'
 
 const routes = [
   { path: '/', component: QuestionsAndCircle },
-  { path: '/import', component: ImportStudents }
+  { path: '/import', component: ImportStudents },
+  { path: '/crudCircle', component: crudCircle }
 ]
 
 const router = createRouter({
