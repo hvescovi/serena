@@ -485,6 +485,27 @@ def incluir_respondentes():
         return jsonify({"result": "error", "details":retorno})
  
 
+# curl -d '{"nome":"AV1 optweb EMI maio 2025","data":"05/05/2025","filtro_respondente":"|g:optweb-301-2025|","ativo":"0","maximo_questoes":10,"autor":"hvescovi","senha":""}' -X POST -H 'Content-Type:application/json' localhost:4999/add/Circulo
+
+@app.route("/add/<string:classe>", methods=['post'])
+def add(classe):
+    # receber as informações do novo objeto
+    dados = request.get_json()  
+    try:  
+        nova = None
+        if classe == "Circulo":
+            c = db.session.query(Circulo).filter(Circulo.nome == dados["nome"]).first()
+            # ele não existe mesmo?
+            if c == None:          
+                nova = Circulo(**dados)
+        
+        db.session.add(nova)  # adicionar no BD
+        db.session.commit()  # efetivar a operação de gravação
+        # retorno de sucesso :-)
+        return jsonify({"result": "ok", "details": "ok"})
+    except Exception as e:  # em caso de erro...
+        # informar mensagem de erro :-(
+        return jsonify({"result": "error", "details": str(e)})
 
 
 app.run(port=4999, debug=True)
