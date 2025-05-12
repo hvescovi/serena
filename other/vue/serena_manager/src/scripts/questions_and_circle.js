@@ -56,8 +56,31 @@ export default {
         console.log(this.checkedOptions);
 
         let mess = "oi ";
-        console.log('=>'+mess);
+        console.log('=>' + mess);
         // loop through question to add
+
+        // chatgpt version
+
+        let promises = this.checkedOptions.map(option => {
+          return axios.post(backendIP + '/questions_circle/' + option + '/' + this.selected_circle)
+            .then(response => {
+              if (response.data.result === 'ok') {
+                mess += `\nQuestão ${option} incluída no círculo, com sucesso!`;
+              } else {
+                mess += `\nProblema na questão ${option}: ${response.data.details}`;
+              }
+            })
+            .catch(error => {
+              mess += `\nERRO: ${error}`;
+            });
+        });
+
+        Promise.all(promises).then(() => {
+          console.log('resultado:' + mess);
+          this.message = mess;
+        });
+
+        /*
         for (let i = 0; i < this.checkedOptions.length; i++) {
 
           axios.post(backendIP + '/questions_circle/' + this.checkedOptions[i] + '/' + this.selected_circle)
@@ -79,6 +102,8 @@ export default {
         }
         console.log('resultado:'+mess);
         this.message = mess;
+
+        */
 
         /*
         axios.post(backendIP+'/questions_circle/'+this.selected_question+'/'+this.selected_circle)
