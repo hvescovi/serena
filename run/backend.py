@@ -287,8 +287,10 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         for linha in results:
             r1.append(linha[0])
 
+        n_respondidas = len(r1)
+
         #print("tamanho:",len(r1)," r1=", r1)
-        if len(r1) >= maximo_questoes:
+        if n_respondidas >= maximo_questoes:
         #if len(r1.all()) >= 10:
             retorno = jsonify(
                 {"message": "error", "details": "Já foram respondidas todas as questões previstas para este círculo"})
@@ -305,7 +307,9 @@ def abrir_questao_circulo(id_circulo, id_respondente):
 
             #print("r2 (todas do círculo)", r2)
 
-            # obter complemento: questões que estão no círculo, MENOS as questões que eu já respondi 
+            # obter complemento: questões que estão no círculo, 
+            # MENOS as questões que eu já respondi 
+            # ou seja, as questões que eu ainda NÃO respondi
             # https://stackoverflow.com/questions/52417929/remove-elements-from-one-array-if-present-in-another-array-keep-duplicates-nu
             r3 = list(set(r2) - set(r1))
 
@@ -318,14 +322,56 @@ def abrir_questao_circulo(id_circulo, id_respondente):
                     {"message": "error", "details": "Não há mais perguntas a responder"})
             else:
 
-                # sorteia uma questão
-                nq = random.randint(1, len(res))  # questoes_ainda_nao))
-
                 # prepara a variável de questão
                 resp = ""
 
-                # obtém a questão
-                q = res[nq-1]
+                # 05/06/2025
+                # quais as questões foram visualizadas e 
+                # não respondidas (ou seja, PULADAS)?
+                sql3 = f'''select distinct qenc.questao_id from questao_exibida_no_circulo qenc 
+where  qenc.circulo_id = {id_circulo} and
+       qenc.respondente_id = {id_respondente} and
+        (qenc.questao_id,qenc.respondente_id) not IN 
+(select r.questao_id, r.respondente_id from resposta r, respostanocirculo rc 
+where r.questao_id = rc.resposta_id
+order by r.questao_id )
+order by qenc.respondente_id'''
+
+                results3 = db.session.execute(text(sql3))
+                #print(sql)
+                r3 = []
+                for linha in results3:
+                    r3.append(linha[0])        
+
+                n_puladas = len(r3)
+
+                # se o total de puladas mais 
+                # o total de respondidas (ou seja, 
+                # número de questões visualizadas)
+                # for menor que o total
+                # de questões a responder
+                n_visualizadas = n_respondidas + n_puladas
+                if n_visualizadas < maximo_questoes:
+                    # segue execução "normal": ainda há
+                    # espaço para novas questões
+
+                    # sorteia uma questão
+                    nq = random.randint(1, len(res))  # questoes_ainda_nao))
+          
+                    # obtém a questão
+                    q = res[nq-1]
+
+                else:
+                    # encontra uma das questões anteriores
+                    # já puladas
+
+                    # percorre as questões não respondidas
+                    for tmp in res:
+                        # se essa for uma pulada
+                        if tmp.questao_id in r3:
+                            # escolhe ela
+                            q = tmp
+                            break
 
                 # faz uma conversão de tipo para obter o json
 
@@ -1051,3 +1097,29 @@ if ipcontrol:
 
 app.run(host='0.0.0.0', debug=True)
 # app.run(host="0.0.0.0")
+
+
+'''
+
+-- questões já respondidas
+select q.id 
+from questao q, resposta r, questaodocirculo qc, 
+respostanocirculo rc 
+where r.respondente_id = 188
+AND r.questao_id=q.id 
+AND qc.id_questao = q.id 
+AND qc.id_circulo = 24 
+and rc.resposta_id=r.id 
+and rc.circulo_id=24
+
+-- questões puladas
+select distinct qenc.questao_id from questao_exibida_no_circulo qenc 
+where  qenc.circulo_id = 24 and
+       qenc.respondente_id = 188 and
+        (qenc.questao_id,qenc.respondente_id) not IN 
+(select r.questao_id, r.respondente_id from resposta r, respostanocirculo rc 
+where r.questao_id = rc.resposta_id
+order by r.questao_id )
+order by qenc.respondente_id
+
+'''
