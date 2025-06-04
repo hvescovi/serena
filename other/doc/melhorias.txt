@@ -1,5 +1,25 @@
 todo:
 
+[ ] Gerar as questões de cada prova, antecipadamente, poder navegar entre as questões
+
+[ ] Poder apagar respostas ou exibição de questões para caso de computador reiniciar
+
+// apagar a resposta
+delete from resposta where questao_id=220 and respondente_id=169
+
+// remover a questao da visualizaçao no circulo
+
+// remover a resposta do círculo
+delete from respostanocirculo 
+where resposta_id=3948
+
+
+// alguma resposta no círculo sem estar na resposta?
+select * from respostanocirculo rc 
+where rc.resposta_id not in (select id from resposta) 
+
+
+
 [ ] 13 may 2024: sistema multiusuário, mais de um círculo ativo
 ideia:
 i) tela para ativação do círculo;nessa tela, pede senha do círculo que deseja ativar; depois, armazena em sessionStorage o ID do círculo que está sendo executado ali (cifrado/hash)

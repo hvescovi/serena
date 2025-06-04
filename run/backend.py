@@ -345,13 +345,17 @@ order by qenc.respondente_id'''
 
                 n_puladas = len(r3)
 
+                # número de questões que o respondente
+                # pode visualizar "a mais" (bônus :-)
+                n_reservas = 1 
+
                 # se o total de puladas mais 
                 # o total de respondidas (ou seja, 
                 # número de questões visualizadas)
                 # for menor que o total
                 # de questões a responder
                 n_visualizadas = n_respondidas + n_puladas
-                if n_visualizadas < maximo_questoes:
+                if n_visualizadas < maximo_questoes + n_reservas:
                     # segue execução "normal": ainda há
                     # espaço para novas questões
 
@@ -365,10 +369,20 @@ order by qenc.respondente_id'''
                     # encontra uma das questões anteriores
                     # já puladas
 
+                    # embaralha as questões restantes para 
+                    # não cair sempre na mesma restante
+
+                    #def myfunction():
+                    #    return 0.1
+                    print(res)
+                    random.shuffle(res)
+                    print(res)
+                    #res = (res, myfunction)
+
                     # percorre as questões não respondidas
                     for tmp in res:
                         # se essa for uma pulada
-                        if tmp.questao_id in r3:
+                        if tmp.id in r3:
                             # escolhe ela
                             q = tmp
                             break
