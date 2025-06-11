@@ -18,10 +18,37 @@ maximo_questoes = 10
 def inicio():
     return "Serena: servidor backend."
 
+def failed():
+    return jsonify({"message": "error", "details": "unauthorized"})
+
+# controle de ips
+ipcontrol = True
+ips = []
+
+def ipok(ip):
+    if ipcontrol:
+        ret = (ip in ips)
+        return ret
+    else:
+        return True
+
+def loadiptable():
+    f = open('/home/friend/Dropbox/10-serena-secrets/ips.txt', 'r')
+    for x in f:
+        # pega o IP sem caracter final quebra de linha
+        ip = x[:-1]
+        # tem comentário?
+        if '#' in ip:
+            # pega só o IP
+            ip = ip.split("#")[0]
+            # remover eventuais espaços
+            ip = ip.strip()
+        ips.append(ip)
+    print(ips)
 
 @app.route('/retornar_questoes')
 def retornar_questoes():
-    print(request.remote_addr)
+    #print(request.remote_addr)
     if not ipok(request.remote_addr):
         return failed()
 
@@ -233,6 +260,8 @@ def preparar_rodada(id_circulo, id_respondente):
 # manter compatibilidade da versão círculo
 @app.route('/preparar_rodada/<id_circulo>')
 def preparar_rodada_padrao(id_circulo):
+    if not ipok(request.remote_addr):
+        return failed()
     return preparar_rodada(id_circulo, "0")
 
 @app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
@@ -665,6 +694,9 @@ def retornar_respostas():
 
 @app.route('/retornar_respondentes')
 def retornar_respondentes():
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
     respondentes = Respondente.query.all()
     for q in respondentes:
@@ -683,6 +715,9 @@ def retornar_respondentes():
 # filtro3: data, parametro=data
 # INTERROMPIDO
 def retornar_contagem_respostas(filtro, parametro):
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
 
     # resposta padrao
@@ -720,6 +755,9 @@ def retornar_contagem_respostas(filtro, parametro):
 
 @app.route('/retornar_contagem_respostas_questao/<email>/<questao>')
 def retornar_contagem_respostas_questao(email, questao):
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
 
     # obtém o respondente
@@ -963,6 +1001,9 @@ def get_generico(classe):
 
 @app.route('/get/<string:classe>/<string:id>', methods=['get'])
 def get_especifico(classe, id):
+    if not ipok(request.remote_addr):
+        return failed()
+
 
     # reflexao: instanciando a classe a partir de seu nome em string
     # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
@@ -998,30 +1039,6 @@ def exibir_respostas_circulo(id_circulo):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-# controle de ips?
-ipcontrol = False
-ips = []
-
-
-def ipok(ip):
-    if ipcontrol:
-        ret = (ip in ips)
-        return ret
-    else:
-        return True
-
-
-def failed():
-    return jsonify({"message": "error", "details": "unauthorized"})
-
-
-def loadiptable():
-    f = open('/home/friend/01-github/serena/dockerfile-backend/ips.txt', 'r')
-    for x in f:
-        ips.append(x[:-1])
-    print(ips)
-
-
 @app.route('/circulo_ativo')
 def circulo_ativo():
     if not ipok(request.remote_addr):
@@ -1044,6 +1061,8 @@ def circulo_ativo():
 
 @app.route('/retornar_contagem_respostas_geral/<circulo_id>')
 def retornar_contagem_respostas_geral(circulo_id):
+    if not ipok(request.remote_addr):
+        return failed()
     
     where2 = " and rc.circulo_id = "+circulo_id
 
@@ -1072,6 +1091,9 @@ order by rc.circulo_id, q desc, rte.nome"""))
 
 @app.route('/retornar_contagem_questoes_puladas/<circulo_id>')
 def retornar_contagem_questoes_puladas(circulo_id):
+    
+    if not ipok(request.remote_addr):
+        return failed()
     
     resultado = db.session.execute(text(f"""select * from questao_exibida_no_circulo qenc where 
         qenc.circulo_id = {circulo_id} and 
