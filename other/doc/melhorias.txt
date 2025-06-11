@@ -1,12 +1,12 @@
 todo:
 
-[ ] mover ipok para serena secrets
-
 [ ] inserir questões reserva (bônus) (questões que pode pular) como atributo de círculo
 
-[ ] Pode apagar respostas fornecidas como teste; tabelas: resposta, respostanocirculo, questao_exibida_no_circulo
+[ ] interface para poder apagar respostas fornecidas como teste; tabelas: resposta, respostanocirculo, questao_exibida_no_circulo
 
-[ ] Gerar as questões de cada prova, antecipadamente, poder navegar entre as questões
+[ ] Gerar as questões de cada prova, antecipadamente, 
+
+[ ] poder navegar entre as questões
 
 [ ] Poder apagar respostas ou exibição de questões para caso de computador reiniciar
 
@@ -76,3 +76,5 @@ i) tela para ativação do círculo;nessa tela, pede senha do círculo que desej
 [ok em 13/05/2024] painel de quantas questões faltam por pessoa (07/08/2023)
 
 [ok 13 may 2024] sugestão de melhoria (07/08/2023): após certo percentual de respostas realizadas, botão para listar respondentes e permitir escolha, em vez de continuar sorteando e mostra vários que ainda não responderam => foi criado link HARD "escolher" para fixar respondente
+
+[x] 12/06/2025 mover ipok para serena secrets; feito em 12/06/2025
