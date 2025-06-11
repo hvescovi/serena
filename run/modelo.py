@@ -118,7 +118,7 @@ class Respondente(db.Model):
     identificador = db.Column(db.String(254)) # utilizado durante operação
     token = db.Column(db.String(254)) # utilizado durante operação
     def __str__(self):
-        return self.nome+" ("+self.email+")" # +self.observacao
+        return self.nome+" ("+self.email+")" +self.observacao
 
     def json(self):
         return {

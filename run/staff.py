@@ -465,10 +465,9 @@ def incluir_respondentes():
         # pega os dados informados
         dados = request.get_json()      
 
-        # insere respondentes
-        #for q in dados['students']:
+        # percorre os novos respondentes
         for q in dados:
-            # estudante já existe?
+            # procura o estudante (e se ele existir?)
             estudante = db.session.query(Respondente).filter(Respondente.nome == q["nome"]).first()
             # ele não existe mesmo?
             if estudante == None:
@@ -478,7 +477,15 @@ def incluir_respondentes():
                 db.session.commit()
                 retorno += ";Respondente carregado: "+str(joao)
             else:
-                retorno += ";Respondente já estava cadastrado: "+str(estudante)
+                # já possui a observação?
+                if q['observacao'] in estudante.observacao:
+                    retorno += ";Respondente já estava cadastrado e já continha a observação: "+str(estudante)
+                else:
+                    # acrescentra a tag/observação :-)
+                    estudante.observacao += q['observacao'] + "|"
+                    db.session.commit()
+                    retorno += ";Respondente já estava cadastrado e foi atualizado com a nova observação: "+str(estudante)
+                    
         return jsonify({"result":"ok", "details":retorno})
     except Exception as e:
         retorno += str(e)
