@@ -1,5 +1,11 @@
 todo:
 
+[ ] mover ipok para serena secrets
+
+[ ] inserir questões reserva (bônus) (questões que pode pular) como atributo de círculo
+
+[ ] Pode apagar respostas fornecidas como teste; tabelas: resposta, respostanocirculo, questao_exibida_no_circulo
+
 [ ] Gerar as questões de cada prova, antecipadamente, poder navegar entre as questões
 
 [ ] Poder apagar respostas ou exibição de questões para caso de computador reiniciar
@@ -12,7 +18,6 @@ delete from resposta where questao_id=220 and respondente_id=169
 // remover a resposta do círculo
 delete from respostanocirculo 
 where resposta_id=3948
-
 
 // alguma resposta no círculo sem estar na resposta?
 select * from respostanocirculo rc 

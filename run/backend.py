@@ -347,7 +347,9 @@ order by qenc.respondente_id'''
 
                 # número de questões que o respondente
                 # pode visualizar "a mais" (bônus :-)
-                n_reservas = 1 
+                # HARD CODED
+                # depois acrescentar como atributo de círculo
+                n_reservas = 2 
 
                 # se o total de puladas mais 
                 # o total de respondidas (ou seja, 
@@ -374,9 +376,9 @@ order by qenc.respondente_id'''
 
                     #def myfunction():
                     #    return 0.1
-                    print(res)
+                    #print(res)
                     random.shuffle(res)
-                    print(res)
+                    #print(res)
                     #res = (res, myfunction)
 
                     # percorre as questões não respondidas
