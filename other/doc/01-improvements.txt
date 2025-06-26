@@ -1,5 +1,7 @@
 todo:
 
+[ ] show images when there are img commands at the correct answers ("gabarito"), showed at the correction page (26/06/2025)
+
 [ ] inserir questões reserva (bônus) (questões que pode pular) como atributo de círculo
 
 [ ] interface para poder apagar respostas fornecidas como teste; tabelas: resposta, respostanocirculo, questao_exibida_no_circulo
