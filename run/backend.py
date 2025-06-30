@@ -22,7 +22,7 @@ def failed():
     return jsonify({"message": "error", "details": "unauthorized"})
 
 # controle de ips
-ipcontrol = True
+ipcontrol = False
 ips = []
 
 def ipok(ip):
