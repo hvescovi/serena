@@ -1,16 +1,9 @@
 todo:
 
 [ ] show images when there are img commands at the correct answers ("gabarito"), showed at the correction page (26/06/2025)
-
-[ ] inserir questões reserva (bônus) (questões que pode pular) como atributo de círculo
-
-[ ] interface para poder apagar respostas fornecidas como teste; tabelas: resposta, respostanocirculo, questao_exibida_no_circulo
-
-[ ] Gerar as questões de cada prova, antecipadamente, 
-
+[ ] interface para poder apagar respostas fornecidas como teste; tabelas: resposta, respostanocirculo, questao_exibida_no_circulo; apagar respostas ou exibição de questões para caso de computador reiniciar
+[ ] Gerar as questões de cada prova, antecipadamente
 [ ] poder navegar entre as questões
-
-[ ] Poder apagar respostas ou exibição de questões para caso de computador reiniciar
 
 // apagar a resposta
 delete from resposta where questao_id=220 and respondente_id=169
@@ -25,25 +18,14 @@ where resposta_id=3948
 select * from respostanocirculo rc 
 where rc.resposta_id not in (select id from resposta) 
 
-
-
 [ ] 13 may 2024: sistema multiusuário, mais de um círculo ativo
 ideia:
 i) tela para ativação do círculo;nessa tela, pede senha do círculo que deseja ativar; depois, armazena em sessionStorage o ID do círculo que está sendo executado ali (cifrado/hash)
-
 [ ] 13 may 2024: sistema multiusuário, login para docente
-
 [ ] 13 may 2024: revisão de respostas
-
-[ ] 13 may 2024: em vez de saltar questão, guardar para uma repescagem (passar e depois trazê-la novamente); "adiar"
-[ ] 2023: havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
-
 [ ] 30/10/2023: exportação e importação de questões, com as respectivas respostas ou com a medida de correção. Como critério, poderia ser usado o enunciado da questão, com auxílio de uma medida de similaridade com outras questões. Assim, por exemplo, eu não importaria duas vezes a mesma questão, ou uma muito parecida. Em resumo, o gerenciamento de questões no sistema é algo que deve ser priorizado, pois as questões são os itens de maior valor no sistema. As respostas dos alunos são também itens valorosos, pois ajustam a questão em relação ao nível de dificuldade.
-
 [ ] 11/11/2023: tela de edição de questões
-
 [ ] 11/11/2023: tela de edição de questões no círculo
-
 [ ] definição de níveis de questão no círculo (ex: duas fáceis, três médias, uma difícil)
 [ ] permitir usar aspas duplas na especificação de imagens, em comandos HTML img src
 [ ] 11/11/2023: uso de <script> em questões: não é exibido; precisa utilizar &lt;script&gt; para exibir a tag script.
@@ -53,9 +35,7 @@ i) tela para ativação do círculo;nessa tela, pede senha do círculo que desej
 [ ] 2023: filtros por assunto
 [ ] 2023: token
 [ ] 2023: novos tipos de questão
-
 [ ] 29/03/2023 falta tela para ver as questões que estão no círculo
-
 [ ] 29/03/2023 falta tela para ver os respondentes do círculo
 
 [ ] sugestão Gustavo 07/08/2023: iniciar com questões objetivas, para fazer avaliação diagnótisca; se errar muito, selecionar questões mais fáceis no decorrer.
@@ -80,3 +60,9 @@ i) tela para ativação do círculo;nessa tela, pede senha do círculo que desej
 [ok 13 may 2024] sugestão de melhoria (07/08/2023): após certo percentual de respostas realizadas, botão para listar respondentes e permitir escolha, em vez de continuar sorteando e mostra vários que ainda não responderam => foi criado link HARD "escolher" para fixar respondente
 
 [x] 12/06/2025 mover ipok para serena secrets; feito em 12/06/2025
+
+[ok] inserir questões reserva (bônus) (questões que pode pular) como atributo de círculo. FEITO em 06/2026
+
+[OK] 13 may 2024: em vez de saltar questão, guardar para uma repescagem (passar e depois trazê-la novamente); "adiar"
+[OK] 2023: havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
+[ok] let free the size of the textbox area (remove width, heigth), 01/07/2025. DONE in 01/07/2025
