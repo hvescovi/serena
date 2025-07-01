@@ -96,7 +96,7 @@ $(function () {
 
                         lin = lin + "<br>"
                         //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
-                        lin = lin + "Your answer: <textarea cols=100 rows=8 id=r" + idq + "></textarea> <br>";
+                        lin = lin + "Your answer: <textarea id=r" + idq + "></textarea> <br>";
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta" onclick="return false">send answer</button>';
 
                         lin = lin + HTML_carregando;

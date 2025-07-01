@@ -23,7 +23,7 @@ def exibir_respostas_circulo(id_circulo):
     # results = db.session.execute(sql)
     # ERRO inserido em nova versão de sqlalchemy
     results = db.session.execute(text(sql))
-    print(sql)
+    # print(sql)
     r1 = []
     for linha in results:
         r1.append(linha[0])        
