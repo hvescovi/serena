@@ -40,8 +40,8 @@ $(function () {
         }
 
         if (type == "multiplaescolha_remodelada") {
-            var resposta = $("#resposta").val();
-            var alternativas = $("#alternativas").val().split("\n");
+            //var resposta = $("#resposta").val();
+            var alternativas = $("#resposta").val().split("\n");
             let corretas = []
             let erradas = []
             for(var i = 0;i < alternativas.length;i++){

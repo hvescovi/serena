@@ -481,8 +481,16 @@ def incluir_respondentes():
                 if q['observacao'] in estudante.observacao:
                     retorno += ";Respondente já estava cadastrado e já continha a observação: "+str(estudante)
                 else:
+                    # remove eventuais espaços do começo e fim
+                    estudante.observacao = estudante.observacao.strip()
+                    # se tem observação
+                    if len(estudante.observacao)>0:
+                        # se a observacao termina com "|"
+                        if estudante.observacao[-1] == "|":
+                            # remove o último caracter, pois vai adicionar mais
+                            estudante.observacao = estudante.observacao[:-1]                    
                     # acrescentra a tag/observação :-)
-                    estudante.observacao += q['observacao'] + "|"
+                    estudante.observacao += q['observacao']
                     db.session.commit()
                     retorno += ";Respondente já estava cadastrado e foi atualizado com a nova observação: "+str(estudante)
                     
