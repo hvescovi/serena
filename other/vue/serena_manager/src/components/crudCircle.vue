@@ -4,13 +4,16 @@
 
     <form @submit.prevent="isEditing ? updateCirculo() : saveCirculo()" class="mb-6 space-y-2">
       
-      <input v-model="form.nome" placeholder="Nome" class="input" ref="firstField" />
-      <input v-model="form.data" placeholder="Data" class="input" />
-      <input v-model="form.filtro_respondente" placeholder="Filtro Respondente" class="input" />
-      <input v-model="form.ativo" placeholder="Ativo (S/N)" class="input" />
-      <input v-model.number="form.maximo_questoes" placeholder="Máximo de Questões" class="input" />
-      <input v-model="form.autor" placeholder="Autor" class="input" />
-      <input v-model="form.senha" type="password" placeholder="Senha" class="input" />
+      Nome: <input v-model="form.nome" placeholder="Nome" class="input" ref="firstField" />
+      Data: <input v-model="form.data" placeholder="Data" class="input" />
+      Filtro do respondente: <input v-model="form.filtro_respondente" placeholder="Filtro Respondente" class="input" />
+      Ativo (0 ou 1) <input v-model="form.ativo" placeholder="Ativo (0/1)" class="input" />
+      Número de questões a responder no círculo: <input v-model.number="form.maximo_questoes" placeholder="Máximo de Questões" class="input" />
+      Autor: <input v-model="form.autor" placeholder="Autor" class="input" />
+      Senha: <input v-model="form.senha" type="password" placeholder="Senha" class="input" />
+      Número de questões reserva: <input v-model.number="form.n_reservas" placeholder="Número de Questões Reservas" class="input" />
+
+      Número de questões no círculo (apenas visualizar): <input v-model.number="form.questoes.length" placeholder="Número de Questões no Círculo" class="input" disabled />
 
       <button v-if="!isEditing" type="submit" class="btn">Incluir novo!</button>
       <button v-else type="submit" class="btn">Atualizar</button>
@@ -27,6 +30,8 @@
         <p><strong>Máximo de Questões:</strong> {{ c.maximo_questoes }}</p>
         <p><strong>Filtro Respondente:</strong> {{ c.filtro_respondente }}</p>
         <p><strong>Senha:</strong> {{ c.senha }}</p>  
+        <p><strong>Número que questões reservas (discente pode ver a mais):</strong> {{ c.n_reservas }}</p>
+        <p><strong>Número de questões:</strong> {{ c.questoes.length }}</p>
 
         <button @click="editCirculo(c)" class="btn-small mr-2">Editar</button>
         <button @click="deleteCirculo(c.nome)" class="btn-small text-red-500">Excluir</button>
@@ -51,7 +56,8 @@ const form = ref({
   autor: 'hvescovi',
   senha: '',
   questoes: [],
-  respostasNoCirculo: []
+  respostasNoCirculo: [],
+  n_reservas: 0
 })
 
 //editing or adding?
@@ -119,7 +125,8 @@ const resetForm = () => {
     autor: '',
     senha: '',
     questoes: [],
-    respostasNoCirculo: []
+    respostasNoCirculo: [],
+    n_reservas: 0
   }
   isEditing.value = false
 }

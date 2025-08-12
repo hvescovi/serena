@@ -1,0 +1,21 @@
+TESTAR O ACESSO ÀS QUESTÕES NA VISÃO DE ALUNO:
+
+é bom fazer um backup dos dados, quando as questões, os alunos e os círculos estão cadastrados, ou seja, o círculo está pronto para ser executado.
+
+1) rodar o backend.py
+2) iniciar um servidor web na pasta de páginas html: serena/run/
+  a) pode-se usar o comando: python3 -m http.server
+    i) o servidor vai rodar na porta 8000
+3) acessar a página no IP da máquina. Exemplo: 192.168.5.178:8000 (ou localhost:8000 na máquina local)
+4) cada visualização de questão insere 1 registro na tabela questao_exibida_no_circulo
+5) cada resposta insere:
+- 1 registro na tabela resposta e 
+- 1 registro na tabela respostanocirculo
+
+7) as tabelas dos itens 4) e 5) devem ter os registros apagados depois que os testes forem feitos, referente às questões de teste; em geral, basta observar o timestamp e o circulo_id para saber quais foram os novos registros de teste
+
+ALTERAR O NÚMERO DE QUESTÕES QUE OS ALUNOS VÃO RESPONDER
+a) informação existente no círculo :-)
+
+DEFINIR O CÍRCULO ATIVO
+acessar tabela circulo, há um campo "ativo", apenas um registro deve ter esse campo igual a 1

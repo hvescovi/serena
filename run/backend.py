@@ -13,6 +13,8 @@ fila_respondentes = []
 maximo_questoes = 10
 # maximo_questoes = 8 # para os círculo 13 e 14
 
+padrao_n_reservas = 2 # número de questões "a mais" que o respondente pode visualizar
+# TODO: obter do banco de dados, parâmetro do círculo
 
 @app.route("/")
 def inicio():
@@ -107,6 +109,9 @@ def preparar_rodada(id_circulo, id_respondente):
     # ATUALIZA o máximo de questões, agora (06 may 2024)
     # dependente do círculo
     maximo_questoes = circulo.maximo_questoes
+
+    # ATUALIZA número de questões "a mais" que o respondente pode visualizar
+    padrao_n_reservas = circulo.n_reservas  
 
     # pega os respondentes do circulo
     todos = db.session.query(Respondente).filter(
@@ -378,7 +383,7 @@ order by qenc.respondente_id'''
                 # pode visualizar "a mais" (bônus :-)
                 # HARD CODED
                 # depois acrescentar como atributo de círculo
-                n_reservas = 2 
+                n_reservas = padrao_n_reservas 
 
                 # se o total de puladas mais 
                 # o total de respondidas (ou seja, 

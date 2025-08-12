@@ -17,34 +17,15 @@ VINCULAR AS QUESTÕES A UM CÍRCULO:
     iii) acessar http://localhost:5173/
 1) criar o círculo que vai mostrar as questões
   a) usar opção no Vue :-) está funcional
-  b) no BD :-( definir o círculo como ativo=1 (deixar os outros com 0)
+  b) editar o círculo anterior, desativar ativo (ativo=0), ativar novo círculo (definir ativo=1)
 2) incluir as questões no círculo
   a) o último círculo aparece marcado, mas é preciso marcar em outro círculo e clicar novamente no círculo ao qual se deseja trabalhar (TODO: melhorar isso!!)
   b) pedir para listar todas as questões (radiobuttom: List all questions)
   c) marcar a radiobuttom "Add question to the checked circle"
-  d) marcar o radiobuttom da questão que deseja incluir no círculo
-  e) clicar no botão "Do it!"
-    e.1) pode ir no banco de dados e verificar se realmente incluiu o vínculo da questão na tabela questaodocirculo
-  f) voltar ao passo e) enquanto desejar incluir outras questões no círculo
+  d) marcar os checkboxes das questões que deseja incluir no círculo
+    d.1) repetir tantas vezes quantas questões deseja adicionar
+  e) clicar no botão "Do it!": todas as questões serão adicionadas ao círculo
 
-=> na prática, acaba sendo mais prático usar o curl:
+=> pode ser mais prático usar o curl:
 curl localhost:4999/questions_circle/129/14 -X POST
  
-TESTAR O ACESSO ÀS QUESTÕES NA VISÃO DE ALUNO:
-1) rodar o backend.py
-2) iniciar um servidor web na pasta de páginas html: serena/dockerfile-frontend/root_html_files
-  a) pode-se usar o comando: python3 -m http.server
-    i) o servidor vai rodar na porta 8000
-3) acessar a página no IP da máquina. Exemplo: 192.168.5.178:8000
-4) cada visualização de questão insere 1 registro na tabela questao_exibida_no_circulo
-5) cada resposta insere 1 registro na tabela resposta e 1 registro na tabela respostanocirculo
-6) cada resposta é armazenada na tabela resposta
-7) as tabelas dos itens 4) 5) e 6) devem ter os registros apagados depois que os testes forem feitos, referente às questões de teste; em geral, basta observar o timestamp e o circulo_id para saber quais foram os novos registros de teste
-
-
-
-ALTERAR O NÚMERO DE QUESTÕES QUE OS ALUNOS VÃO RESPONDER
-a) informação existente no círculo :-)
-
-DEFINIR O CÍRCULO ATIVO
-acessar tabela circulo, há um campo "ativo", apenas um registro deve ter esse campo igual a 1

@@ -294,6 +294,10 @@ class Circulo(db.Model):
     # added in 06 may 2024
     maximo_questoes = db.Column(db.Integer)
 
+    # added in 12 aug 2025
+    # extra questions that the respondent can see
+    n_reservas = db.Column(db.Integer) 
+
     # added in 27 may 2024
     autor = db.Column(db.Text)
     senha = db.Column(db.Text)
@@ -318,9 +322,8 @@ class Circulo(db.Model):
             "ativo":self.ativo,
             "maximo_questoes" : str(self.maximo_questoes),
             "autor": self.autor,
-            "senha": self.senha
-            
-
+            "senha": self.senha,
+            "n_reservas": self.n_reservas
         }
 
 questaoDoCirculo = db.Table('questaodocirculo', db.metadata,
