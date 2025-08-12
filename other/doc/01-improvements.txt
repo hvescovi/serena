@@ -66,3 +66,4 @@ i) tela para ativação do círculo;nessa tela, pede senha do círculo que desej
 [OK] 13 may 2024: em vez de saltar questão, guardar para uma repescagem (passar e depois trazê-la novamente); "adiar"
 [OK] 2023: havendo o recurso de pular questão (e ele existe), poderia existir um limite do n número de vezes que a questão pode ser pulada.
 [ok] let free the size of the textbox area (remove width, heigth), 01/07/2025. DONE in 01/07/2025
+[ok] autocomplete=off, to not autofill inputs in the 'lacuna' question type with past answers, 12/08/2025

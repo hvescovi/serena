@@ -21,15 +21,16 @@
 
             <p><span class="destaque">Action</span> to do:</p>
             <p>
-                <input type="radio" v-model="operation" value="define_circle" name="define_circle" />Define active
-                circle
+                <input type="radio" v-model="operation" value="define_circle" name="operation" />
+                Define active circle
             </p>
             <p>
-                <input type="radio" v-model="operation" value="add" name="operation" />Add question to the checked
-                circle
+                <input type="radio" v-model="operation" value="add" name="operation" />
+                Add question to the checked circle
             </p>
             <p>
-                <input type="radio" v-model="operation" value="list" name="operation" />List all questions
+                <input type="radio" v-model="operation" value="list" name="operation" />
+                List all questions
             </p>
 
             <button>Do it!</button>

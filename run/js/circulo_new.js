@@ -142,7 +142,8 @@ $(function () {
                             // ainda não é a última parte de texto?
                             if (lac < (n - 1)) {
                                 // acrescentar o campo de entrada da lacuna
-                                en = en + '<input type=text id="q' + idq + 'l' + lac + '">';
+                                // não completar valores, para não pegar respostas anteriores
+                                en = en + '<input autocomplete="off" type=text id="q' + idq + 'l' + lac + '">';
                             }
                         }
 

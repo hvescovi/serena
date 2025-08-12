@@ -540,11 +540,30 @@ def delete_circulo(nome):
     # Delete by nome
     ...
 
-@app.route("/update/Circulo/<string:nome>", methods=['PUT'])
-def update_circulo(nome):
-    # Update data
-    ...
+@app.route("/circle/<int:circle_id>", methods=['PUT'])
+def update_circulo(circle_id):
+    # Update circle by ID
+    dados = request.get_json()
+    try:
+        circulo = db.session.get(Circulo, circle_id)
+        if circulo is None:
+            return jsonify({"result": "error", "details": "Circle not found"}), 404
+        
+        # Only update simple columns, skip relationships and internal attributes
+        for key, value in dados.items():
+            # skip SQLAlchemy internal attributes and relationships
+            if key.startswith('_') or key in ['questoes', 'respostasNoCirculo']:
+                continue
+            if hasattr(Circulo, key):
+                setattr(circulo, key, value)
 
+        db.session.commit()
+        return jsonify({"result": "ok", "details": "Circle updated successfully"})
+    except Exception as e:
+        print("Erro ao atualizar círculo:", e)
+        return jsonify({"result": "error", "details": str(e)}), 500
+    
+    
 app.run(port=4999, debug=True)
 
 '''

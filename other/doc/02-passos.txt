@@ -6,27 +6,26 @@ CADASTRO DE QUESTÕES
 5) incluir as questões
   a) preencher enunciado
   b) escolher o tipo de questão
-  c) preencher em uma das duas caixas de texto, dependendo do tipo de questão
-
-* se for resposta aberta ou de completar, informar a resposta
-* O formulário vem preenchido com dados de exemplo.
+  c) preencher a resposta
 
 VINCULAR AS QUESTÕES A UM CÍRCULO:
-1) criar o círculo que vai mostrar as questões
-  a) usar opção no Vue :-)
-  b) no BD :-( definir o círculo como ativo=1 (deixar os outros com 0)
-2) incluir as questões no círculo
+- staff.py permanece em execução
+- iniciar Vue:
   a) executar o servidor vue
     i) entrar na pasta serena/vue/serena_manager
     ii) npm run dev
     iii) acessar http://localhost:5173/
-  b) o último círculo aparece marcado, mas é preciso marcar em outro círculo e clicar novamente no círculo ao qual se deseja trabalhar (TODO: melhorar isso!!)
-  c) pedir para listar todas as questões (radiobuttom: List all questions)
-  d) marcar a radiobuttom "Add question to the checked circle"
-  e) marcar o radiobuttom da questão que deseja incluir no círculo
-  f) clicar no botão "Do it!"
-    f.1) pode ir no banco de dados e verificar se realmente incluiu o vínculo da questão na tabela questaodocirculo
-  g) voltar ao passo e) enquanto desejar incluir outras questões no círculo
+1) criar o círculo que vai mostrar as questões
+  a) usar opção no Vue :-) está funcional
+  b) no BD :-( definir o círculo como ativo=1 (deixar os outros com 0)
+2) incluir as questões no círculo
+  a) o último círculo aparece marcado, mas é preciso marcar em outro círculo e clicar novamente no círculo ao qual se deseja trabalhar (TODO: melhorar isso!!)
+  b) pedir para listar todas as questões (radiobuttom: List all questions)
+  c) marcar a radiobuttom "Add question to the checked circle"
+  d) marcar o radiobuttom da questão que deseja incluir no círculo
+  e) clicar no botão "Do it!"
+    e.1) pode ir no banco de dados e verificar se realmente incluiu o vínculo da questão na tabela questaodocirculo
+  f) voltar ao passo e) enquanto desejar incluir outras questões no círculo
 
 => na prática, acaba sendo mais prático usar o curl:
 curl localhost:4999/questions_circle/129/14 -X POST

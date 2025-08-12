@@ -316,7 +316,10 @@ class Circulo(db.Model):
             "questoes":[a.json() for a in self.questoes],
             "filtro_respondente":self.filtro_respondente,
             "ativo":self.ativo,
-            "maximo_questoes" : str(self.maximo_questoes)
+            "maximo_questoes" : str(self.maximo_questoes),
+            "autor": self.autor,
+            "senha": self.senha
+            
 
         }
 

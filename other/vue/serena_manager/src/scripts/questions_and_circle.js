@@ -118,8 +118,7 @@ export default {
         .catch(error => {
           this.mensagem = error;
         });*/
-
-      }
+      } 
     }
   },
   mounted() {
