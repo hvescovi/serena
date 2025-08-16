@@ -343,7 +343,7 @@ def incluir_questao():
             nova.resposta = dados['resposta']
         elif dados['type'] == "completar":
             nova = Completar()
-            nova.lacunas = dados['lacunas']
+            nova.lacunas = dados['resposta']
         elif dados['type'] == "multiplaescolha":
             nova = MultiplaEscolha()
             for i in range(1, 10):
@@ -563,7 +563,30 @@ def update_circulo(circle_id):
         print("Erro ao atualizar círculo:", e)
         return jsonify({"result": "error", "details": str(e)}), 500
     
-    
+@app.route("/questions_circle/<int:q>/<int:c>", methods=['DELETE'])
+def questions_circle_remove(q, c):
+    try:
+        circulo = db.session.get(Circulo, c)
+        question = db.session.get(Questao, q)
+        if question in circulo.questoes:
+            circulo.questoes.remove(question)
+            db.session.commit()
+            return jsonify({"result":"ok", "details":"Question removed from circle"})
+        else:
+            return jsonify({"result":"error", "details":"Question not in circle"})
+    except Exception as e:
+        return jsonify({"result": "error", "details": str(e)})
+
+# get questions from a circle
+@app.route('/questions_circle/<int:circle_id>', methods=['GET'])
+def questions_in_circle(circle_id):
+    circulo = db.session.get(Circulo, circle_id)
+    if not circulo:
+        return jsonify({"result": "error", "details": "Circle not found"}), 404
+    questions = [q.json() for q in circulo.questoes]
+    return jsonify({"result": "ok", "details": questions})
+
+
 app.run(port=4999, debug=True)
 
 '''
