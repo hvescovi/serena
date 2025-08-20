@@ -202,12 +202,15 @@ export default function Circles() {
       <ul>
         {circles.map(c => (
           <li key={c.nome} style={{ marginBottom: 10, border: "1px solid #ccc", padding: 10 }}>
-            <strong>{c.nome}</strong> ({c.data})<br />
-            Autor: {c.autor} | Ativo: {c.ativo} | Máx. Questões: {c.maximo_questoes}
-            Data: {c.data} | 
-            Filtro Respondente: {c.filtro_respondente}<br />
-            Senha: {c.senha} | 
-            N. Reservas: {c.n_reservas} | 
+            {c.id} - <strong>{c.nome}</strong> ({c.data})<br />
+            Autor: {c.autor} &asymp;
+            Ativo: {c.ativo} &asymp;
+            Questões a responder (Máx. Questões): {c.maximo_questoes}
+            <br />
+            Data: {c.data} &asymp;
+            Filtro Respondente: {c.filtro_respondente} &asymp;
+            Senha: {c.senha} &asymp;
+            N. Reservas: {c.n_reservas} &asymp;
             Questões: {c.questoes.length}
             
             <br />

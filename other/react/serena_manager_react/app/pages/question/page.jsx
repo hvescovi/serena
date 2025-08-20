@@ -127,7 +127,9 @@ export default function Questions() {
       <ul>
         {filteredQuestions.map(q => (
           <li key={q.id}>
+            <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
             {q.id}) {q.enunciado} ({q.type})
+            </span>
 
             {q.type === "MultiplaEscolha" && (
               <div>
