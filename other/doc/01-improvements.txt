@@ -1,5 +1,6 @@
 todo:
 
+[ ] URGENT: retrieve a page with the anwers of each student (22/08/2025)
 [ ] show images when there are img commands at the correct answers ("gabarito"), showed at the correction page (26/06/2025)
 [ ] interface para poder apagar respostas fornecidas como teste; tabelas: resposta, respostanocirculo, questao_exibida_no_circulo; apagar respostas ou exibição de questões para caso de computador reiniciar
 [ ] Gerar as questões de cada prova, antecipadamente
