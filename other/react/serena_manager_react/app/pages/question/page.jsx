@@ -135,8 +135,8 @@ export default function Questions() {
               <div>
               <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
                 {q.alternativas.map(a => (
-                  <div key={a.descricao}>
-                    {a.certa && <span>===&gt;</span>} {a.descricao} <br />
+                  <div key={a.id}>
+                    {a.certa && <span>===&gt;</span>}{a.descricao}<br />
                   </div>
                 ))}
                 </span>
