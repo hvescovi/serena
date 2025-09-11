@@ -1,11 +1,12 @@
 <template>
+
     <div id="div_questions_and_circle">
         <form @submit.prevent="action_questions_and_circle" id="form_questions_and_circle">
             <p>
                 Active circle:
             <div v-if="circles.length">
                 <div class="card" v-for="c in circles" :key="c.id">
-                    <input type="radio" v-model="selected_circle" name="selected_circle" :checked="c.ativo == 1"
+                    <input type="radio" v-model="selected_circle" name="selected_circle" :checked="c.ativo == '1'"
                         :value="c.id" />
                     {{ c.id }}) {{ c.nome }}
                 </div>
@@ -20,32 +21,48 @@
 
             <p><span class="destaque">Action</span> to do:</p>
             <p>
-                <input type="radio" v-model="operation" value="define_circle" name="define_circle" />Define active circle
+                <input type="radio" v-model="operation" value="add" name="operation" />
+                Add question to the checked circle
             </p>
             <p>
-                <input type="radio" v-model="operation" value="add" name="operation" />Add question to the checked circle
-            </p>
-            <p>
-                <input type="radio" v-model="operation" value="list" name="operation" />List all questions
+                <input type="radio" v-model="operation" value="list" name="operation" />
+                List all questions
             </p>
 
             <button>Do it!</button>
         </form>
 
-        <input v-model="message">
+        <textarea v-model="message"></textarea>
 
         <div v-if="questions.length">
             <div class="card" v-for="q in questions" :key="q.id">
 
                 <div class="enunciado_sty">
                     <span class="big_title">
-                        <input type="radio" v-model="selected_question" :value="q.id" name="selected_question" /> {{ q.id }}
+                        <input type="checkbox" v-model="checkedOptions" :value="q.id" name="checkedOptions" :id="q.id" /> {{
+                        q.id }}
                     </span>
 
                     <hr />
 
                     <div v-html="q.enunciado" class="question_title">
                     </div>
+
+
+                    <div v-if="q.type == 'MultiplaEscolha'">
+                        <div v-for="a in q.alternativas" :key="a.descricao">
+                            <span v-if="a.certa">===></span> {{ a.descricao }} <br>
+                        </div>
+                    </div>
+
+                    <div v-if="q.type == 'Aberta'">
+                        {{ q.resposta }}
+                    </div>
+
+                    <div v-if="q.type == 'Completar'">
+                        <pre>{{ q.lacunas }}</pre>
+                    </div>
+
                 </div>
 
 

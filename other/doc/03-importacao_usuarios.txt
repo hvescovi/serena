@@ -1,6 +1,38 @@
-1) ver planilha importação serena poo2 2024-1
--  no sigaa, acessar: Menu Turma Virtual > Diário Eletrônico > Lista de Presença
+primeiramente, anotar qual é o Filtro do Respondente que existe no círculo considerado. Por exemplo:
+
+|g:bd-201-2025|
+
+1) no sigaa, acessar: Menu Turma Virtual > Diário Eletrônico > Lista de Presença
 - copiar a tabela toda (com os nomes dos alunos)
+
+2) acessar módulo de importação no Vue
+3) colar nomes de estudantes)
+4) clicar no botão "Limpar" para limpar os números :-)
+5) no sigaa, copiar emails dos alunos em:
+
+Turma > Participantes > Lista de E-mail dos discentes da turma
+
+copiar todos os emails
+colar na caixa de emails
+clicar no botão "PREENCHER EMAILS"
+
+6) preencher na observação qual é o IDENTIFICADOR da turma
+
+por exemplo:
+
+|g:optweb-301-2025|
+
+deve ser o mesmo identificador que foi utilizado no círculo, no campo "Filtro Respondente"
+
+7) clicar no botão "CADASTRAR!"
+
+verificar o resultado na caixa de texto
+
+
+
+---
+
+OLD (below)
 - colar especial na planilha modelo (ctrl+shift+v)
 - apagar as linhas acima dos nomes dos alunos
 - usar essa fórmula para extrair os nomes dos alunos (arrancar a matrícula que aparece junto):

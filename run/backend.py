@@ -13,15 +13,44 @@ fila_respondentes = []
 maximo_questoes = 10
 # maximo_questoes = 8 # para os círculo 13 e 14
 
+padrao_n_reservas = 2 # número de questões "a mais" que o respondente pode visualizar
+# TODO: obter do banco de dados, parâmetro do círculo
 
 @app.route("/")
 def inicio():
     return "Serena: servidor backend."
 
+def failed():
+    return jsonify({"message": "error", "details": "unauthorized"})
+
+# controle de ips
+ipcontrol = True
+ips = []
+
+def ipok(ip):
+    if ipcontrol:
+        ret = (ip in ips)
+        return ret
+    else:
+        return True
+
+def loadiptable():
+    f = open('/home/friend/Dropbox/10-serena-secrets/ips.txt', 'r')
+    for x in f:
+        # pega o IP sem caracter final quebra de linha
+        ip = x[:-1]
+        # tem comentário?
+        if '#' in ip:
+            # pega só o IP
+            ip = ip.split("#")[0]
+            # remover eventuais espaços
+            ip = ip.strip()
+        ips.append(ip)
+    print(ips)
 
 @app.route('/retornar_questoes')
 def retornar_questoes():
-    print(request.remote_addr)
+    #print(request.remote_addr)
     if not ipok(request.remote_addr):
         return failed()
 
@@ -80,6 +109,9 @@ def preparar_rodada(id_circulo, id_respondente):
     # ATUALIZA o máximo de questões, agora (06 may 2024)
     # dependente do círculo
     maximo_questoes = circulo.maximo_questoes
+
+    # ATUALIZA número de questões "a mais" que o respondente pode visualizar
+    padrao_n_reservas = circulo.n_reservas  
 
     # pega os respondentes do circulo
     todos = db.session.query(Respondente).filter(
@@ -233,6 +265,8 @@ def preparar_rodada(id_circulo, id_respondente):
 # manter compatibilidade da versão círculo
 @app.route('/preparar_rodada/<id_circulo>')
 def preparar_rodada_padrao(id_circulo):
+    if not ipok(request.remote_addr):
+        return failed()
     return preparar_rodada(id_circulo, "0")
 
 @app.route('/abrir_questao_circulo/<id_circulo>/<id_respondente>')
@@ -287,8 +321,10 @@ def abrir_questao_circulo(id_circulo, id_respondente):
         for linha in results:
             r1.append(linha[0])
 
+        n_respondidas = len(r1)
+
         #print("tamanho:",len(r1)," r1=", r1)
-        if len(r1) >= maximo_questoes:
+        if n_respondidas >= maximo_questoes:
         #if len(r1.all()) >= 10:
             retorno = jsonify(
                 {"message": "error", "details": "Já foram respondidas todas as questões previstas para este círculo"})
@@ -305,7 +341,9 @@ def abrir_questao_circulo(id_circulo, id_respondente):
 
             #print("r2 (todas do círculo)", r2)
 
-            # obter complemento: questões que estão no círculo, MENOS as questões que eu já respondi 
+            # obter complemento: questões que estão no círculo, 
+            # MENOS as questões que eu já respondi 
+            # ou seja, as questões que eu ainda NÃO respondi
             # https://stackoverflow.com/questions/52417929/remove-elements-from-one-array-if-present-in-another-array-keep-duplicates-nu
             r3 = list(set(r2) - set(r1))
 
@@ -318,14 +356,72 @@ def abrir_questao_circulo(id_circulo, id_respondente):
                     {"message": "error", "details": "Não há mais perguntas a responder"})
             else:
 
-                # sorteia uma questão
-                nq = random.randint(1, len(res))  # questoes_ainda_nao))
-
                 # prepara a variável de questão
                 resp = ""
 
-                # obtém a questão
-                q = res[nq-1]
+                # 05/06/2025
+                # quais as questões foram visualizadas e 
+                # não respondidas (ou seja, PULADAS)?
+                sql3 = f'''select distinct qenc.questao_id from questao_exibida_no_circulo qenc 
+where  qenc.circulo_id = {id_circulo} and
+       qenc.respondente_id = {id_respondente} and
+        (qenc.questao_id,qenc.respondente_id) not IN 
+(select r.questao_id, r.respondente_id from resposta r, respostanocirculo rc 
+where r.questao_id = rc.resposta_id
+order by r.questao_id )
+order by qenc.respondente_id'''
+
+                results3 = db.session.execute(text(sql3))
+                #print(sql)
+                r3 = []
+                for linha in results3:
+                    r3.append(linha[0])        
+
+                n_puladas = len(r3)
+
+                # número de questões que o respondente
+                # pode visualizar "a mais" (bônus :-)
+                # HARD CODED
+                # depois acrescentar como atributo de círculo
+                n_reservas = padrao_n_reservas 
+
+                # se o total de puladas mais 
+                # o total de respondidas (ou seja, 
+                # número de questões visualizadas)
+                # for menor que o total
+                # de questões a responder
+                n_visualizadas = n_respondidas + n_puladas
+                if n_visualizadas < maximo_questoes + n_reservas:
+                    # segue execução "normal": ainda há
+                    # espaço para novas questões
+
+                    # sorteia uma questão
+                    nq = random.randint(1, len(res))  # questoes_ainda_nao))
+          
+                    # obtém a questão
+                    q = res[nq-1]
+
+                else:
+                    # encontra uma das questões anteriores
+                    # já puladas
+
+                    # embaralha as questões restantes para 
+                    # não cair sempre na mesma restante
+
+                    #def myfunction():
+                    #    return 0.1
+                    #print(res)
+                    random.shuffle(res)
+                    #print(res)
+                    #res = (res, myfunction)
+
+                    # percorre as questões não respondidas
+                    for tmp in res:
+                        # se essa for uma pulada
+                        if tmp.id in r3:
+                            # escolhe ela
+                            q = tmp
+                            break
 
                 # faz uma conversão de tipo para obter o json
 
@@ -603,6 +699,9 @@ def retornar_respostas():
 
 @app.route('/retornar_respondentes')
 def retornar_respondentes():
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
     respondentes = Respondente.query.all()
     for q in respondentes:
@@ -621,6 +720,9 @@ def retornar_respondentes():
 # filtro3: data, parametro=data
 # INTERROMPIDO
 def retornar_contagem_respostas(filtro, parametro):
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
 
     # resposta padrao
@@ -658,6 +760,9 @@ def retornar_contagem_respostas(filtro, parametro):
 
 @app.route('/retornar_contagem_respostas_questao/<email>/<questao>')
 def retornar_contagem_respostas_questao(email, questao):
+    if not ipok(request.remote_addr):
+        return failed()
+
     resp = []
 
     # obtém o respondente
@@ -901,6 +1006,9 @@ def get_generico(classe):
 
 @app.route('/get/<string:classe>/<string:id>', methods=['get'])
 def get_especifico(classe, id):
+    if not ipok(request.remote_addr):
+        return failed()
+
 
     # reflexao: instanciando a classe a partir de seu nome em string
     # https://stackoverflow.com/questions/4821104/dynamic-instantiation-from-string-name-of-a-class-in-dynamically-imported-module
@@ -936,30 +1044,6 @@ def exibir_respostas_circulo(id_circulo):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-# controle de ips?
-ipcontrol = False
-ips = []
-
-
-def ipok(ip):
-    if ipcontrol:
-        ret = (ip in ips)
-        return ret
-    else:
-        return True
-
-
-def failed():
-    return jsonify({"message": "error", "details": "unauthorized"})
-
-
-def loadiptable():
-    f = open('/home/friend/01-github/serena/dockerfile-backend/ips.txt', 'r')
-    for x in f:
-        ips.append(x[:-1])
-    print(ips)
-
-
 @app.route('/circulo_ativo')
 def circulo_ativo():
     if not ipok(request.remote_addr):
@@ -982,6 +1066,8 @@ def circulo_ativo():
 
 @app.route('/retornar_contagem_respostas_geral/<circulo_id>')
 def retornar_contagem_respostas_geral(circulo_id):
+    if not ipok(request.remote_addr):
+        return failed()
     
     where2 = " and rc.circulo_id = "+circulo_id
 
@@ -1010,6 +1096,9 @@ order by rc.circulo_id, q desc, rte.nome"""))
 
 @app.route('/retornar_contagem_questoes_puladas/<circulo_id>')
 def retornar_contagem_questoes_puladas(circulo_id):
+    
+    if not ipok(request.remote_addr):
+        return failed()
     
     resultado = db.session.execute(text(f"""select * from questao_exibida_no_circulo qenc where 
         qenc.circulo_id = {circulo_id} and 
@@ -1051,3 +1140,29 @@ if ipcontrol:
 
 app.run(host='0.0.0.0', debug=True)
 # app.run(host="0.0.0.0")
+
+
+'''
+
+-- questões já respondidas
+select q.id 
+from questao q, resposta r, questaodocirculo qc, 
+respostanocirculo rc 
+where r.respondente_id = 188
+AND r.questao_id=q.id 
+AND qc.id_questao = q.id 
+AND qc.id_circulo = 24 
+and rc.resposta_id=r.id 
+and rc.circulo_id=24
+
+-- questões puladas
+select distinct qenc.questao_id from questao_exibida_no_circulo qenc 
+where  qenc.circulo_id = 24 and
+       qenc.respondente_id = 188 and
+        (qenc.questao_id,qenc.respondente_id) not IN 
+(select r.questao_id, r.respondente_id from resposta r, respostanocirculo rc 
+where r.questao_id = rc.resposta_id
+order by r.questao_id )
+order by qenc.respondente_id
+
+'''

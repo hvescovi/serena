@@ -1,0 +1,50 @@
+@startuml
+
+skinparam backgroundColor white
+skinparam shadowing true
+skinparam rectangle {
+  BackgroundColor #EEF2F3
+  BorderColor black
+}
+
+actor Client as "Client (Browser or App)"
+
+rectangle "Serena Backend (Flask App)" {
+  rectangle "/retornar_questoes" as RQ
+  rectangle "/preparar_rodada" as PR
+  rectangle "/verificar_resposta" as VR
+  rectangle "/imagem/<nome>" as IMG
+  rectangle "IP Check (ipok)" as IPC
+}
+
+database "SQLAlchemy Database" as DB {
+  rectangle "Questao"
+  rectangle "Resposta"
+  rectangle "Respondente"
+  rectangle "Circulo"
+  rectangle "RespostaNoCirculo"
+  rectangle "QuestaoExibidaNoCirculo"
+}
+
+folder "Filesystem" as FS {
+  rectangle "images/"
+}
+
+' Interaction flows
+Client --> RQ : GET /retornar_questoes
+Client --> PR : GET /preparar_rodada
+Client --> VR : POST /verificar_resposta
+Client --> IMG : GET /imagem/<nome>
+
+RQ --> DB : SELECT Questao
+PR --> DB : SELECT/INSERT Circulo,\nRespondente
+VR --> DB : INSERT Resposta,\nRespostaNoCirculo
+IMG --> FS : Read PNG
+
+RQ --> IPC : IP Check
+PR --> IPC : IP Check
+VR --> IPC : IP Check
+IMG --> IPC : IP Check
+
+@enduml
+

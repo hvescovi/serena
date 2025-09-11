@@ -1,0 +1,31 @@
+CADASTRO DE QUESTÕES
+1) criar questões em formato textual simples, em arquivo txt (sugestão)
+2) fazer backup do banco de dados, que deve estar em pasta privada; usar data invertida para facilitar ordenação
+3) rodar staff.py (backend do admin)
+4) acessar a interface de cadastro de questões: form_inserir_questao.html (pode acessar sem servidor web, diretamente no arquivo)
+5) incluir as questões
+  a) preencher enunciado
+  b) escolher o tipo de questão
+  c) preencher a resposta
+
+VINCULAR AS QUESTÕES A UM CÍRCULO:
+- staff.py permanece em execução
+- iniciar Vue:
+  a) executar o servidor vue
+    i) entrar na pasta serena/vue/serena_manager
+    ii) npm run dev
+    iii) acessar http://localhost:5173/
+1) criar o círculo que vai mostrar as questões
+  a) usar opção no Vue :-) está funcional
+  b) editar o círculo anterior, desativar ativo (ativo=0), ativar novo círculo (definir ativo=1)
+2) incluir as questões no círculo
+  a) o último círculo aparece marcado, mas é preciso marcar em outro círculo e clicar novamente no círculo ao qual se deseja trabalhar (TODO: melhorar isso!!)
+  b) pedir para listar todas as questões (radiobuttom: List all questions)
+  c) marcar a radiobuttom "Add question to the checked circle"
+  d) marcar os checkboxes das questões que deseja incluir no círculo
+    d.1) repetir tantas vezes quantas questões deseja adicionar
+  e) clicar no botão "Do it!": todas as questões serão adicionadas ao círculo
+
+=> pode ser mais prático usar o curl:
+curl localhost:4999/questions_circle/129/14 -X POST
+ 

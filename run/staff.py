@@ -23,7 +23,7 @@ def exibir_respostas_circulo(id_circulo):
     # results = db.session.execute(sql)
     # ERRO inserido em nova versão de sqlalchemy
     results = db.session.execute(text(sql))
-    print(sql)
+    # print(sql)
     r1 = []
     for linha in results:
         r1.append(linha[0])        
@@ -343,7 +343,7 @@ def incluir_questao():
             nova.resposta = dados['resposta']
         elif dados['type'] == "completar":
             nova = Completar()
-            nova.lacunas = dados['lacunas']
+            nova.lacunas = dados['resposta']
         elif dados['type'] == "multiplaescolha":
             nova = MultiplaEscolha()
             for i in range(1, 10):
@@ -452,7 +452,7 @@ def circulo_info(c):
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-# curl -d '{.....}' -H 'Content-Type:application/json' localhost:4999/incluir_respondentes
+# curl -d '[{"nome":"AMANDA PAZIANOTI HORST", "email":"amanda.horst07@gmail.com", "observacao":"|g:optweb-301-2025|"},{"nome":"ANTONIO HENRIQUE ROHLING FROEHNER","email":"rf.antonio2007@gmail.com", "observacao":"|g:optweb-301-2025|"}]' -H 'Content-Type:application/json' localhost:4999/incluir_respondentes
 
 @app.route('/incluir_respondentes', methods=['POST'])
 def incluir_respondentes():
@@ -465,26 +465,126 @@ def incluir_respondentes():
         # pega os dados informados
         dados = request.get_json()      
 
-        # insere respondentes
-        #for q in dados['students']:
+        # percorre os novos respondentes
         for q in dados:
-            # estudante já existe?
+            # procura o estudante (e se ele existir?)
             estudante = db.session.query(Respondente).filter(Respondente.nome == q["nome"]).first()
             # ele não existe mesmo?
             if estudante == None:
                 # adiciona!
-                joao = Respondente(nome = q['nome'], email=q['email']) # , observacao = q['observacao'])
+                joao = Respondente(nome = q['nome'], email=q['email'], observacao = q['observacao'])
                 db.session.add(joao)
                 db.session.commit()
                 retorno += ";Respondente carregado: "+str(joao)
             else:
-                retorno += ";Respondente já estava cadastrado: "+str(estudante)
+                # já possui a observação?
+                if q['observacao'] in estudante.observacao:
+                    retorno += ";Respondente já estava cadastrado e já continha a observação: "+str(estudante)
+                else:
+                    # remove eventuais espaços do começo e fim
+                    estudante.observacao = estudante.observacao.strip()
+                    # se tem observação
+                    if len(estudante.observacao)>0:
+                        # se a observacao termina com "|"
+                        if estudante.observacao[-1] == "|":
+                            # remove o último caracter, pois vai adicionar mais
+                            estudante.observacao = estudante.observacao[:-1]                    
+                    # acrescentra a tag/observação :-)
+                    estudante.observacao += q['observacao']
+                    db.session.commit()
+                    retorno += ";Respondente já estava cadastrado e foi atualizado com a nova observação: "+str(estudante)
+                    
         return jsonify({"result":"ok", "details":retorno})
     except Exception as e:
         retorno += str(e)
         return jsonify({"result": "error", "details":retorno})
  
 
+# curl -d '{"nome":"AV1 optweb EMI maio 2025","data":"05/05/2025","filtro_respondente":"|g:optweb-301-2025|","ativo":"0","maximo_questoes":10,"autor":"hvescovi","senha":""}' -X POST -H 'Content-Type:application/json' localhost:4999/add/Circulo
+
+@app.route("/add/<string:classe>", methods=['post'])
+def add(classe):
+    # receber as informações do novo objeto
+    dados = request.get_json()  
+    try:  
+        nova = None
+        if classe == "Circulo":
+            c = db.session.query(Circulo).filter(Circulo.nome == dados["nome"]).first()
+            # ele não existe mesmo?
+            if c == None:          
+                nova = Circulo(**dados)
+        
+        db.session.add(nova)  # adicionar no BD
+        db.session.commit()  # efetivar a operação de gravação
+        # retorno de sucesso :-)
+        return jsonify({"result": "ok", "details": "ok"})
+    except Exception as e:  # em caso de erro...
+        # informar mensagem de erro :-(
+        return jsonify({"result": "error", "details": str(e)})
+
+@app.route("/list/<string:classe>", methods=['GET'])
+def generic_list(classe):
+    resp = []
+    if classe == "Circulo":
+        dados = Circulo.query.all()
+    for q in dados:
+        resp.append(q.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    return jsonify(retorno)
+
+
+@app.route("/delete/Circulo/<string:nome>", methods=['DELETE'])
+def delete_circulo(nome):
+    # Delete by nome
+    ...
+
+@app.route("/circle/<int:circle_id>", methods=['PUT'])
+def update_circulo(circle_id):
+    # Update circle by ID
+    dados = request.get_json()
+    try:
+        circulo = db.session.get(Circulo, circle_id)
+        if circulo is None:
+            return jsonify({"result": "error", "details": "Circle not found"}), 404
+        
+        # Only update simple columns, skip relationships and internal attributes
+        for key, value in dados.items():
+            # skip SQLAlchemy internal attributes and relationships
+            if key.startswith('_') or key in ['questoes', 'respostasNoCirculo']:
+                continue
+            if hasattr(Circulo, key):
+                setattr(circulo, key, value)
+
+        db.session.commit()
+        return jsonify({"result": "ok", "details": "Circle updated successfully"})
+    except Exception as e:
+        print("Erro ao atualizar círculo:", e)
+        return jsonify({"result": "error", "details": str(e)}), 500
+    
+@app.route("/questions_circle/<int:q>/<int:c>", methods=['DELETE'])
+def questions_circle_remove(q, c):
+    try:
+        circulo = db.session.get(Circulo, c)
+        question = db.session.get(Questao, q)
+        if question in circulo.questoes:
+            circulo.questoes.remove(question)
+            db.session.commit()
+            return jsonify({"result":"ok", "details":"Question removed from circle"})
+        else:
+            return jsonify({"result":"error", "details":"Question not in circle"})
+    except Exception as e:
+        return jsonify({"result": "error", "details": str(e)})
+
+# get questions from a circle
+@app.route('/questions_circle/<int:circle_id>', methods=['GET'])
+def questions_in_circle(circle_id):
+    circulo = db.session.get(Circulo, circle_id)
+    if not circulo:
+        return jsonify({"result": "error", "details": "Circle not found"}), 404
+    questions = [q.json() for q in circulo.questoes]
+    return jsonify({"result": "ok", "details": questions})
 
 
 app.run(port=4999, debug=True)

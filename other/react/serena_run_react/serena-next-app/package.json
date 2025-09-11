@@ -1,0 +1,25 @@
+{
+  "name": "serena-next-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "bootstrap": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "sweetalert2": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "@types/react": "19.1.12",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "typescript": "latest"
+  }
+}

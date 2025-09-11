@@ -10,12 +10,26 @@
     background-color: lightblue;
 }
 
-textarea {
+/*textarea {
     width: 250px;
     height: 100px;
-  }
+  }*/
 
+textarea {
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    resize: both;
+}
 
-  td:hover {
+textarea:focus {
+    border-color: #66afe9;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+    outline: none;
+    background-color: #f9f9ff;
+}
+
+td:hover {
     background-color: yellow;
-  }
+}

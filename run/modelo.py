@@ -118,7 +118,7 @@ class Respondente(db.Model):
     identificador = db.Column(db.String(254)) # utilizado durante operação
     token = db.Column(db.String(254)) # utilizado durante operação
     def __str__(self):
-        return self.nome+" ("+self.email+")" # +self.observacao
+        return self.nome+" ("+self.email+")" +self.observacao
 
     def json(self):
         return {
@@ -294,6 +294,10 @@ class Circulo(db.Model):
     # added in 06 may 2024
     maximo_questoes = db.Column(db.Integer)
 
+    # added in 12 aug 2025
+    # extra questions that the respondent can see
+    n_reservas = db.Column(db.Integer) 
+
     # added in 27 may 2024
     autor = db.Column(db.Text)
     senha = db.Column(db.Text)
@@ -316,8 +320,10 @@ class Circulo(db.Model):
             "questoes":[a.json() for a in self.questoes],
             "filtro_respondente":self.filtro_respondente,
             "ativo":self.ativo,
-            "maximo_questoes" : str(self.maximo_questoes)
-
+            "maximo_questoes" : str(self.maximo_questoes),
+            "autor": self.autor,
+            "senha": self.senha,
+            "n_reservas": self.n_reservas
         }
 
 questaoDoCirculo = db.Table('questaodocirculo', db.metadata,

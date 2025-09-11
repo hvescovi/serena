@@ -96,7 +96,7 @@ $(function () {
 
                         lin = lin + "<br>"
                         //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
-                        lin = lin + "Your answer: <textarea cols=100 rows=8 id=r" + idq + "></textarea> <br>";
+                        lin = lin + "Your answer: <textarea id=r" + idq + "></textarea> <br>";
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm responder_questao_circulo_aberta" onclick="return false">send answer</button>';
 
                         lin = lin + HTML_carregando;
@@ -119,7 +119,7 @@ $(function () {
                         quest.alternativas.sort(() => Math.random() - 0.5);
 
                         for (var j in quest.alternativas) {
-                            lin = lin + '<input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
+                            lin = lin + '<hr><input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                         }
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">send answer</button>';
 
@@ -142,7 +142,8 @@ $(function () {
                             // ainda não é a última parte de texto?
                             if (lac < (n - 1)) {
                                 // acrescentar o campo de entrada da lacuna
-                                en = en + '<input type=text id="q' + idq + 'l' + lac + '">';
+                                // não completar valores, para não pegar respostas anteriores
+                                en = en + '<input autocomplete="off" type=text id="q' + idq + 'l' + lac + '">';
                             }
                         }
 

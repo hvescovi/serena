@@ -1,0 +1,49 @@
+/* forms */
+
+.input {
+    display: block;
+    width: 30%;
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .btn {
+    background: #4f46e5;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+  }
+  .btn-small {
+    padding: 0.25rem 0.5rem;
+    background: #e5e7eb;
+    border-radius: 4px;
+  }
+
+  /* routerview 
+  https://www.w3schools.com/vue/vue_routing.php
+  */
+
+  a {
+    display: inline-block;
+    background-color: black;
+    border: solid 1px black;
+    color: white;
+    padding: 5px;
+    margin: 10px;
+  }
+  a:hover,
+  a.router-link-active {
+    background-color: rgb(110, 79, 13);
+  }
+
+  /* divs 
+  https://www.w3schools.com/vue/vue_routing.php
+  */
+
+  div {
+    border: dashed black 1px;
+    padding: 20px;
+    margin: 10px;
+    display: inline-block;
+  }
