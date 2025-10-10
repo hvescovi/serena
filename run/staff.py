@@ -343,7 +343,7 @@ def incluir_questao():
             nova.resposta = dados['resposta']
         elif dados['type'] == "completar":
             nova = Completar()
-            nova.lacunas = dados['resposta']
+            nova.lacunas = dados['lacunas']
         elif dados['type'] == "multiplaescolha":
             nova = MultiplaEscolha()
             for i in range(1, 10):
