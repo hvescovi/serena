@@ -61,16 +61,23 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
       
       else if (buttonValue === "save") {
         const paraEnviar = StudentsCsvToJson(StudentsList);
+        alert(paraEnviar.length + " estudantes serão enviados ao servidor.");
 
-        const response = await axios.post<{ details: string }>(
+        const response = axios.post(
           `${backendIP}/incluir_respondentes`,
           paraEnviar,
           {
             headers: { "Content-Type": "application/json" },
           }
         );
-
-        const resp = response.data.details;
+        
+        const resp = (await response).data.details;
+        alert(response);
+        
+        if (resp.status !== 200) {
+          setError("Erro: " + resp.status + " - " + resp.statusText);
+          return;
+        }
         setMessage(resp.replaceAll(";", "\n"));
       }
     } catch (err) {

@@ -1,13 +1,13 @@
 export interface Student {
-  name: string;
+  nome: string;
   email: string;
-  obs?: string;
+  observacao: string;
 }
 
 export function StudentsCsvToJson(csvString: string): Student[] {
   const lines = csvString.split("\n").filter(Boolean);
   return lines.map((line) => {
-    const [name, email, obs] = line.split(",");
-    return { name: name?.trim(), email: email?.trim(), obs: obs?.trim() };
+    const [nome, email, observacao] = line.split(",");
+    return { nome: nome?.trim(), email: email?.trim(), observacao: observacao?.trim() };
   });
 }
