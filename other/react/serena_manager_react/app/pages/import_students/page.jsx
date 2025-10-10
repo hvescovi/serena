@@ -1,7 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
 import axios from "axios";
-import { StudentsCsvToJson, Student } from "@/scripts/utils";
+import { StudentsCsvToJson, Student } from "../../scripts/utils.tsx";
 
 export default function ImportStudents() {
   // Environment variable
@@ -11,18 +11,18 @@ export default function ImportStudents() {
   }
 
   // State hooks
-  const [message, setMessage] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [delimiter, setDelimiter] = useState<string>(";");
-  const [emails, setEmails] = useState<string>("");
-  const [buttonValue, setButtonValue] = useState<string>("");
-  const [observacao, setObservacao] = useState<string>("|g:optweb-301-2025|");
-  const [StudentsList, setStudentsList] = useState<string>(
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [delimiter, setDelimiter] = useState(";");
+  const [emails, setEmails] = useState("");
+  const [buttonValue, setButtonValue] = useState("");
+  const [observacao, setObservacao] = useState("|g:optweb-301-2025|");
+  const [StudentsList, setStudentsList] = useState(
     `AMANDA PAZIANOTI HORST,amanda.horst07@gmail.com,|g:optweb-301-2025|
 ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
   );
 
-  const action_ImportStudents = async (e: FormEvent<HTMLFormElement>) => {
+  const action_ImportStudents = async (e) => {
     e.preventDefault();
 
     try {
@@ -32,7 +32,7 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
       } 
       
       else if (buttonValue === "emails") {
-        const result: string[] = [];
+        const result = [];
         const lines = StudentsList.split("\n");
         const string_emails = emails;
 
@@ -51,7 +51,7 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
       } 
       
       else if (buttonValue === "obs") {
-        const result: string[] = [];
+        const result = [];
         const lines = StudentsList.split("\n");
         for (let i = 0; i < lines.length; i++) {
           result.push(`${lines[i]},${observacao}`);
@@ -60,7 +60,7 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
       } 
       
       else if (buttonValue === "save") {
-        const paraEnviar: Student[] = StudentsCsvToJson(StudentsList);
+        const paraEnviar = StudentsCsvToJson(StudentsList);
 
         const response = await axios.post<{ details: string }>(
           `${backendIP}/incluir_respondentes`,
@@ -73,7 +73,7 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
         const resp = response.data.details;
         setMessage(resp.replaceAll(";", "\n"));
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Erro desconhecido");
     }
   };
