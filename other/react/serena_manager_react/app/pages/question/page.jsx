@@ -19,6 +19,11 @@ export default function Questions() {
   const [editId, setEditId] = useState(null);
 
 
+  function ajustaImagens(texto) {
+    let url = `${API}/imagem/`;
+    return texto.replace(/<img src=/gi, "<img src=" + url);
+  }
+
 
   const filteredQuestions = filterCircle
     ? questions.filter(q => q.circulo_id === filterCircle)
@@ -191,10 +196,10 @@ export default function Questions() {
       <ul>
         {filteredQuestions.map(q => (
           <li key={q.id}>
-            <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+            <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold mt-6">
               {q.id})
               {q.ativa == "0" ? "<span className=text-blue>(INATIVA)</span> " : ""}
-              <span dangerouslySetInnerHTML={{ __html: q.enunciado }} /> ({q.type})
+              <span dangerouslySetInnerHTML={{ __html: ajustaImagens(q.enunciado) }} /> ({q.type})
             </span>
 
             {q.type === "multiplaescolha" && (
@@ -361,82 +366,84 @@ export default function Questions() {
 
 
       {/* Edit Question Area */}
-      {isEditing && (
-        <div className="mb-6 p-4 bg-yellow-50 rounded shadow flex flex-col gap-4 max-w-lg">
-          <h2 className="text-2xl font-bold mb-2 text-yellow-800">Editar Questão</h2>
-          <form onSubmit={updateQuestion} className="flex flex-col gap-4">
-            <div>
-              <label className="block mb-1 font-semibold text-gray-700">Tipo</label>
-              <select
-                value={editForm.type}
-                onChange={e => setEditForm({ ...editForm, type: e.target.value })}
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
-                required
-              >
-                <option value="aberta">Aberta</option>
-                <option value="completar">Completar (lacunas)</option>
-                <option value="multiplaescolha_remodelada">Múltipla Escolha (remodelada)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block mb-1 font-semibold text-gray-700">Enunciado</label>
-              <textarea
-                rows={3}
-                value={editForm.enunciado}
-                onChange={e => setEditForm({ ...editForm, enunciado: e.target.value })}
-                placeholder="Digite o enunciado da questão"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 font-semibold text-gray-700">Resposta</label>
-              <textarea
-                value={editForm.resposta}
-                onChange={e => setEditForm({ ...editForm, resposta: e.target.value })}
-                placeholder="Digite a resposta (se aplicável)"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
-                rows={3}
-              />
-            </div>
-            <div>
-              <label className="block mb-1 font-semibold text-gray-700">Observação</label>
-              <textarea
-                value={editForm.observacao}
-                onChange={e => setEditForm({ ...editForm, observacao: e.target.value })}
-                placeholder="Observação"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
-                rows={2}
-              />
-            </div>
-            <div>
-              <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
-              <textarea
-                value={editForm.ativa}
-                onChange={e => setEditForm({ ...editForm, ativa: e.target.value })}
-                placeholder="Questão ativa? (0 = não, 1 = sim)"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
-                rows={1}
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-yellow-600 text-white rounded shadow font-bold transition hover:bg-yellow-700"
-              >
-                Atualizar Questão
-              </button>
-              <button
-                type="button"
-                onClick={cancelEdit}
-                className="px-4 py-2 bg-gray-400 text-white rounded shadow font-bold transition hover:bg-gray-500"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+      {
+        isEditing && (
+          <div className="mb-6 p-4 bg-yellow-50 rounded shadow flex flex-col gap-4 max-w-lg">
+            <h2 className="text-2xl font-bold mb-2 text-yellow-800">Editar Questão</h2>
+            <form onSubmit={updateQuestion} className="flex flex-col gap-4">
+              <div>
+                <label className="block mb-1 font-semibold text-gray-700">Tipo</label>
+                <select
+                  value={editForm.type}
+                  onChange={e => setEditForm({ ...editForm, type: e.target.value })}
+                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                  required
+                >
+                  <option value="aberta">Aberta</option>
+                  <option value="completar">Completar (lacunas)</option>
+                  <option value="multiplaescolha_remodelada">Múltipla Escolha (remodelada)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block mb-1 font-semibold text-gray-700">Enunciado</label>
+                <textarea
+                  rows={3}
+                  value={editForm.enunciado}
+                  onChange={e => setEditForm({ ...editForm, enunciado: e.target.value })}
+                  placeholder="Digite o enunciado da questão"
+                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-1 font-semibold text-gray-700">Resposta</label>
+                <textarea
+                  value={editForm.resposta}
+                  onChange={e => setEditForm({ ...editForm, resposta: e.target.value })}
+                  placeholder="Digite a resposta (se aplicável)"
+                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <label className="block mb-1 font-semibold text-gray-700">Observação</label>
+                <textarea
+                  value={editForm.observacao}
+                  onChange={e => setEditForm({ ...editForm, observacao: e.target.value })}
+                  placeholder="Observação"
+                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                  rows={2}
+                />
+              </div>
+              <div>
+                <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
+                <textarea
+                  value={editForm.ativa}
+                  onChange={e => setEditForm({ ...editForm, ativa: e.target.value })}
+                  placeholder="Questão ativa? (0 = não, 1 = sim)"
+                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                  rows={1}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-yellow-600 text-white rounded shadow font-bold transition hover:bg-yellow-700"
+                >
+                  Atualizar Questão
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="px-4 py-2 bg-gray-400 text-white rounded shadow font-bold transition hover:bg-gray-500"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        )
+      }
 
 
 
@@ -466,6 +473,6 @@ export default function Questions() {
         Assign
       </button>
 
-    </div>
+    </div >
   );
 }
