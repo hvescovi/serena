@@ -9,10 +9,16 @@ const API = "http://localhost:4999";
 export default function Questions() {
   const [questions, setQuestions] = useState([]);
   const [circles, setCircles] = useState([]);
-  const [form, setForm] = useState({ enunciado: "", type: "aberta", resposta: "" });
+  const [form, setForm] = useState({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
   const [selectedCircle, setSelectedCircle] = useState("");
   const [selectedQuestion, setSelectedQuestion] = useState("");
   const [filterCircle, setFilterCircle] = useState("");
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
+  const [editId, setEditId] = useState(null);
+
+
 
   const filteredQuestions = filterCircle
     ? questions.filter(q => q.circulo_id === filterCircle)
@@ -88,6 +94,64 @@ export default function Questions() {
     alert("Question assigned to circle!");
   };
 
+  // Start editing a question
+  const startEditQuestion = (q) => {
+    for (let key in q) {
+      console.log(key + ": " + q[key]);
+    }
+    setEditForm({
+      enunciado: q.enunciado || "",
+      type: q.type || "aberta",
+      resposta: q.resposta || "",
+      observacao: q.observacao || "",
+      ativa: q.ativa || "1"
+    });
+    setEditId(q.id);
+    setIsEditing(true);
+  };
+
+  // Update question
+  const updateQuestion = async (e) => {
+    e.preventDefault();
+    if (!window.confirm("Atualizar esta questão?")) return;
+    try {
+      await axios.put(`${API}/question/${editId}`, editForm, {
+        headers: { "Content-Type": "application/json" }
+      });
+      alert("Questão atualizada!");
+      setIsEditing(false);
+      setEditId(null);
+      setEditForm({ enunciado: "", type: "aberta", resposta: "" });
+      const updated = await axios.get(`${API}/question`);
+      setQuestions(updated.data.details);
+    } catch (error) {
+      alert("Erro ao atualizar a questão.");
+    }
+  };
+
+  // Cancel editing
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setEditId(null);
+    setEditForm({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
+  };
+
+
+  const toggleActive = async (q) => {
+    const newStatus = q.ativa == "1" ? "0" : "1";
+    try {
+      await axios.put(`${API}/question/${q.id}`, { ...q, ativa: newStatus }, {
+        headers: { "Content-Type": "application/json" }
+      });
+      setQuestions(questions.map(quest =>
+        quest.id === q.id ? { ...quest, ativa: newStatus } : quest
+      ));
+    } catch (error) {
+      alert("Erro ao atualizar o status da questão.");
+    }
+  };
+
+
   // HTML
   return (
     <div className="m-4">
@@ -128,42 +192,58 @@ export default function Questions() {
         {filteredQuestions.map(q => (
           <li key={q.id}>
             <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-            {q.id}) <span dangerouslySetInnerHTML={{ __html: q.enunciado }} /> ({q.type})
+              {q.id})
+              {q.ativa == "0" ? "<span className=text-blue>(INATIVA)</span> " : ""}
+              <span dangerouslySetInnerHTML={{ __html: q.enunciado }} /> ({q.type})
             </span>
 
-            {q.type === "MultiplaEscolha" && (
+            {q.type === "multiplaescolha" && (
               <div>
-              <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                {q.alternativas.map(a => (
-                  <div key={a.id}>
-                    {a.certa && <span>===&gt;</span>}{a.descricao}<br />
-                  </div>
-                ))}
+                <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                  {q.alternativas.map(a => (
+                    <div key={a.id}>
+                      {a.certa && <span>===&gt;</span>}{a.descricao}<br />
+                    </div>
+                  ))}
                 </span>
               </div>
             )}
 
-            {q.type === "Aberta" && (
+            {q.type === "aberta" && (
               <div>
                 <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                Resposta: {q.resposta}
+                  Resposta: {q.resposta}
                 </span>
               </div>
             )}
 
-            {q.type === "Completar" && (
+            {q.type === "completar" && (
               <div>
                 <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                Lacunas: {q.lacunas}
+                  Lacunas: {q.lacunas}
                 </span>
               </div>
             )}
-            
+
 
             <button
               onClick={() => removeQuestion(q.id)}
               className="ml-2 px-3 py-1 bg-red-600 text-white rounded shadow hover:bg-red-700 font-semibold transition"
               style={{ marginLeft: 10 }}>Remove</button>
+
+            <button
+              onClick={() => startEditQuestion(q)}
+              className="ml-2 px-3 py-1 bg-yellow-500 text-white rounded shadow hover:bg-yellow-600 font-semibold transition"
+              style={{ marginLeft: 10 }}>Edit</button>
+
+            <button
+              onClick={() => toggleActive(q)}
+              className={`ml-2 px-3 py-1 ${q.ativa == "1" ? "bg-gray-400 hover:bg-gray-600" : "bg-blue-600 hover:bg-blue-800"} text-white rounded shadow font-semibold transition`}
+              style={{ marginLeft: 10 }}
+            >
+              {q.ativa == "1" ? "desativar" : "ATIVAR"}
+            </button>
+
           </li>
         ))}
       </ul>
@@ -251,6 +331,26 @@ export default function Questions() {
             rows={3}
           />
         </div>
+        <div>
+          <label className="block mb-1 font-semibold text-gray-700">Observação</label>
+          <textarea
+            value={form.observacao}
+            onChange={e => setForm({ ...form, observacao: e.target.value })}
+            placeholder="Observação"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
+            rows={3}
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
+          <textarea
+            value={form.ativa}
+            onChange={e => setForm({ ...form, ativa: e.target.value })}
+            placeholder="Questão ativa? (0 = não, 1 = sim)"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
+            rows={3}
+          />
+        </div>
         <button
           type="submit"
           className="px-4 py-2 bg-blue-600 text-white rounded shadow font-bold transition hover:bg-blue-700"
@@ -260,7 +360,87 @@ export default function Questions() {
       </form>
 
 
+      {/* Edit Question Area */}
+      {isEditing && (
+        <div className="mb-6 p-4 bg-yellow-50 rounded shadow flex flex-col gap-4 max-w-lg">
+          <h2 className="text-2xl font-bold mb-2 text-yellow-800">Editar Questão</h2>
+          <form onSubmit={updateQuestion} className="flex flex-col gap-4">
+            <div>
+              <label className="block mb-1 font-semibold text-gray-700">Tipo</label>
+              <select
+                value={editForm.type}
+                onChange={e => setEditForm({ ...editForm, type: e.target.value })}
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                required
+              >
+                <option value="aberta">Aberta</option>
+                <option value="completar">Completar (lacunas)</option>
+                <option value="multiplaescolha_remodelada">Múltipla Escolha (remodelada)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold text-gray-700">Enunciado</label>
+              <textarea
+                rows={3}
+                value={editForm.enunciado}
+                onChange={e => setEditForm({ ...editForm, enunciado: e.target.value })}
+                placeholder="Digite o enunciado da questão"
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                required
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold text-gray-700">Resposta</label>
+              <textarea
+                value={editForm.resposta}
+                onChange={e => setEditForm({ ...editForm, resposta: e.target.value })}
+                placeholder="Digite a resposta (se aplicável)"
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold text-gray-700">Observação</label>
+              <textarea
+                value={editForm.observacao}
+                onChange={e => setEditForm({ ...editForm, observacao: e.target.value })}
+                placeholder="Observação"
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                rows={2}
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
+              <textarea
+                value={editForm.ativa}
+                onChange={e => setEditForm({ ...editForm, ativa: e.target.value })}
+                placeholder="Questão ativa? (0 = não, 1 = sim)"
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-gray-50"
+                rows={1}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-yellow-600 text-white rounded shadow font-bold transition hover:bg-yellow-700"
+              >
+                Atualizar Questão
+              </button>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="px-4 py-2 bg-gray-400 text-white rounded shadow font-bold transition hover:bg-gray-500"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
+
+
+      {/* Assign Question to Circle */}
       <h1
         className="text-4xl font-bold m-3">
         Assign Question to Circle

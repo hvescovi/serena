@@ -51,6 +51,10 @@ class Questao(db.Model):
     # inserted in 11 may 2024
     textual_id = db.Column(db.Text)
 
+    # inserted in 16 october 2025
+    observacao = db.Column(db.Text)
+    ativa = db.Column(db.String(1)) # '0' ou '1'
+
     __mapper_args__ = {
         'polymorphic_identity':'questao', 
         'polymorphic_on':type
@@ -98,8 +102,10 @@ class MultiplaEscolha(Questao):
             #"assunto": self.assunto,
             "data_cadastro":self.data_cadastro,
             # assuntos...
-            "type":self.__class__.__name__,
+            "type":"multiplaescolha", # self.__class__.__name__,
             "textual_id":self.textual_id,
+            "observacao":self.observacao,
+            "ativa":self.ativa,
             # específico desse tipo de questão
                 "alternativas":[alternativa.json() for alternativa in self.alternativas]
         }
@@ -231,8 +237,10 @@ class Completar(Questao):
             #"assunto": self.assunto,
             "data_cadastro": self.data_cadastro,
             
-            "type": self.__class__.__name__,
+            "type": "completar",
             "textual_id":self.textual_id,
+            "observacao":self.observacao,
+            "ativa":self.ativa,
             # específico desse tipo de questão
             "lacunas":self.lacunas
         }
@@ -260,8 +268,10 @@ class Aberta(Questao):
 #            "assunto": self.assunto,
             "data_cadastro":self.data_cadastro,
 #   assuntos = db.relationship("Assunto", secondary="assuntodaquestao")         
-            "type":self.__class__.__name__,
+            "type":"aberta",
             "textual_id":self.textual_id,
+            "observacao":self.observacao,
+            "ativa":self.ativa,
             # específico desse tipo de questão
             "resposta": self.resposta
         }  

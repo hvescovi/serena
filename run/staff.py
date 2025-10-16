@@ -594,6 +594,33 @@ def questions_in_circle(circle_id):
     return jsonify({"result": "ok", "details": questions})
 
 
+# update question by ID
+@app.route('/question/<int:question_id>', methods=['PUT'])
+def update_question(question_id):
+    try:
+        dados = request.get_json()
+        # find the question
+        question = db.session.get(Questao, question_id)
+        if question is None:
+            return jsonify({"result": "error", "details": "Question not found"}), 404
+
+        # Update allowed fields
+        for key, value in dados.items():
+            # Only update attributes that exist and are not relationships
+            if key.startswith('_') or key in ['alternativas', 'questao_id']:
+                continue
+            if hasattr(question, key):
+                setattr(question, key, value)
+
+        db.session.commit()
+        return jsonify({"result": "ok", "details": "Question updated successfully"})
+    except Exception as e:
+        print("Erro ao atualizar questão:", e)
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+
+
 app.run(port=4999, debug=True)
 
 '''
