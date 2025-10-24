@@ -1,5 +1,6 @@
 todo:
 
+[ ] option to show (enable) the display of answer date/time (timestamp), to explicit similar answers in the near time
 [ ] assign to the answer grade the teacher which assigned it (it allows to evaluete the teacher assignment)
 [ ] URGENT: retrieve a page with the anwers of each student (22/08/2025)
 [ ] show images when there are img commands at the correct answers ("gabarito"), showed at the correction page (26/06/2025)
