@@ -71,7 +71,7 @@ $(function () {
                         semhtml = resp.resposta.replaceAll("<", "&lt;");
                         semhtml = semhtml.replaceAll(">", "&gt;");
 
-                        if (resp.questao.type != "MultiplaEscolha") {
+                        if (resp.questao.type != "multiplaescolha") {
                             semhtml = '<pre>' + semhtml + '</pre>';
                         }
 
@@ -97,7 +97,7 @@ $(function () {
                         // pontuação sugerida, entre 0 e 1
                         pt = "";
 
-                        if (resp.questao.type == "MultiplaEscolha") {
+                        if (resp.questao.type == "multiplaescolha") {
 
                             acertou = false;
                             for (j in resp.questao.alternativas) {
@@ -114,13 +114,13 @@ $(function () {
                                 novaresp += " _ errou _";
                                 pt = 0;
                             }
-                        } else if (resp.questao.type == "Aberta") {
+                        } else if (resp.questao.type == "aberta") {
                             temp = resp.questao.resposta;
                             temp = temp.replaceAll("<", "&lt;");
                             temp = temp.replaceAll(">", "&gt;");
                             gabarito = '<pre>' + temp + '</pre>'; //.replace("<", " (MENOR) ");
                             pt = resp.pontuacao_sugerida;
-                        } else if (resp.questao.type == "Completar") {
+                        } else if (resp.questao.type == "completar") {
                             temp = resp.questao.lacunas;
                             temp = temp.replaceAll("<", "&lt;");
                             temp = temp.replaceAll(">", "&gt;");
