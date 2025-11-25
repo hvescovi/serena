@@ -1,5 +1,6 @@
 todo:
 
+[ ] URGENT: some fields of new questions are not being saved!
 [ ] option to show (enable) the display of answer date/time (timestamp), to explicit similar answers in the near time
 [ ] assign to the answer grade the teacher which assigned it (it allows to evaluete the teacher assignment)
 [ ] URGENT: retrieve a page with the anwers of each student (22/08/2025)

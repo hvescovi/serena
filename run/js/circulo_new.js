@@ -66,19 +66,24 @@ $(function () {
         url = 'http://' + myip + ':5000/abrir_questao_circulo/' + circulo_id + '/' + id_respondente;
 
         //alert(url);
+        //console.log('abrir_questao_circulo -> url:', url, { myip: myip, circulo_id: circulo_id, id_respondente: id_respondente });
+        //console.log("início do clique abrir questão");
         $.ajax({
             url: url,
             method: 'GET',
             dataType: 'json',
             success: function (resultado) {
 
+               // console.log("entrei no sucesso do abrir questão");
                 $('#tabela_questoes').empty();
                 //alert(resultado);
 
                 if (resultado.message != "ok") {
-                    jmessage("ERRO", resultado.details);
+                    //jmessage("ERRO", resultado.details);
+                    alert("ERRO", resultado.details);
                 } else {
 
+                    //console.log("abrir questão ok");
                     // sucesso, vamos abrir a questão...
 
                     quest = resultado.details;
@@ -87,7 +92,7 @@ $(function () {
 
                     //alert(url);
 
-                    if (quest.type == "Aberta") {
+                    if (quest.type == "aberta") {
                         //alert('questão: '+quest.enunciado);
                         enun = quest.enunciado;
                         novo = enun.replace(/\n/g, "<br>");
@@ -109,7 +114,7 @@ $(function () {
                         lin += "</font>";
                     }
 
-                    if (quest.type == "MultiplaEscolha") {
+                    if (quest.type == "multiplaescolha") {
                         lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                         lin = lin + "<br>"
 
@@ -131,7 +136,7 @@ $(function () {
                         lin = lin + '<br><div id="g' + idq + '" class="bg-warning"></div>'; // espaço para o gabarito
                     }
 
-                    if (quest.type == "Completar") {
+                    if (quest.type == "completar") {
                         // quebrar o enunciado em partes sepadas por três underlines
                         partes = quest.enunciado.split("___");
                         n = partes.length;
@@ -178,6 +183,7 @@ $(function () {
                 jmessage("ERRO", "ocorreu algum erro na leitura dos dados, verifique o backend");
             }
         });
+        //console.log("fim do clique abrir questão");
     });
 
     $(document).on("click", ".responder_questao_circulo_aberta", function () {
