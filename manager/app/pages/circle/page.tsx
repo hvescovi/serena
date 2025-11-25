@@ -113,7 +113,8 @@ export default function Circles() {
           e.preventDefault();
           isEditing ? updateCircle() : addCircle();
         }}
-        style={{ marginBottom: 20 }}
+        className="mb-4 w-full max-w-2xl border p-4 rounded bg-white shadow"
+        // style={{ marginBottom: 20 }}
       >
         <label htmlFor="nome">Nome</label>
         <input
@@ -201,7 +202,10 @@ export default function Circles() {
 
       <ul>
         {circles.map(c => (
-          <li key={c.nome} style={{ marginBottom: 10, border: "1px solid #ccc", padding: 10 }}>
+          <li key={c.nome} 
+          className="mb-4 w-full max-w-2xl border p-4 rounded bg-white shadow"
+          //style={{ marginBottom: 10, border: "1px solid #ccc", padding: 10 }}
+          >
             {c.id} - <strong>{c.nome}</strong> ({c.data})<br />
             Autor: {c.autor} &asymp;
             Ativo: {c.ativo} &asymp;
