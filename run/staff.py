@@ -383,6 +383,11 @@ def incluir_questao():
              
         # comum para todas as questões
         nova.enunciado = dados['enunciado']
+        nova.observacao = dados['observacao']
+
+        # TODO pode ser algo relativo ao tipo, string ou int, está dando erro se pegar do front
+        nova.ativa = 1 # dados['ativa'] 
+
         now = datetime.now()
         nova.data_cadastro = now.strftime("%d/%m/%Y, %H:%M:%S")
         nova.autor = "Hylson"

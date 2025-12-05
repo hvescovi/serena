@@ -39,13 +39,13 @@ export default function Questions() {
   const addQuestion = async () => {
     if (!window.confirm("Add this question?")) return;
 
-    const { enunciado, type, resposta } = form;
+    const { enunciado, type, resposta, observacao, ativa } = form;
     let dados;
 
     if (type === "aberta") {
-      dados = { type, enunciado, resposta };
+      dados = { type, enunciado, resposta, observacao, ativa};
     } else if (type === "completar") {
-      dados = { type, enunciado, lacunas: resposta };
+      dados = { type, enunciado, lacunas: resposta, observacao, ativa };
     } else if (type === "multiplaescolha_remodelada") {
       const alternativas = resposta.split("\n");
       let corretas = [];
@@ -58,7 +58,7 @@ export default function Questions() {
           erradas.push({ op: alt });
         }
       });
-      dados = { type, enunciado, corrects: corretas, wrongs: erradas };
+      dados = { type, enunciado, corrects: corretas, wrongs: erradas, observacao, ativa };
     }
 
     try {
@@ -67,7 +67,7 @@ export default function Questions() {
       });
       if (res.data.message === "ok") {
         alert("Questão incluída com sucesso!");
-        setForm({ enunciado: "", type: "aberta", resposta: "" });
+        setForm({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
         const updated = await axios.get(`${API}/question`);
         setQuestions(updated.data.details);
       } else {
