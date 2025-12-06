@@ -1,5 +1,10 @@
 todo:
 
+[ ] swap the color of the grade button when we click it
+[ ] prefer patterns than color to elaborate questions, because of the daltonic people
+[ ] when correcting, locate similar grades and suggest the new values besides (05/12/2025)
+[ ] save the IP of the answer in the answer table, to detect similar answers from side-by-side machines (05/12/2025)
+[ ] create an image of the question, to avoid ctrl+c and ctrl+v and past in IA (it happened !! (05/12/2025)
 [ ] URGENT: some fields of new questions are not being saved!
 [ ] option to show (enable) the display of answer date/time (timestamp), to explicit similar answers in the near time
 [ ] assign to the answer grade the teacher which assigned it (it allows to evaluete the teacher assignment)
