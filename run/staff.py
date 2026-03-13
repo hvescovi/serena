@@ -621,7 +621,95 @@ def update_question(question_id):
         return jsonify({"result": "ok", "details": "Question updated successfully"})
     except Exception as e:
         print("Erro ao atualizar questão:", e)
-        return jsonify({"result": "error", "details": str(e)}), 500
+        return jsonify({"result": "error", "details": str(e)}), 500# CRUD routes for Respondente
+
+@app.route('/respondentes', methods=['GET'])
+def list_respondentes():
+    resp = []
+    respondentes = Respondente.query.all()
+    for r in respondentes:
+        resp.append(r.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    ret = jsonify(retorno)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+@app.route('/respondente/<int:id>', methods=['GET'])
+def get_respondente(id):
+    respondente = db.session.get(Respondente, id)
+    if respondente is None:
+        resp = jsonify({"result": "error", "details": "Respondente not found"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp, 404
+    resp = jsonify({"result": "ok", "details": respondente.json()})
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+@app.route('/respondente', methods=['POST'])
+def create_respondente():
+    dados = request.get_json()
+    try:
+        # Check if already exists by nome
+        existente = db.session.query(Respondente).filter(Respondente.nome == dados["nome"]).first()
+        if existente:
+            resp = jsonify({"result": "error", "details": "Respondente already exists"})
+            resp.headers.add('Access-Control-Allow-Origin', '*')
+            return resp
+        nova = Respondente(**dados)
+        db.session.add(nova)
+        db.session.commit()
+        resp = jsonify({"result": "ok", "details": "Respondente created"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+    except Exception as e:
+        resp = jsonify({"result": "error", "details": str(e)})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+
+@app.route('/respondente/<int:id>', methods=['PUT'])
+def update_respondente(id):
+    dados = request.get_json()
+    try:
+        respondente = db.session.get(Respondente, id)
+        if respondente is None:
+            resp = jsonify({"result": "error", "details": "Respondente not found"})
+            resp.headers.add('Access-Control-Allow-Origin', '*')
+            return resp, 404
+        
+        # Only update simple columns
+        for key, value in dados.items():
+            if key.startswith('_'):
+                continue
+            if hasattr(Respondente, key):
+                setattr(respondente, key, value)
+        db.session.commit()
+        resp = jsonify({"result": "ok", "details": "Respondente updated successfully"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+    except Exception as e:
+        resp = jsonify({"result": "error", "details": str(e)})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+
+@app.route('/respondente/<int:id>', methods=['DELETE'])
+def delete_respondente(id):
+    try:
+        respondente = db.session.get(Respondente, id)
+        if respondente is None:
+            resp = jsonify({"result": "error", "details": "Respondente not found"})
+            resp.headers.add('Access-Control-Allow-Origin', '*')
+            return resp, 404
+        db.session.delete(respondente)
+        db.session.commit()
+        resp = jsonify({"result": "ok", "details": "Respondente deleted"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+    except Exception as e:
+        resp = jsonify({"result": "error", "details": str(e)})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
 
 
 
