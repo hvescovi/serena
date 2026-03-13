@@ -426,6 +426,19 @@ def circle():
     retorno.update({"details":resp})
     return jsonify(retorno)
 
+@app.route('/respondente')
+def respondente():
+    resp = []
+    dados = Respondente.query.all()
+    for q in dados:
+        resp.append(q.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    ret = jsonify(retorno)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
 # curl localhost:4999/questions_circle/91/10 -X POST
 # add question to the circle!
 @app.route("/questions_circle/<int:q>/<int:c>", methods=['post'])

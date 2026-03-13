@@ -21,6 +21,12 @@ export default function Menu() {
       >
         Questões por Círculo
       </Link>
+      <Link
+        href="/pages/respondente"
+        className="px-4 py-2 rounded bg-yellow-600 text-white font-semibold shadow hover:bg-yellow-700 transition"
+      >
+        Gerenciar Respondentes
+      </Link>
     </nav>
   );
 }

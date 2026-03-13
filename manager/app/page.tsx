@@ -30,6 +30,12 @@ export default function Home() {
           >
             Importar Alunos
           </Link>
+          <Link
+            href="/pages/respondente"
+            className="block px-6 py-4 rounded-lg bg-yellow-600 text-white text-lg font-semibold shadow hover:bg-yellow-700 transition"
+          >
+            Gerenciar Respondentes
+          </Link>
         </nav>
       </main>
       <footer className="mt-16 flex gap-6 flex-wrap items-center justify-center text-sm text-gray-500">
