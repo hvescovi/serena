@@ -62,7 +62,10 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
 
       else if (buttonValue === "save") {
         const paraEnviar = StudentsCsvToJson(StudentsList);
-        alert(paraEnviar.length + " estudantes serão enviados ao servidor.");
+        let ok = confirm(paraEnviar.length + " estudantes serão enviados ao servidor.");
+        if (!ok) {
+          return;
+        }
 
         const response = axios.post(
           `${backendIP}/incluir_respondentes`,
@@ -72,14 +75,18 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
           }
         );
 
-        const resp = (await response).data.details;
-        alert(response);
-
+        const resp = (await response);
+        //alert(resp.status);
+        //alert(resp.data.result);
+        //alert(resp.data.details);
+        
         if (resp.status !== 200) {
-          setError("Erro: " + resp.status + " - " + resp.statusText);
+          setError("Erro: " + resp.data.result + " - " + resp.data.details);
           return;
         }
-        setMessage(resp.replaceAll(";", "\n"));
+        let msg = resp.data.details;
+        msg = msg.replaceAll(";", "\n");
+        setMessage(msg);
       }
     } catch (err) {
       setError(err.message || "Erro desconhecido");
@@ -120,9 +127,7 @@ YAGO SCHUMANN VRONSKI202530816132
           cols={80}
           className="mb-4 p-2 border rounded w-full font-mono bg-green-200"
         />
-        <br />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
+        
         <h2>Segundo passo</h2>
         Clicar no botão:
         <button type="submit" value="clean" onClick={(e) => setButtonValue(e.currentTarget.value)}>
@@ -181,15 +186,14 @@ YAGO SCHUMANN VRONSKI202530816132
         </button>
       </form>
 
-      <br />
-      <hr />
-      <br />
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={30}
         cols={50}
+        className="mb-4 p-2 border rounded w-full font-mono bg-blue-100"
       />
 
       <style jsx>{`
