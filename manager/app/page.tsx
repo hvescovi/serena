@@ -19,7 +19,7 @@ export default function Home() {
             Gerenciar Questões
           </Link>
           <Link
-            href="/pages/question_circle"
+            href="/pages/questions_circle_batch"
             className="block px-6 py-4 rounded-lg bg-purple-600 text-white text-lg font-semibold shadow hover:bg-purple-700 transition"
           >
             Questões por Círculo

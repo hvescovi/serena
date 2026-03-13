@@ -16,10 +16,16 @@ export default function Menu() {
         Gerenciar Questões
       </Link>
       <Link
-        href="/pages/question_circle"
+        href="/pages/questions_circle_batch"
         className="px-4 py-2 rounded bg-purple-600 text-white font-semibold shadow hover:bg-purple-700 transition"
       >
         Questões por Círculo
+      </Link>
+      <Link
+        href="/pages/import_students"
+        className="px-4 py-2 rounded bg-gray-600 text-white font-semibold shadow hover:bg-gray-700 transition"
+      >
+        Importar Alunos
       </Link>
       <Link
         href="/pages/respondente"

@@ -2,6 +2,7 @@
 import { useState, FormEvent } from "react";
 import axios from "axios";
 import { StudentsCsvToJson, Student } from "../../scripts/utils.tsx";
+import Menu from "../../components/Menu";
 
 export default function ImportStudents() {
   // Environment variable
@@ -94,12 +95,12 @@ ANTONIO HENRIQUE ROHLING FROEHNER,rf.antonio2007@gmail.com,|g:optweb-301-2025|`
   };
 
   return (
-    <div className="container">
-      <h1>Importação de Estudantes</h1>
+    <div className="m-4">
+      <Menu />
+      <h1 className="text-3xl font-bold mb-4">Importação de Estudantes</h1>
 
       <form onSubmit={action_ImportStudents}>
-        <br />
-        <h2>Primeiro Passo</h2>
+        <h2 className="text-xl font-bold mb-2">Primeiro Passo</h2>
         <p>Pegar os nomes dos estudantes no SIGAA, menu
           Diário Eletrônico, Lista de Presença.
           Copiar os nomes dos alunos e colar na caixa de área de texto abaixo.
@@ -128,14 +129,14 @@ YAGO SCHUMANN VRONSKI202530816132
           className="mb-4 p-2 border rounded w-full font-mono bg-green-200"
         />
         
-        <h2>Segundo passo</h2>
+        <h2 className="text-xl font-bold mb-2">Segundo passo</h2>
         Clicar no botão:
         <button type="submit" value="clean" onClick={(e) => setButtonValue(e.currentTarget.value)}>
           LIMPAR
         </button>
 
         
-        <h2>Terceiro Passo</h2>
+        <h2 className="text-xl font-bold mb-2">Terceiro Passo</h2>
         3.1 Preencher Emails: pegar os emails dos estudantes no SIGAA,
         menu Turma, Participantes, Lista de E-mail
         dos discentes da turma.
