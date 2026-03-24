@@ -20,6 +20,11 @@ class Alternativa(db.Model):
 class Assunto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(254))
+
+    # n x n
+    questoes = db.relationship("Questao", secondary="assuntodaquestao",
+                               back_populates="assuntos")
+
     def __str__(self):
         return self.nome + "("+str(self.id)+")"
         
@@ -38,7 +43,8 @@ class Questao(db.Model):
     data_cadastro = db.Column(db.String(254))
 
     # n x n
-    assuntos = db.relationship("Assunto", secondary="assuntodaquestao")
+    assuntos = db.relationship("Assunto", secondary="assuntodaquestao", 
+                               back_populates="questoes")
 
     #questoesNaProva = db.relationship("QuestaoNaProva")
     #respostas = db.relationship("Resposta")
