@@ -9,6 +9,9 @@ const API = "http://localhost:4999";
 export default function Questions() {
   const [questions, setQuestions] = useState([]);
   const [circles, setCircles] = useState([]);
+  const [assuntos, setAssuntos] = useState([]);
+  const [assuntosPerQuestion, setAssuntosPerQuestion] = useState({});
+  const [selectedAssuntoPerQuestion, setSelectedAssuntoPerQuestion] = useState({});
   const [form, setForm] = useState({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -21,10 +24,29 @@ export default function Questions() {
     return texto.replace(/<img src=/gi, "<img src=" + url);
   }
 
-  // Fetch questions and circles
+  // Fetch assuntos for a specific question
+  const fetchAssuntosForQuestion = async (questionId) => {
+    try {
+      const res = await axios.get(`${API}/questao/${questionId}/assuntos`);
+      setAssuntosPerQuestion(prev => ({
+        ...prev,
+        [questionId]: res.data.details || []
+      }));
+    } catch (error) {
+      console.error(`Erro ao carregar assuntos para questão ${questionId}:`, error);
+    }
+  };
+
+  // Fetch questions, circles and assuntos
   useEffect(() => {
-    axios.get(`${API}/question`).then(res => setQuestions(res.data.details));
+    axios.get(`${API}/question`).then(res => {
+      const questoes = res.data.details;
+      setQuestions(questoes);
+      // Fetch assuntos for each question
+      questoes.forEach(q => fetchAssuntosForQuestion(q.id));
+    });
     axios.get(`${API}/circle`).then(res => setCircles(res.data.details));
+    axios.get(`${API}/assuntos`).then(res => setAssuntos(res.data.details || []));
   }, []);
 
   // Add a new question
@@ -141,6 +163,23 @@ export default function Questions() {
     }
   };
 
+  const linkAssuntoToQuestao = async (questaoId) => {
+    const assuntoId = selectedAssuntoPerQuestion[questaoId];
+    if (!assuntoId) {
+      alert("Selecione um assunto primeiro");
+      return;
+    }
+    try {
+      await axios.post(`${API}/assunto/${assuntoId}/questao/${questaoId}`);
+      alert("Assunto vinculado com sucesso!");
+      setSelectedAssuntoPerQuestion({ ...selectedAssuntoPerQuestion, [questaoId]: "" });
+      // Reload assuntos for this question
+      await fetchAssuntosForQuestion(questaoId);
+    } catch (error) {
+      alert("Erro ao vincular assunto à questão.");
+    }
+  };
+
 
   // HTML
   return (
@@ -235,7 +274,7 @@ export default function Questions() {
       */}
       <ul>
         {questions.map(q => (
-          <li key={q.id}>
+          <li key={q.id} className="border rounded p-4 bg-white shadow mb-4">
             <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold mt-6">
               {q.id})
               {q.ativa == "0" ? "<span className=text-blue>(INATIVA)</span> " : ""}
@@ -270,24 +309,59 @@ export default function Questions() {
               </div>
             )}
 
+            {assuntosPerQuestion[q.id] && assuntosPerQuestion[q.id].length > 0 && (
+              <div style={{ marginTop: 8 }}>
+                <span className="inline-block bg-blue-100 border border-blue-400 text-blue-800 px-3 py-1 rounded font-semibold">
+                  Assuntos: {assuntosPerQuestion[q.id].map(a => a.nome).join(", ")}
+                </span>
+              </div>
+            )}
 
-            <button
-              onClick={() => removeQuestion(q.id)}
-              className="ml-2 px-3 py-1 bg-red-600 text-white rounded shadow hover:bg-red-700 font-semibold transition"
-              style={{ marginLeft: 10 }}>Remove</button>
 
-            <button
-              onClick={() => startEditQuestion(q)}
-              className="ml-2 px-3 py-1 bg-yellow-500 text-white rounded shadow hover:bg-yellow-600 font-semibold transition"
-              style={{ marginLeft: 10 }}>Edit</button>
+            <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+              <button
+                onClick={() => removeQuestion(q.id)}
+                className="px-3 py-1 bg-red-600 text-white rounded shadow hover:bg-red-700 font-semibold transition"
+              >
+                Remove
+              </button>
 
-            <button
-              onClick={() => toggleActive(q)}
-              className={`ml-2 px-3 py-1 ${q.ativa == "1" ? "bg-gray-400 hover:bg-gray-600" : "bg-blue-600 hover:bg-blue-800"} text-white rounded shadow font-semibold transition`}
-              style={{ marginLeft: 10 }}
-            >
-              {q.ativa == "1" ? "desativar" : "ATIVAR"}
-            </button>
+              <button
+                onClick={() => startEditQuestion(q)}
+                className="px-3 py-1 bg-yellow-500 text-white rounded shadow hover:bg-yellow-600 font-semibold transition"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => toggleActive(q)}
+                className={`px-3 py-1 ${q.ativa == "1" ? "bg-gray-400 hover:bg-gray-600" : "bg-blue-600 hover:bg-blue-800"} text-white rounded shadow font-semibold transition`}
+              >
+                {q.ativa == "1" ? "desativar" : "ATIVAR"}
+              </button>
+
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <select
+                  value={selectedAssuntoPerQuestion[q.id] || ""}
+                  onChange={(e) => setSelectedAssuntoPerQuestion({ ...selectedAssuntoPerQuestion, [q.id]: e.target.value })}
+                  className="px-2 py-1 border rounded bg-gray-50 text-sm"
+                  style={{ minWidth: 150 }}
+                >
+                  <option value="">Selecione um assunto...</option>
+                  {assuntos.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.nome}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => linkAssuntoToQuestao(q.id)}
+                  className="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700 font-semibold transition text-sm"
+                >
+                  Vincular Assunto
+                </button>
+              </div>
+            </div>
 
           </li>
         ))}

@@ -36,6 +36,14 @@ export default function Home() {
           >
             Gerenciar Respondentes
           </Link>
+
+           <Link
+            href="/pages/assunto"
+            className="block px-6 py-4 rounded-lg bg-yellow-600 text-white text-lg font-semibold shadow hover:bg-yellow-700 transition"
+          >
+            Gerenciar Assuntos
+          </Link>
+          
         </nav>
       </main>
       <footer className="mt-16 flex gap-6 flex-wrap items-center justify-center text-sm text-gray-500">

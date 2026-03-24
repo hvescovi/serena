@@ -7,13 +7,13 @@ export default function Menu() {
         href="/pages/circle"
         className="px-4 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition"
       >
-        Gerenciar Círculos
+        Círculos
       </Link>
       <Link
         href="/pages/question"
         className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition"
       >
-        Gerenciar Questões
+        Questões
       </Link>
       <Link
         href="/pages/questions_circle_batch"
@@ -31,7 +31,21 @@ export default function Menu() {
         href="/pages/respondente"
         className="px-4 py-2 rounded bg-yellow-600 text-white font-semibold shadow hover:bg-yellow-700 transition"
       >
-        Gerenciar Respondentes
+        Respondentes
+      </Link>
+
+      <Link
+        href="/pages/assunto"
+        className="px-4 py-2 rounded bg-yellow-600 text-white font-semibold shadow hover:bg-yellow-700 transition"
+      >
+        Assuntos
+      </Link>
+
+      <Link
+        href="/pages/assunto-questao"
+        className="px-4 py-2 rounded bg-yellow-600 text-white font-semibold shadow hover:bg-yellow-700 transition"
+      >
+        Assuntos por Questão
       </Link>
     </nav>
   );
