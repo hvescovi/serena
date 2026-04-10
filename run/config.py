@@ -37,8 +37,8 @@ app = Flask(__name__, static_url_path="/assets", static_folder='templates/assets
 CORS(app) # aplicar o cross domain
 
 # execução local?
-#caminho_BD = "/home/friend/Dropbox/10-serena-secrets/"
-caminho_BD="C:/Users/hylso/Dropbox/10-serena-secrets/"
+caminho_BD = "/home/friend/Dropbox/10-serena-secrets/"
+#caminho_BD="C:/Users/hylso/Dropbox/10-serena-secrets/"
 # TODO: configure image folder to work in containers
 caminho_imagens = "/home/friend/Dropbox/10-serena-secrets/questions_images/"
 if os.path.exists(caminho_BD):
