@@ -74,13 +74,13 @@ $(function () {
             dataType: 'json',
             success: function (resultado) {
 
-               // console.log("entrei no sucesso do abrir questão");
+                // console.log("entrei no sucesso do abrir questão");
                 $('#tabela_questoes').empty();
                 //alert(resultado);
 
                 if (resultado.message != "ok") {
                     //jmessage("ERRO", resultado.details);
-                    alert("ERRO", resultado.details);
+                    alert("ERRO: " + resultado.details);
                 } else {
 
                     //console.log("abrir questão ok");
@@ -431,6 +431,10 @@ $(function () {
         return texto.replace(/<img src=/gi, "<img src=" + url);
     }
 
+    //
+    // CONFIGURAÇÃO DE VARIÁVEIS INICIAIS DE AMBIENTE
+    // 
+
     //alert(document.URL);
     if (document.URL.startsWith("http://localhost")) {
         $("#myip").text("localhost");
@@ -439,14 +443,19 @@ $(function () {
     } else {
         url = document.URL;
         pos = url.search("/circulo.html");
+        // exemplo: localhost:8000/circulo.html
         if (pos > 0) {
-            protocolo = "http://"
+            protocolo = "http://";
             http = protocolo.length;
+            // pega o que houver entre o http:// e o /circulo.html
             meuip = url.substring(http, pos);
+            // verifica se especificou porta; exemplo: 191.52.7.159:8000
             temdoisp = meuip.search(":");
             if (temdoisp > 0) {
+                // tem porta, então pega só o ip, sem a porta
                 meuip = meuip.substring(0, temdoisp);
             }
+            // configura o IP!
             $("#myip").text(meuip);
         } else {
             alert("ERRO: não localizei URL");
@@ -463,78 +472,160 @@ $(function () {
 
 
 
+    // verifica se já foi informada a SENHA do círculo
+    let pin = sessionStorage.getItem("pin");
+    if (pin == null) {
+        // não tem senha, então pede um identificador (PIN) do usuário que pretende usar o sistema
+        // o PIN é um identificador único do usuário, de forma textual
+        // exemplo: hvescovi4411, pericles112233, uriarteAA01
+        pin = prompt("Digite seu PIN para participar listar os círculos ativos:");
 
+        if (pin == null || pin.length <= 0) {
+            alert("PIN é necessário para participar do círculo. Volte para a página inicial e informe o PIN.");
+            $(location).attr('href', '/index.html');
+        }
 
+        // salvar o PIN informado para usar durante a sessão
+        sessionStorage.setItem("pin", pin);
+        // avisar que o pin foi salvo
+        alert("PIN salvo para esta sessão: " + pin);
+    }
 
+    // obtém qual foi o círculo escolhido para ser o ativo, a partir do PIN informado
+    let circulo = sessionStorage.getItem("circulo_ativo");
+    
+    // se o pin foi informado mas ainda não tem círculo ativo, então vamos obter os círculos ativos para o PIN informado
+    if ((pin != null) && (circulo == null)) {
+        // obter quais são os círculos ativos a partir do PIN informado
+        url = 'http://' + $("#myip").text() + ':5000/get_circles_of_user/' + pin;
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function (resultado) {
 
+                if (resultado.message == "ok") {
+                    let circulos = resultado.details;
 
-    myip = $("#myip").text();
-
-    // obtém do backend qual é o círculo ativo
-    url = 'http://' + myip + ':5000/circulo_ativo';
-
-    $.ajax({
-        url: url,
-        method: 'GET',
-        dataType: 'json',
-        success: function (resultado) {
-
-            if (resultado.message == "ok") {
-                circulo = resultado.details.id;
-                console.log("circulo ativo: " + circulo);
-
-                // busca reopondente fixo
-                var id_quem_responde = sessionStorage.getItem("id_quem_responde");
-
-                // se NÃO escolheu o respondente...
-                if ( id_quem_responde == null ) {
-                    // vamos preparar a rodada via sorteio (círculo)
-                    url = 'http://' + myip + ':5000/preparar_rodada/' + circulo + '/0';
-                } else {
-                    // vamos preparar a rodada via linha (prova)
-                    url = 'http://' + myip + ':5000/preparar_rodada/' + circulo + '/' + id_quem_responde;
-                }
-
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    dataType: 'json', // vou receber a resposta em json,
-                    //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
-                    //contentType: "application/json",
-                    success: function (resultado) {
-                        if (resultado.message == "ok") {
-                            d = resultado.details;
-                            // coloca a resposta no gabarito
-                            $("#id_respondente").val(d.id);
-                            $("#nome_respondente").text(d.nome);
-                            $("#email_respondente").text(d.email);
-                            $("#questoes_respondidas").text(d.questoes_respondidas);
-                            $("#questoes_puladas").text(d.questoes_puladas);
-                            // alert(resultado.details);
-                            //mostrar_resultado_acao(deu_certo);
-
-                            $("#nome_circulo").text(d.nome_circulo);
-                            $("#circulo_id").text(d.circulo_id);
-                            $("#data_circulo").text(d.data_circulo);
-                        }
-                        else {
-                            jmessage("ERRO", resultado.details);
-                        }
-                    },
-                    error: function () {
-                        jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
+                    if (circulos.length == 0) {
+                        alert("Não há círculos ativos para o PIN informado. Volte para a página inicial e informe outro PIN.");
+                        $(location).attr('href', '/index.html');
                     }
 
-                });
-
-            } else {
-                jmessage("ERRO", "Não foi possível encontrar círculo ativo: " + resultado.details);
+                    // se tem mais de um círculo, pede para escolher qual é o ativo
+                    if (circulos.length > 1) {
+                        var lista_circulos = "PIN = " + pin + " - Escolha o círculo ativo:\n";
+                        for (var i in circulos) {
+                            lista_circulos = lista_circulos + i + ": " + circulos[i].nome + " (id: " + circulos[i].id + ")\n";
+                        }
+                        var escolha = prompt(lista_circulos);
+                        if (escolha == null || escolha.length <= 0 || isNaN(escolha) || escolha < 0 || escolha >= circulos.length) {
+                            alert("Escolha inválida. Volte para a página inicial e informe outro PIN.");
+                            $(location).attr('href', '/index.html');
+                        }
+                        sessionStorage.setItem("circulo_ativo", circulos[escolha].id);
+                        // avisa que o circulo foi salvo
+                        alert("Círculo ativo salvo para esta sessão: " + circulos[escolha].nome+", ID = " + circulos[escolha].id);
+                    }
+                }
+                else {
+                    alert("Não foi possível obter os círculos ativos para o PIN informado. Volte para a página inicial e informe outro PIN.");
+                    $(location).attr('href', '/index.html');
+                }
             }
-        },
-        error: function () {
-            jmessage("ERRO", "Erro na leitura dos dados, verifique o backend");
+        });
+    } 
+
+
+    // se já escolhou o círculo...
+    if (circulo != null) {
+
+
+        // obtém o IP que foi encontrado, obtido a partir da barra de endereços
+        myip = $("#myip").text();
+
+        
+        /*
+        
+            // obtém do backend qual é o círculo ativo
+            //url = 'http://' + myip + ':5000/circulo_ativo';
+        
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                success: function (resultado) {
+        
+                    if (resultado.message == "ok") {
+                        circulo = resultado.details.id;
+        
+        */
+
+
+        // início da aplicação do círculo
+        console.log("IP do backend: " + myip);
+        console.log("PIN do usuário: " + pin);
+        console.log("circulo ativo: " + circulo);
+
+        // busca respondente fixo
+        var id_quem_responde = sessionStorage.getItem("id_quem_responde");
+
+        // se NÃO escolheu o respondente...
+        if (id_quem_responde == null) {
+            // vamos preparar a rodada via sorteio (círculo)
+            url = 'http://' + myip + ':5000/preparar_rodada/' + circulo + '/0';
+        } else {
+            // vamos preparar a rodada via linha (prova)
+            url = 'http://' + myip + ':5000/preparar_rodada/' + circulo + '/' + id_quem_responde;
         }
-    });
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json', // vou receber a resposta em json,
+            //data: dados, // dados a enviar    //JSON.stringify({ "message": "ok" }), // dados a enviar
+            //contentType: "application/json",
+            success: function (resultado) {
+                if (resultado.message == "ok") {
+                    d = resultado.details;
+                    // coloca a resposta no gabarito
+                    $("#id_respondente").val(d.id);
+                    $("#nome_respondente").text(d.nome);
+                    $("#email_respondente").text(d.email);
+                    $("#questoes_respondidas").text(d.questoes_respondidas);
+                    $("#questoes_puladas").text(d.questoes_puladas);
+                    // alert(resultado.details);
+                    //mostrar_resultado_acao(deu_certo);
+
+                    $("#nome_circulo").text(d.nome_circulo);
+                    $("#circulo_id").text(d.circulo_id);
+                    $("#data_circulo").text(d.data_circulo);
+                }
+                else {
+                    jmessage("ERRO", resultado.details);
+                }
+            },
+            error: function () {
+                jmessage("ERRO", 'ocorreu algum erro na leitura dos dados, verifique o backend');
+            }
+
+        });
+    }
+
+
+    /*
+    
+                } else {
+                    jmessage("ERRO", "Não foi possível encontrar círculo ativo: " + resultado.details);
+                }
+            },
+            error: function () {
+                jmessage("ERRO", "Erro na leitura dos dados, verifique o backend");
+            }
+                
+        });
+    
+        */
 
 
 

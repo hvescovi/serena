@@ -35,17 +35,23 @@ def ipok(ip):
         return True
 
 def loadiptable():
-    f = open('/home/friend/Dropbox/10-serena-secrets/ips.txt', 'r')
+    # open IPs from the secret's folder
+    f = open(caminho_BD+'ips.txt', 'r')
+
     for x in f:
         # pega o IP sem caracter final quebra de linha
         ip = x[:-1]
         # tem comentário?
         if '#' in ip:
-            # pega só o IP
+            # supõe que o comentário está DEPOIS do ip
+            # exemplo: 191.162.1.114 # notebook do Hylson
+            # pega só o IP (descarta comentários)
             ip = ip.split("#")[0]
             # remover eventuais espaços
             ip = ip.strip()
+        # adicionar o IP na lista dos permitidos
         ips.append(ip)
+    # mostra os IPs para efeito de depuração
     print(ips)
 
 @app.route('/retornar_questoes')
@@ -96,7 +102,8 @@ def preparar_rodada(id_circulo, id_respondente):
     }
 
     '''
-    # carrega o circulo atual
+    # carrega o circulo informado no parâmetro
+
     # MUDANÇA DE VERSÃO DO SQLALCHEMY
     # ERRO
     # LegacyAPIWarning: The Query.get() method is considered legacy as of the 
@@ -104,13 +111,14 @@ def preparar_rodada(id_circulo, id_respondente):
     # The method is now available as Session.get() (deprecated since: 2.0) 
     # (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
     #circulo = Circulo.query.get(id_circulo)
+    
     circulo = db.session.get(Circulo, id_circulo)
 
     # ATUALIZA o máximo de questões, agora (06 may 2024)
-    # dependente do círculo
+    # dependente do círculo: qual é o número de questões neste círculo? :-)
     maximo_questoes = circulo.maximo_questoes
 
-    # ATUALIZA número de questões "a mais" que o respondente pode visualizar
+    # ATUALIZA o número de questões "a mais" que o respondente pode visualizar
     padrao_n_reservas = circulo.n_reservas  
 
     # pega os respondentes do circulo
@@ -126,14 +134,14 @@ def preparar_rodada(id_circulo, id_respondente):
             Respondente.observacao == "302").all()
     '''
 
-    
+    # se não há nenhum respondente configurado para aquele círculo...
     if len(todos) == 0:
-        resp = {"message": "error", "details": "não há respondentes"}
+        resp = {"message": "error", "details": "não há respondentes no círculo"}
     else:
 
         # não foi informado respondente?
         if not id_respondente:
-            resp = {"message": "error", "details": "não foi informado o modo da rodada (parâmetro id_respondente) "}
+            resp = {"message": "error", "details": "não foi informado o respondente (parâmetro id_respondente) no círculo {id_circulo}  "}
         else:
 
             # declaração padrão do escolhido
@@ -192,6 +200,7 @@ def preparar_rodada(id_circulo, id_respondente):
                 escolhido = id_respondente_TMP
 
             else:
+                # foi especificado um respondente específico!
                 id_respondente_TMP = escolhido
 
                 # código duplicado embaixo !!!!!!!!!!!!
@@ -218,7 +227,7 @@ def preparar_rodada(id_circulo, id_respondente):
             detalhes = q[0].json()
 
             # OUTRA CONSULTA
-            # verificar quantas questões a pessoa já respondeu NO CIRCULOOOOO TODO TODO TODO
+            # verificar quantas questões a pessoa já respondeu NO CIRCULOOOOO 
             # não precisa mais, já é feita a consulta antes
             #q = Resposta.query.filter_by(respondente_id=id_respondente).count()
 
@@ -1132,6 +1141,30 @@ def retornar_contagem_questoes_puladas(circulo_id):
 
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
+
+
+
+
+# retorna os círculos que pertencem a um usuário
+@app.route('/get_circles_of_user/<author>')
+def get_circle_by_hash(author):
+    if not ipok(request.remote_addr):
+        return failed()
+
+    # busca o primeiro círculo ativo
+    circulo = db.session.query(Circulo).filter(Circulo.autor == author, Circulo.ativo == "1").all()
+
+    if circulo == None:
+        resp = {"message": "erro", "details": f"não há círculo(s) para o usuário especificado: {author}!"}
+    else:
+        resp = {"message": "ok"}
+        resp.update({"details": [c.json() for c in circulo]})
+
+    ret = jsonify(resp)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+
 
 # start of backend
 
