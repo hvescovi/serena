@@ -15,6 +15,7 @@ export default function Respondentes() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [observacaoFilter, setObservacaoFilter] = useState("");
 
   // Fetch respondentes
   const fetchRespondentes = async () => {
@@ -99,6 +100,9 @@ export default function Respondentes() {
     });
   };
 
+  // Filtered respondentes
+  const filteredRespondentes = respondentes.filter(r => r.observacao.toLowerCase().includes(observacaoFilter.toLowerCase()));
+
   return (
     <div className="m-4">
       <Menu />
@@ -162,10 +166,21 @@ export default function Respondentes() {
         </div>
       </form>
 
+      <div className="mb-4">
+        <label className="block mb-1 font-semibold text-gray-700">Filtrar por Observação</label>
+        <input
+          type="text"
+          placeholder="Digite para filtrar observações"
+          value={observacaoFilter}
+          onChange={e => setObservacaoFilter(e.target.value)}
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 max-w-lg"
+        />
+      </div>
+
       <h2 className="text-xl font-bold mb-2">Lista de Respondentes</h2>
       <ul className="space-y-2">
-        {respondentes.length === 0 && <li className="text-gray-500">Nenhum respondente encontrado.</li>}
-        {respondentes.map(r => (
+        {filteredRespondentes.length === 0 && <li className="text-gray-500">Nenhum respondente encontrado.</li>}
+        {filteredRespondentes.map(r => (
           <li key={r.id} className="p-4 bg-white rounded shadow border">
             <div className="flex justify-between items-center">
               <div>
