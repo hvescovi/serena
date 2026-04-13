@@ -97,8 +97,11 @@ $(function () {
         method: 'GET',
         dataType: 'json',
         success: function (resultado) {
-            if (resultado.message == "ok") {
+            //if (resultado.message == "ok") {
                 circulo = resultado.details.id;
+
+                circulo = 48; // HARD-CODED
+                
                 console.log("circulo ativo: " + circulo);
 
                 // vamos obter a informação dos respondentes
@@ -168,9 +171,9 @@ $(function () {
 
                 });
 
-            } else {
-                jmessage("ERRO", "Não foi possível encontrar círculo ativo: " + resultado.details);
-            }
+            //} else {
+            //    jmessage("ERRO", "Não foi possível encontrar círculo ativo: " + resultado.details);
+            //}
         },
         error: function () {
             jmessage("ERRO", "Erro na leitura dos dados, verifique o backend");
