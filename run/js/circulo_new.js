@@ -428,7 +428,8 @@ $(function () {
     function ajustaImagens(texto) {
         myip = $("#myip").text();
         url = 'http://' + myip + ':5000/imagem/';
-        return texto.replace(/<img src=/gi, "<img src=" + url);
+        //texto = texto + "<br><br>";
+        return texto.replace(/<img src=/gi, "<br><img src=" + url);
     }
 
     //
@@ -489,11 +490,11 @@ $(function () {
         sessionStorage.setItem("pin", pin);
         // avisar que o pin foi salvo
         alert("PIN salvo para esta sessão: " + pin);
-    }
+    } 
 
     // obtém qual foi o círculo escolhido para ser o ativo, a partir do PIN informado
     let circulo = sessionStorage.getItem("circulo_ativo");
-    
+
     // se o pin foi informado mas ainda não tem círculo ativo, então vamos obter os círculos ativos para o PIN informado
     if ((pin != null) && (circulo == null)) {
         // obter quais são os círculos ativos a partir do PIN informado
@@ -513,7 +514,7 @@ $(function () {
                     }
 
                     // se tem mais de um círculo, pede para escolher qual é o ativo
-                    if (circulos.length > 1) {
+                    if (circulos.length >= 1) {
                         var lista_circulos = "PIN = " + pin + " - Escolha o círculo ativo:\n";
                         for (var i in circulos) {
                             lista_circulos = lista_circulos + i + ": " + circulos[i].nome + " (id: " + circulos[i].id + ")\n";
@@ -525,7 +526,7 @@ $(function () {
                         }
                         sessionStorage.setItem("circulo_ativo", circulos[escolha].id);
                         // avisa que o circulo foi salvo
-                        alert("Círculo ativo salvo para esta sessão: " + circulos[escolha].nome+", ID = " + circulos[escolha].id);
+                        alert("Círculo ativo salvo para esta sessão: " + circulos[escolha].nome + ", ID = " + circulos[escolha].id);
                     }
                 }
                 else {
@@ -534,7 +535,7 @@ $(function () {
                 }
             }
         });
-    } 
+    }
 
 
     // se já escolhou o círculo...
@@ -544,7 +545,7 @@ $(function () {
         // obtém o IP que foi encontrado, obtido a partir da barra de endereços
         myip = $("#myip").text();
 
-        
+
         /*
         
             // obtém do backend qual é o círculo ativo
