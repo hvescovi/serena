@@ -18,6 +18,7 @@ export default function Questions() {
   const [editForm, setEditForm] = useState({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
   const [editId, setEditId] = useState(null);
 
+  const [htmlContent, setHtmlContent] = useState("<p>Visão prévia da questão</p>");
 
   function ajustaImagens(texto) {
     let url = `${API}/imagem/`;
@@ -57,7 +58,7 @@ export default function Questions() {
     let dados;
 
     if (type === "aberta") {
-      dados = { type, enunciado, resposta, observacao, ativa};
+      dados = { type, enunciado, resposta, observacao, ativa };
     } else if (type === "completar") {
       dados = { type, enunciado, lacunas: resposta, observacao, ativa };
     } else if (type === "multiplaescolha_remodelada") {
@@ -189,75 +190,109 @@ export default function Questions() {
 
       <h1 className="text-4xl font-bold m-3">Questions</h1>
 
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          addQuestion();
-        }}
-        className="mb-6 p-4 bg-white rounded shadow flex flex-col gap-4 max-w-lg"
-      >
-        <div>
-          <label className="block mb-1 font-semibold text-gray-700">Tipo</label>
-          <select
-            value={form.type}
-            onChange={e => setForm({ ...form, type: e.target.value })}
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
-            required
-          >
-            <option value="aberta">Aberta</option>
-            <option value="completar">Completar (lacunas))</option>
-            <option value="multiplaescolha_remodelada">Múltipla Escolha (remodelada)  </option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold text-gray-700">Enunciado</label>
-          <textarea
-            rows={3}
-            value={form.enunciado}
-            onChange={e => setForm({ ...form, enunciado: e.target.value })}
-            placeholder="Digite o enunciado da questão"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
-            required
-          >
-          </textarea>
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold text-gray-700">Resposta</label>
-          <textarea
-            value={form.resposta}
-            onChange={e => setForm({ ...form, resposta: e.target.value })}
-            placeholder="Digite a resposta (se aplicável)"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
-            rows={3}
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold text-gray-700">Observação</label>
-          <textarea
-            value={form.observacao}
-            onChange={e => setForm({ ...form, observacao: e.target.value })}
-            placeholder="Observação"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
-            rows={3}
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
-          <textarea
-            value={form.ativa}
-            onChange={e => setForm({ ...form, ativa: e.target.value })}
-            placeholder="Questão ativa? (0 = não, 1 = sim)"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
-            rows={3}
-          />
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded shadow font-bold transition hover:bg-blue-700"
+      <div className="flex gap-4">
+
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            addQuestion();
+          }}
+          className="mb-6 p-4 bg-gray-100 rounded shadow flex flex-col gap-4 flex-1"
         >
-          Adicionar Questão
-        </button>
-      </form>
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">Tipo</label>
+            <select
+              value={form.type}
+              onChange={e => setForm({ ...form, type: e.target.value })}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
+              required
+            >
+              <option value="aberta">Aberta</option>
+              <option value="completar">Completar (lacunas))</option>
+              <option value="multiplaescolha_remodelada">Múltipla Escolha (remodelada)  </option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">Enunciado</label>
+            <textarea
+              rows={5}
+              value={form.enunciado}
+              onChange={e => setForm({ ...form, enunciado: e.target.value })}
+              placeholder="Digite o enunciado da questão"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
+              required
+            >
+            </textarea>
+
+            <button
+              type="button"
+              onClick={() => {
+                const html = ajustaImagens(form.enunciado);
+                setHtmlContent(html);
+              }}
+              className="px-4 py-2 bg-green-500 text-white rounded shadow font-bold transition hover:bg-green-700"
+            >
+              Visualizar questão em HTML
+            </button>
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">Resposta</label>
+            <textarea
+              value={form.resposta}
+              onChange={e => setForm({ ...form, resposta: e.target.value })}
+              placeholder="Digite a resposta (se aplicável)"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
+              rows={3}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const html = ajustaImagens(form.resposta);
+                setHtmlContent(html);
+              }}
+              className="px-4 py-2 bg-green-600 text-white rounded shadow font-bold transition hover:bg-green-700"
+            >
+              Visualizar resposta(s) em HTML
+            </button>
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">Observação</label>
+            <textarea
+              value={form.observacao}
+              onChange={e => setForm({ ...form, observacao: e.target.value })}
+              placeholder="Observação"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
+              rows={3}
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
+            <textarea
+              value={form.ativa}
+              onChange={e => setForm({ ...form, ativa: e.target.value })}
+              placeholder="Questão ativa? (0 = não, 1 = sim)"
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
+              rows={3}
+            />
+          </div>
+
+
+
+
+
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded shadow font-bold transition hover:bg-blue-700"
+          >
+            Adicionar Questão
+          </button>
+
+
+        </form>
+
+        <div className="p-4 bg-gray-100 rounded shadow flex-1" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+
+      </div>
 
       {/*
       <ul>
@@ -286,7 +321,8 @@ export default function Questions() {
                 <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
                   {q.alternativas.map(a => (
                     <div key={a.id}>
-                      {a.certa && <span>===&gt;</span>}{a.descricao}<br />
+                      {a.certa && <span>===&gt;</span>}
+                      <span dangerouslySetInnerHTML={{ __html: ajustaImagens(a.descricao) }} /><br />
                     </div>
                   ))}
                 </span>
