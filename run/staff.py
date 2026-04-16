@@ -44,11 +44,84 @@ def exibir_respostas_circulo(id_circulo):
     return ret
 
 
+
+
 @app.route('/imagem/<nome>')
 def imagem(nome):
 
     filename = caminho_imagens+nome
     return send_file(filename, mimetype='image/png')
+
+
+@app.route('/lista_imagens')
+def lista_imagens():
+    try:
+        if not os.path.exists(caminho_imagens):
+            return jsonify({"message": "ok", "details": []})
+
+        arquivos = [f for f in os.listdir(caminho_imagens) if os.path.isfile(os.path.join(caminho_imagens, f))]
+        retorno = jsonify({"message": "ok", "details": arquivos})
+    except Exception as e:
+        retorno = jsonify({"message": "error", "details": str(e)})
+
+    retorno.headers.add('Access-Control-Allow-Origin', '*')
+    return retorno
+
+
+@app.route('/upload_imagem', methods=['POST'])
+def upload_imagem():
+    response = jsonify({"message": "error", "details": "no file provided"})
+    
+    try:
+        # verifica se o arquivo foi enviado
+        if 'file' not in request.files:
+            return jsonify({"message": "error", "details": "no file part"}), 400
+        
+        file = request.files['file']
+        
+        # verifica se o arquivo tem um nome
+        if file.filename == '':
+            return jsonify({"message": "error", "details": "no selected file"}), 400
+        
+        # validar extensão de arquivo (apenas imagens)
+        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+        if '.' not in file.filename or file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+            return jsonify({"message": "error", "details": "file type not allowed"}), 400
+        
+        # criar pasta se não existir
+        #os.makedirs(caminho_imagens, exist_ok=True)
+        
+        # salvar arquivo
+        filename = file.filename
+
+        # ajustar o nome do arquivo para evitar conflitos (ex: adicionar timestamp)
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"{timestamp}_{filename}"
+
+        # remover espacos do nome do arquivo
+        filename = filename.replace(" ", "_")
+
+        # remover caracteres invalidos ou estranhos do nome do arquivo
+        filename = "".join(c for c in filename if c.isalnum() or c in ('_', '.', '-')).rstrip()
+        
+        filepath = os.path.join(caminho_imagens, filename)
+        file.save(filepath)
+        
+        response = jsonify({
+            "message": "ok", 
+            "details": {
+                "filename": filename,
+                "url": f"/imagem/{filename}"
+            }
+        })
+    
+    except Exception as e:
+        response = jsonify({"message": "error", "details": str(e)})
+    
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 
 
 @app.route('/pontuar_resposta', methods=['post'])

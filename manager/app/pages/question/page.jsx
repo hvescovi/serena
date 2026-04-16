@@ -18,6 +18,11 @@ export default function Questions() {
   const [editForm, setEditForm] = useState({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
   const [editId, setEditId] = useState(null);
 
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagesError, setImagesError] = useState("");
+
   const [htmlContent, setHtmlContent] = useState("<p>Visão prévia da questão</p>");
 
   function ajustaImagens(texto) {
@@ -39,15 +44,32 @@ export default function Questions() {
   };
 
   // Fetch questions, circles and assuntos
+  const fetchImageFiles = async () => {
+    try {
+      const res = await axios.get(`${API}/lista_imagens`);
+      if (res.data.message === "ok") {
+        setImageFiles(res.data.details || []);
+        setImagesError("");
+      } else {
+        setImageFiles([]);
+        setImagesError(res.data.details || "Erro ao listar imagens");
+      }
+    } catch (error) {
+      setImageFiles([]);
+      setImagesError("Erro ao listar imagens");
+    }
+  };
+
   useEffect(() => {
     axios.get(`${API}/question`).then(res => {
       const questoes = res.data.details;
       setQuestions(questoes);
-      // Fetch assuntos for each question
+      // Fetch assuntos for cada questão
       questoes.forEach(q => fetchAssuntosForQuestion(q.id));
     });
     axios.get(`${API}/circle`).then(res => setCircles(res.data.details));
     axios.get(`${API}/assuntos`).then(res => setAssuntos(res.data.details || []));
+    fetchImageFiles();
   }, []);
 
   // Add a new question
@@ -91,13 +113,35 @@ export default function Questions() {
     } catch (error) {
       alert("Erro: ocorreu algum erro na leitura dos dados, verifique o backend");
     }
-    /*
+  };
 
-    await axios.post(`${API}/incluir_questao`, form);
-    const res = await axios.get(`${API}/question`);
-    setQuestions(res.data.details);
-    setForm({ enunciado: "", type: "aberta", resposta: "" });
-    */
+  const handleUploadImage = async () => {
+    if (!uploadFile) {
+      alert("Selecione um arquivo de imagem antes de enviar.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", uploadFile);
+
+    try {
+      const res = await axios.post(`${API}/upload_imagem`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+
+      if (res.data.message === "ok") {
+        setUploadStatus(`Upload concluído: ${res.data.details.filename}`);
+        alert(`Upload concluído: ${res.data.details.filename}`);
+        fetchImageFiles();
+      } else {
+        setUploadStatus(`Erro: ${res.data.details || res.data.message}`);
+        alert(`Erro no upload: ${res.data.details || res.data.message}`);
+      }
+    } catch (error) {
+      const details = error.response?.data?.details || error.message;
+      setUploadStatus(`Erro no upload: ${details}`);
+      alert(`Erro no upload: ${details}`);
+    }
   };
 
   // Remove a question
@@ -265,6 +309,28 @@ export default function Questions() {
               rows={3}
             />
           </div>
+
+
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">Imagem de apoio</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={e => setUploadFile(e.target.files?.[0] || null)}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+            />
+            <div className="flex flex-wrap gap-2 mt-2 items-center">
+              <button
+                type="button"
+                onClick={handleUploadImage}
+                className="px-4 py-2 bg-blue-600 text-white rounded shadow font-bold transition hover:bg-blue-700"
+              >
+                Upload imagem
+              </button>
+              <span className="text-sm text-gray-600">{uploadStatus}</span>
+            </div>
+          </div>
+
           <div>
             <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
             <textarea
@@ -275,6 +341,8 @@ export default function Questions() {
               rows={3}
             />
           </div>
+
+
 
 
 
@@ -292,6 +360,28 @@ export default function Questions() {
 
         <div className="p-4 bg-gray-100 rounded shadow flex-1" dangerouslySetInnerHTML={{ __html: htmlContent }} />
 
+      </div>
+
+      <div className="mt-6 p-4 bg-white rounded shadow">
+        <h2 className="text-xl font-bold mb-4">Imagens do sistema</h2>
+        {imagesError ? (
+          <p className="text-sm text-red-600">{imagesError}</p>
+        ) : imageFiles.length === 0 ? (
+          <p className="text-sm text-gray-600">Nenhuma imagem encontrada.</p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {imageFiles.map(file => (
+              <div key={file} className="border rounded overflow-hidden">
+                <img
+                  src={`${API}/imagem/${encodeURIComponent(file)}`}
+                  alt={file}
+                  className="w-full h-32 object-cover"
+                />
+                <div className="p-2 bg-gray-50 text-sm break-words">{file}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/*
