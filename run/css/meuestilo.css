@@ -33,3 +33,9 @@ textarea:focus {
 td:hover {
     background-color: yellow;
 }
+
+
+.ql-font-monospace {
+  font-family: Monaco, Courier New, monospace;
+  white-space: pre-wrap;
+}

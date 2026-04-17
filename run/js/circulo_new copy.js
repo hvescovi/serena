@@ -94,13 +94,11 @@ $(function () {
 
                     if (quest.type == "aberta") {
                         //alert('questão: '+quest.enunciado);
-                        lin = lin + quest.enunciado;
-
-
-                        //novo = enun.replace(/\n/g, "<br>");
+                        enun = quest.enunciado;
+                        novo = enun.replace(/\n/g, "<br>");
                         
                         //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
-                        //lin = lin + ajustaImagens(novo); // + "(" + quest[i].type + ")"
+                        lin = lin + ajustaImagens(novo); // + "(" + quest[i].type + ")"
 
                         lin = lin + "<br>"
                         //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
@@ -118,8 +116,7 @@ $(function () {
                     }
 
                     if (quest.type == "multiplaescolha") {
-                        //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
-                        lin = lin + quest.enunciado;
+                        lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                         lin = lin + "<br>"
 
 
@@ -147,7 +144,7 @@ $(function () {
                         en = "";
                         for (var lac = 0; lac < n; lac++) {
                             // acrescentar o texto antes da lacuna
-                            en = en + partes[lac];
+                            en = en + ajustaImagens(partes[lac]);
                             // ainda não é a última parte de texto?
                             if (lac < (n - 1)) {
                                 // acrescentar o campo de entrada da lacuna
