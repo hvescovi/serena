@@ -13,7 +13,7 @@ export default function Home() {
             Gerenciar Círculos
           </Link>
           <Link
-            href="/pages/question"
+            href="/pages/newquestion"
             className="block px-6 py-4 rounded-lg bg-green-600 text-white text-lg font-semibold shadow hover:bg-green-700 transition"
           >
             Gerenciar Questões

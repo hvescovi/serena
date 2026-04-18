@@ -34,6 +34,17 @@ export default function Questions() {
     }
   };
 
+  // usado para questões antigas que tem imagem em arquivo externo
+   function ajustaImagens(texto) {
+    if (texto.includes(".png")) {
+      let url = `${API}/imagem/`;
+      return texto.replace(/<img src=/gi, "(<b>QUESTÃO ANTIGA</b>)<img src=" + url);
+    } else {
+      // new question types don't need adjustment
+      return texto;
+    }
+  }
+
   // Fetch questions, circles and assuntos
   useEffect(() => {
     axios.get(`${API}/question`).then(res => {
@@ -330,7 +341,10 @@ export default function Questions() {
             <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold mt-6">
               {q.id})
               {q.ativa == "0" ? "<span className=\"text-blue\">(INATIVA)</span>" : ""}
-              <span dangerouslySetInnerHTML={{ __html: q.enunciado }} /> ({q.type})
+
+                <span dangerouslySetInnerHTML={{ __html: ajustaImagens(q.enunciado) }} /> ({q.type})
+              
+
             </span>
 
             {q.type === "multiplaescolha" && (
