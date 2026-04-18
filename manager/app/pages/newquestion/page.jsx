@@ -45,6 +45,26 @@ export default function Questions() {
     }
   }
 
+  function troca_P_por_BR(texto) {
+    // remove <br> to not add extra lines
+    let novo = texto.replace(/<br>/g, "");
+
+    // swap </p> for <br>
+    novo = novo.replace(/<\/p>/g, "<br>");
+    //alert("Enunciado after replacing <p> with <br>: " + enunciado);
+    
+    // remove <p>
+    novo = novo.replace(/<p>/g, "");
+    //alert("Enunciado after removing <p>: " + enunciado);
+    
+    //remove the last <br> if it exists
+    if (novo.endsWith("<br>")) {
+        novo = novo.slice(0, -4);
+    }
+
+    return novo;
+  }
+
   // Fetch questions, circles and assuntos
   useEffect(() => {
     axios.get(`${API}/question`).then(res => {
@@ -90,26 +110,17 @@ export default function Questions() {
 
 
     if (type === "aberta") {
-      dados = { type, enunciado: enunciado, resposta, observacao, ativa };
+      let resposta_clean = troca_P_por_BR(resposta);
+      dados = { type, enunciado: enunciado, resposta: resposta_clean, observacao, ativa };
     } else if (type === "completar") {
       // remove any <p> because the answer has to be inline
-      let resposta_clean = resposta.replace(/<\/?p>/g, "");
+      let resposta_clean = troca_P_por_BR(resposta);
       // prepare the data package to send to the backend
       dados = { type, enunciado: enunciado, lacunas: resposta_clean, observacao, ativa };
     } else if (type === "multiplaescolha_remodelada") {
       //alert("Resposta raw: " + resposta);
       // convert </p> to <br>
-      let resposta_clean = resposta.replace(/<\/p>/g, "<br>");
-      //alert("Resposta ainda com <p>: " + resposta_clean);
-      // remove <p> 
-      resposta_clean = resposta_clean.replace(/<p>/g, "");
-      //console.log("Resposta limpa: " + resposta_clean);
-      //alert("Resposta limpa: " + resposta_clean);
-      
-      //remove the last <br> if it exists
-      if (resposta_clean.endsWith("<br>")) {
-        resposta_clean = resposta_clean.slice(0, -4);
-      }
+      let resposta_clean = troca_P_por_BR(resposta);
 
       const alternativas = resposta_clean.split("<br>");
       let corretas = [];
