@@ -19,11 +19,6 @@ export default function Questions() {
   const [editForm, setEditForm] = useState({ enunciado: "", type: "aberta", resposta: "", observacao: "", ativa: "1" });
   const [editId, setEditId] = useState(null);
 
-  const [uploadFile, setUploadFile] = useState(null);
-  const [uploadStatus, setUploadStatus] = useState("");
-  const [imageFiles, setImageFiles] = useState([]);
-  const [imagesError, setImagesError] = useState("");
-
   const [htmlContent, setHtmlContent] = useState("<p>Visão prévia da questão</p>");
 
   // Fetch assuntos for a specific question
@@ -59,14 +54,29 @@ export default function Questions() {
     let dados;
 
     // change <p> and </p> to <br> in the enunciado
+    
+    //alert("Enunciado original: " + enunciado);
+
+    // remove <br> to not add extra lines
+    enunciado = enunciado.replace(/<br>/g, "");
+
     // swap </p> for <br>
-    enunciado = enunciado.replace(/<\/?p>/g, "<br>");
+    enunciado = enunciado.replace(/<\/p>/g, "<br>");
+    //alert("Enunciado after replacing <p> with <br>: " + enunciado);
+    
     // remove <p>
     enunciado = enunciado.replace(/<p>/g, "");
+    //alert("Enunciado after removing <p>: " + enunciado);
+    
     //remove the last <br> if it exists
     if (enunciado.endsWith("<br>")) {
         enunciado = enunciado.slice(0, -4);
     }
+    //alert("Enunciado final: " + enunciado);
+
+    
+    //return;
+
 
     if (type === "aberta") {
       dados = { type, enunciado: enunciado, resposta, observacao, ativa };
@@ -126,34 +136,6 @@ export default function Questions() {
       }
     } catch (error) {
       alert("Erro: ocorreu algum erro na leitura dos dados, verifique o backend");
-    }
-  };
-
-  const handleUploadImage = async () => {
-    if (!uploadFile) {
-      alert("Selecione um arquivo de imagem antes de enviar.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", uploadFile);
-
-    try {
-      const res = await axios.post(`${API}/upload_imagem`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      if (res.data.message === "ok") {
-        setUploadStatus(`Upload concluído: ${res.data.details.filename}`);
-        alert(`Upload concluído: ${res.data.details.filename}`);
-      } else {
-        setUploadStatus(`Erro: ${res.data.details || res.data.message}`);
-        alert(`Erro no upload: ${res.data.details || res.data.message}`);
-      }
-    } catch (error) {
-      const details = error.response?.data?.details || error.message;
-      setUploadStatus(`Erro no upload: ${details}`);
-      alert(`Erro no upload: ${details}`);
     }
   };
 
@@ -300,28 +282,6 @@ export default function Questions() {
               rows={3}
             />
           </div>
-
-
-          <div>
-            <label className="block mb-1 font-semibold text-gray-700">Imagem de apoio</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={e => setUploadFile(e.target.files?.[0] || null)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-            />
-            <div className="flex flex-wrap gap-2 mt-2 items-center">
-              <button
-                type="button"
-                onClick={handleUploadImage}
-                className="px-4 py-2 bg-blue-600 text-white rounded shadow font-bold transition hover:bg-blue-700"
-              >
-                Upload imagem
-              </button>
-              <span className="text-sm text-gray-600">{uploadStatus}</span>
-            </div>
-          </div>
-
           <div>
             <label className="block mb-1 font-semibold text-gray-700">Ativa? (0 = não, 1 = sim)</label>
             <textarea
@@ -369,7 +329,7 @@ export default function Questions() {
           <li key={q.id} className="border rounded p-4 bg-white shadow mb-4">
             <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold mt-6">
               {q.id})
-              {q.ativa == "0" ? "<span className=text-blue>(INATIVA)</span> " : ""}
+              {q.ativa == "0" ? "<span className=\"text-blue\">(INATIVA)</span>" : ""}
               <span dangerouslySetInnerHTML={{ __html: q.enunciado }} /> ({q.type})
             </span>
 

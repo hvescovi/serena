@@ -91,6 +91,7 @@ $(function () {
                     lin = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood"><font size="+2">';
 
                     //alert(url);
+                    //alert(quest.type);
 
                     if (quest.type == "aberta") {
                         //alert('questão: '+quest.enunciado);
@@ -128,7 +129,7 @@ $(function () {
                         quest.alternativas.sort(() => Math.random() - 0.5);
 
                         for (var j in quest.alternativas) {
-                            lin = lin + '<hr><input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
+                            lin = lin + '<hr><input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + quest.alternativas[j].descricao + "<br/>";
                         }
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">send answer</button>';
 

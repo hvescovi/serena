@@ -25,3 +25,8 @@ body {
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
+.ql-font-monospace {
+  font-family: Monaco, Courier New, monospace;
+  white-space: pre-wrap;
+}
