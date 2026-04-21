@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Menu from "../../components/Menu";
 import { Editor } from 'primereact/editor';
+import { ajustaImagens } from "../../lib/htmlUtils";
 
-const API = "http://localhost:4999";
+const API = process.env.NEXT_PUBLIC_API_URL; // || "http://localhost:4999";
 
 export default function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -34,18 +35,7 @@ export default function Questions() {
     }
   };
 
-  // usado para questões antigas que tem imagem em arquivo externo
-   function ajustaImagens(texto) {
-    if (texto.includes(".png")) {
-      let url = `${API}/imagem/`;
-      return texto.replace(/<img src=/gi, "(<b>QUESTÃO ANTIGA</b>)<img src=" + url);
-    } else {
-      // new question types don't need adjustment
-      return texto;
-    }
-  }
-
-  function troca_P_por_BR(texto) {
+    function troca_P_por_BR(texto) {
     // remove <br> to not add extra lines
     let novo = texto.replace(/<br>/g, "");
 
@@ -349,11 +339,11 @@ export default function Questions() {
       <ul>
         {questions.map(q => (
           <li key={q.id} className="border rounded p-4 bg-white shadow mb-4">
-            <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold mt-6">
+            <span className="inline-block bg-green-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold mt-6 hover:bg-green-300 transition">
               {q.id})
               {q.ativa == "0" ? "<span className=\"text-blue\">(INATIVA)</span>" : ""}
 
-                <span dangerouslySetInnerHTML={{ __html: ajustaImagens(q.enunciado) }} /> ({q.type})
+                <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, q.enunciado) }} /> ({q.type})
               
 
             </span>

@@ -10,7 +10,7 @@ export default function Menu() {
         Círculos
       </Link>
       <Link
-        href="/pages/question"
+        href="/pages/newquestion"
         className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition"
       >
         Questões

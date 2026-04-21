@@ -47,7 +47,7 @@ export default function Home() {
         </nav>
       </main>
       <footer className="mt-16 flex gap-6 flex-wrap items-center justify-center text-sm text-gray-500">
-        <span>Serena Manager &copy; 2025</span>
+        <span>Serena Manager &copy; 2026</span>
       </footer>
     </div>
   );

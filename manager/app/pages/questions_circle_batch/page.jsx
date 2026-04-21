@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Menu from "../../components/Menu";
+import { ajustaImagens } from "../../lib/htmlUtils";
 
-const API = "http://localhost:4999";
+const API = process.env.NEXT_PUBLIC_API_URL; // || "http://localhost:4999";
 
 export default function QuestionsCircleBatchCRUD() {
   const [questions, setQuestions] = useState([]);
@@ -145,7 +146,7 @@ export default function QuestionsCircleBatchCRUD() {
               <>
                 <div className="space-y-2 mb-4">
                   {circleQuestions.map(q => (
-                    <label key={q.id} className="flex items-center mb-2 cursor-pointer">
+                    <label key={q.id} className="flex items-center mb-2 cursor-pointer border border-gray-300 rounded p-2 hover:bg-yellow-200">
                       <input
                         type="checkbox"
                         checked={selectedQuestionsToRemove.has(q.id)}
@@ -153,18 +154,55 @@ export default function QuestionsCircleBatchCRUD() {
                         className="mr-3 w-4 h-4"
                         disabled={isLoading}
                       />
-                      <span>{q.id}) {q.enunciado} ({q.type})</span>
+                      <span>
+                        {q.id})
+                        (<b>{q.type}</b>)
+                        <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, q.enunciado) }} />
+                      </span>
+
+                      {/* details of the question */}
+
+                      {q.type === "multiplaescolha" && (
+                        <div>
+                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                            {q.alternativas.map(a => (
+                              <div key={a.id}>
+                                {a.certa && <span>(CERTA)</span>}
+                                <span dangerouslySetInnerHTML={{ __html: a.descricao }} /><br />
+                              </div>
+                            ))}
+                          </span>
+                        </div>
+                      )}
+
+                      {q.type === "aberta" && (
+                        <div>
+                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                            Resposta: {q.resposta}
+                          </span>
+                        </div>
+                      )}
+
+                      {q.type === "completar" && (
+                        <div>
+                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                            Lacunas: {q.lacunas}
+                          </span>
+                        </div>
+                      )}
+
+
+
                     </label>
                   ))}
                 </div>
                 <button
                   onClick={removeQuestionsFromCircle}
                   disabled={selectedQuestionsToRemove.size === 0 || isLoading}
-                  className={`px-4 py-2 bg-red-600 text-white rounded shadow font-bold transition ${
-                    selectedQuestionsToRemove.size === 0 || isLoading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-red-700"
-                  }`}
+                  className={`px-4 py-2 bg-red-600 text-white rounded shadow font-bold transition ${selectedQuestionsToRemove.size === 0 || isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-red-700"
+                    }`}
                 >
                   {isLoading ? "Processing..." : `Remove ${selectedQuestionsToRemove.size} Selected`}
                 </button>
@@ -181,7 +219,7 @@ export default function QuestionsCircleBatchCRUD() {
               <>
                 <div className="space-y-2 mb-4">
                   {availableQuestions.map(q => (
-                    <label key={q.id} className="flex items-center mb-2 cursor-pointer">
+                    <label key={q.id} className="flex items-center mb-2 cursor-pointer border border-gray-300 rounded p-2 hover:bg-gray-200">
                       <input
                         type="checkbox"
                         checked={selectedQuestionsToAdd.has(q.id)}
@@ -189,18 +227,58 @@ export default function QuestionsCircleBatchCRUD() {
                         className="mr-3 w-4 h-4"
                         disabled={isLoading}
                       />
-                      <span>{q.id}) {q.enunciado} ({q.type})</span>
+                      <span>
+                        {q.id})
+                        (<b>{q.type}</b>)
+                        <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, q.enunciado) }} />
+                      </span>
+
+                      {/* details of the question
+                      
+                      REPEATED CODE - consider refactoring into a separate component to avoid duplication
+                      
+                      */}
+                      
+                      {q.type === "multiplaescolha" && (
+                        <div>
+                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                            {q.alternativas.map(a => (
+                              <div key={a.id}>
+                                {a.certa && <span>(CERTA)</span>}
+                                <span dangerouslySetInnerHTML={{ __html: a.descricao }} /><br />
+                              </div>
+                            ))}
+                          </span>
+                        </div>
+                      )}
+
+                      {q.type === "aberta" && (
+                        <div>
+                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                            Resposta: {q.resposta}
+                          </span>
+                        </div>
+                      )}
+
+                      {q.type === "completar" && (
+                        <div>
+                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                            Lacunas: {q.lacunas}
+                          </span>
+                        </div>
+                      )}
+
+
                     </label>
                   ))}
                 </div>
                 <button
                   onClick={addQuestionsToCircle}
                   disabled={selectedQuestionsToAdd.size === 0 || isLoading}
-                  className={`px-4 py-2 bg-green-600 text-white rounded shadow font-bold transition ${
-                    selectedQuestionsToAdd.size === 0 || isLoading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-green-700"
-                  }`}
+                  className={`px-4 py-2 bg-green-600 text-white rounded shadow font-bold transition ${selectedQuestionsToAdd.size === 0 || isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-green-700"
+                    }`}
                 >
                   {isLoading ? "Processing..." : `Add ${selectedQuestionsToAdd.size} Selected`}
                 </button>
