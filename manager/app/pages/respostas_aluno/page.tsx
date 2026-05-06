@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Menu from "../../components/Menu";
-import { ajustaImagens } from "../../lib/htmlUtils";
+import { ajustaImagens } from "../../scripts/utils";
 
 const API = "http://localhost:4999";
 
