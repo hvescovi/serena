@@ -208,7 +208,7 @@ class Resposta(db.Model):
         ', pontuação: '+str(self.pontuacao) +', ptsugerida: '+str(self.pontuacao_sugerida)
 
     def json(self):
-        return {
+        x = {
             "id":self.id,
             "questao_id":self.questao_id,
             "questao": self.questao.json(),
@@ -219,6 +219,7 @@ class Resposta(db.Model):
             "pontuacao":self.pontuacao,
             "pontuacao_sugerida":self.pontuacao_sugerida # recomendação gerada pelo sistema
         }
+        return x
 
 class Completar(Questao):
     id = db.Column(db.Integer, db.ForeignKey('questao.id'), primary_key=True)

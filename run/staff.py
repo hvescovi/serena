@@ -44,6 +44,41 @@ def exibir_respostas_circulo(id_circulo):
     return ret
 
 
+@app.route('/respostas_aluno/<id_respondente>')
+def respostas_aluno(id_respondente):
+    """
+    Retorna todas as respostas de um aluno específico
+    Ordenadas por questão_id com informações do círculo
+    
+    Exemplo: curl localhost:5000/respostas_aluno/5
+    """
+    try:
+        # obter as respostas do aluno, ordenadas por questão
+        respostas = Resposta.query.filter(Resposta.respondente_id == id_respondente) \
+                                   .order_by(Resposta.questao_id) \
+                                   .all()
+        
+        lista = []
+        for r in respostas:
+            resposta_dict = r.json()
+            
+            # obter o círculo associado a essa resposta
+            sql = "select c.id, c.nome from circulo c, respostanocirculo rc where rc.resposta_id = " + str(r.id) + " and rc.circulo_id = c.id"
+            results = db.session.execute(text(sql))
+            circulos = []
+            for linha in results:
+                circulos.append({"id": linha[0], "nome": linha[1]})
+            
+            resposta_dict["circulos"] = circulos
+            lista.append(resposta_dict)
+        
+        ret = jsonify({"message": "ok", "details": lista})
+        
+    except Exception as e:
+        ret = jsonify({"message": "error", "details": str(e)})
+    
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
 
 
 @app.route('/imagem/<nome>')
@@ -968,6 +1003,8 @@ def del_m2m_assunto_questao(assunto_id, questao_id):
         assunto.questoes.remove(questao)
         db.session.commit()
     return jsonify({"result":"ok","details":"Desvinculado ou já estava assim"})
+
+
 
 
 

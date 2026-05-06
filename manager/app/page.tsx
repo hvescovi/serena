@@ -43,6 +43,13 @@ export default function Home() {
           >
             Gerenciar Assuntos
           </Link>
+
+          <Link
+            href="/pages/respostas_aluno"
+            className="block px-6 py-4 rounded-lg bg-indigo-600 text-white text-lg font-semibold shadow hover:bg-indigo-700 transition"
+          >
+            Respostas do Aluno
+          </Link>
           
         </nav>
       </main>
