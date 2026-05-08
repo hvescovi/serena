@@ -44,11 +44,119 @@ def exibir_respostas_circulo(id_circulo):
     return ret
 
 
+@app.route('/respostas_aluno/<id_respondente>')
+def respostas_aluno(id_respondente):
+    """
+    Retorna todas as respostas de um aluno específico
+    Ordenadas por questão_id com informações do círculo
+    
+    Exemplo: curl localhost:5000/respostas_aluno/5
+    """
+    try:
+        # obter as respostas do aluno, ordenadas por questão
+        respostas = Resposta.query.filter(Resposta.respondente_id == id_respondente) \
+                                   .order_by(Resposta.questao_id) \
+                                   .all()
+        
+        lista = []
+        for r in respostas:
+            resposta_dict = r.json()
+            
+            # obter o círculo associado a essa resposta
+            sql = "select c.id, c.nome from circulo c, respostanocirculo rc where rc.resposta_id = " + str(r.id) + " and rc.circulo_id = c.id"
+            results = db.session.execute(text(sql))
+            circulos = []
+            for linha in results:
+                circulos.append({"id": linha[0], "nome": linha[1]})
+            
+            resposta_dict["circulos"] = circulos
+            lista.append(resposta_dict)
+        
+        ret = jsonify({"message": "ok", "details": lista})
+        
+    except Exception as e:
+        ret = jsonify({"message": "error", "details": str(e)})
+    
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+
 @app.route('/imagem/<nome>')
 def imagem(nome):
 
     filename = caminho_imagens+nome
     return send_file(filename, mimetype='image/png')
+
+
+@app.route('/lista_imagens')
+def lista_imagens():
+    try:
+        if not os.path.exists(caminho_imagens):
+            return jsonify({"message": "ok", "details": []})
+
+        arquivos = [f for f in os.listdir(caminho_imagens) if os.path.isfile(os.path.join(caminho_imagens, f))]
+        retorno = jsonify({"message": "ok", "details": arquivos})
+    except Exception as e:
+        retorno = jsonify({"message": "error", "details": str(e)})
+
+    retorno.headers.add('Access-Control-Allow-Origin', '*')
+    return retorno
+
+
+@app.route('/upload_imagem', methods=['POST'])
+def upload_imagem():
+    response = jsonify({"message": "error", "details": "no file provided"})
+    
+    try:
+        # verifica se o arquivo foi enviado
+        if 'file' not in request.files:
+            return jsonify({"message": "error", "details": "no file part"}), 400
+        
+        file = request.files['file']
+        
+        # verifica se o arquivo tem um nome
+        if file.filename == '':
+            return jsonify({"message": "error", "details": "no selected file"}), 400
+        
+        # validar extensão de arquivo (apenas imagens)
+        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+        if '.' not in file.filename or file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+            return jsonify({"message": "error", "details": "file type not allowed"}), 400
+        
+        # criar pasta se não existir
+        #os.makedirs(caminho_imagens, exist_ok=True)
+        
+        # salvar arquivo
+        filename = file.filename
+
+        # ajustar o nome do arquivo para evitar conflitos (ex: adicionar timestamp)
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"{timestamp}_{filename}"
+
+        # remover espacos do nome do arquivo
+        filename = filename.replace(" ", "_")
+
+        # remover caracteres invalidos ou estranhos do nome do arquivo
+        filename = "".join(c for c in filename if c.isalnum() or c in ('_', '.', '-')).rstrip()
+        
+        filepath = os.path.join(caminho_imagens, filename)
+        file.save(filepath)
+        
+        response = jsonify({
+            "message": "ok", 
+            "details": {
+                "filename": filename,
+                "url": f"/imagem/{filename}"
+            }
+        })
+    
+    except Exception as e:
+        response = jsonify({"message": "error", "details": str(e)})
+    
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 
 
 @app.route('/pontuar_resposta', methods=['post'])
@@ -295,8 +403,17 @@ def circulo_ativo():
     ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
 
-# curl -d '{ "idq": 1, "enunciado":"ok mudou", "autor": "eu", "data_cadastro":"1/1/2020", "resposta":"ok valeu" }' -X POST http://localhost:5000/alterar_questao
 
+
+'''
+
+CRUD routes for Questao
+
+'''
+
+
+
+# curl -d '{ "idq": 1, "enunciado":"ok mudou", "autor": "eu", "data_cadastro":"1/1/2020", "resposta":"ok valeu" }' -X POST http://localhost:5000/alterar_questao
 
 @app.route('/alterar_questao', methods=['post'])
 def alterar_questao():
@@ -415,6 +532,54 @@ def retornar_questoes():
     retorno.update({"details":resp})
     return jsonify(retorno)
 
+
+
+# update question by ID
+@app.route('/question/<int:question_id>', methods=['PUT'])
+def update_question(question_id):
+    try:
+        dados = request.get_json()
+        # find the question
+        question = db.session.get(Questao, question_id)
+        if question is None:
+            return jsonify({"result": "error", "details": "Question not found"}), 404
+
+        # Update allowed fields
+        for key, value in dados.items():
+            # Only update attributes that exist and are not relationships
+            if key.startswith('_') or key in ['alternativas', 'questao_id']:
+                continue
+            if hasattr(question, key):
+                setattr(question, key, value)
+
+        db.session.commit()
+        return jsonify({"result": "ok", "details": "Question updated successfully"})
+    except Exception as e:
+        print("Erro ao atualizar questão:", e)
+        return jsonify({"result": "error", "details": str(e)}), 500# CRUD routes for Respondente
+
+
+# assuntos da questão, via relacionamento
+@app.route("/questao/<int:questao_id>/assuntos", methods=["GET"])
+def get_assuntos_por_questao(questao_id):
+    questao = db.session.get(Questao, questao_id)
+    if not questao:
+        return jsonify({"result": "error", "details": "Questao nao encontrada"}), 404
+
+    # se relaciona via subject list
+    assuntos = [a.json() for a in questao.assuntos]
+    return jsonify({"result": "ok", "details": assuntos})
+
+
+
+'''
+
+
+
+'''
+
+
+
 @app.route('/circle')
 def circle():
     resp = []
@@ -425,6 +590,19 @@ def circle():
     retorno = {"result":"ok"}
     retorno.update({"details":resp})
     return jsonify(retorno)
+
+@app.route('/respondente')
+def respondente():
+    resp = []
+    dados = Respondente.query.all()
+    for q in dados:
+        resp.append(q.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    ret = jsonify(retorno)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
 
 # curl localhost:4999/questions_circle/91/10 -X POST
 # add question to the circle!
@@ -575,6 +753,13 @@ def update_circulo(circle_id):
         print("Erro ao atualizar círculo:", e)
         return jsonify({"result": "error", "details": str(e)}), 500
     
+
+'''
+
+CRUD routes for link Circle and Question
+
+'''
+
 @app.route("/questions_circle/<int:q>/<int:c>", methods=['DELETE'])
 def questions_circle_remove(q, c):
     try:
@@ -599,29 +784,226 @@ def questions_in_circle(circle_id):
     return jsonify({"result": "ok", "details": questions})
 
 
-# update question by ID
-@app.route('/question/<int:question_id>', methods=['PUT'])
-def update_question(question_id):
+
+
+
+
+'''
+
+CRUD routes for Respondente
+
+'''
+
+
+
+
+@app.route('/respondentes', methods=['GET'])
+def list_respondentes():
+    resp = []
+    respondentes = Respondente.query.all()
+    for r in respondentes:
+        resp.append(r.json())
+    
+    retorno = {"result":"ok"}
+    retorno.update({"details":resp})
+    ret = jsonify(retorno)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
+    return ret
+
+@app.route('/respondente/<int:id>', methods=['GET'])
+def get_respondente(id):
+    respondente = db.session.get(Respondente, id)
+    if respondente is None:
+        resp = jsonify({"result": "error", "details": "Respondente not found"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp, 404
+    resp = jsonify({"result": "ok", "details": respondente.json()})
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+@app.route('/respondente', methods=['POST'])
+def create_respondente():
+    dados = request.get_json()
     try:
-        dados = request.get_json()
-        # find the question
-        question = db.session.get(Questao, question_id)
-        if question is None:
-            return jsonify({"result": "error", "details": "Question not found"}), 404
-
-        # Update allowed fields
-        for key, value in dados.items():
-            # Only update attributes that exist and are not relationships
-            if key.startswith('_') or key in ['alternativas', 'questao_id']:
-                continue
-            if hasattr(question, key):
-                setattr(question, key, value)
-
+        # Check if already exists by nome
+        existente = db.session.query(Respondente).filter(Respondente.nome == dados["nome"]).first()
+        if existente:
+            resp = jsonify({"result": "error", "details": "Respondente already exists"})
+            resp.headers.add('Access-Control-Allow-Origin', '*')
+            return resp
+        nova = Respondente(**dados)
+        db.session.add(nova)
         db.session.commit()
-        return jsonify({"result": "ok", "details": "Question updated successfully"})
+        resp = jsonify({"result": "ok", "details": "Respondente created"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
     except Exception as e:
-        print("Erro ao atualizar questão:", e)
+        resp = jsonify({"result": "error", "details": str(e)})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+
+@app.route('/respondente/<int:id>', methods=['PUT'])
+def update_respondente(id):
+    dados = request.get_json()
+    try:
+        respondente = db.session.get(Respondente, id)
+        if respondente is None:
+            resp = jsonify({"result": "error", "details": "Respondente not found"})
+            resp.headers.add('Access-Control-Allow-Origin', '*')
+            return resp, 404
+        
+        # Only update simple columns
+        for key, value in dados.items():
+            if key.startswith('_'):
+                continue
+            if hasattr(Respondente, key):
+                setattr(respondente, key, value)
+        db.session.commit()
+        resp = jsonify({"result": "ok", "details": "Respondente updated successfully"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+    except Exception as e:
+        resp = jsonify({"result": "error", "details": str(e)})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+
+@app.route('/respondente/<int:id>', methods=['DELETE'])
+def delete_respondente(id):
+    try:
+        respondente = db.session.get(Respondente, id)
+        if respondente is None:
+            resp = jsonify({"result": "error", "details": "Respondente not found"})
+            resp.headers.add('Access-Control-Allow-Origin', '*')
+            return resp, 404
+        db.session.delete(respondente)
+        db.session.commit()
+        resp = jsonify({"result": "ok", "details": "Respondente deleted"})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+    except Exception as e:
+        resp = jsonify({"result": "error", "details": str(e)})
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        return resp
+
+
+
+'''
+
+CRUD routes for Assunto
+
+'''
+
+
+@app.route("/assuntos", methods=["GET"])
+def list_assuntos():
+    try:
+        assuntos = Assunto.query.all()
+        return jsonify({"result": "ok", "details": [a.json() for a in assuntos]})
+    except Exception as e:
         return jsonify({"result": "error", "details": str(e)}), 500
+    
+
+@app.route("/assunto/<int:assunto_id>", methods=["GET"])
+def get_assunto(assunto_id):
+    assunto = db.session.get(Assunto, assunto_id)
+    if assunto is None:
+        return jsonify({"result": "error", "details": "Assunto não encontrado"}), 404
+    return jsonify({"result": "ok", "details": assunto.json()})
+
+
+@app.route("/assunto", methods=["POST"])
+def create_assunto():
+    dados = request.get_json()
+    try:
+        novo = Assunto(**dados)
+        db.session.add(novo)
+        db.session.commit()
+        return jsonify({"result": "ok", "details": novo.json()}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 400
+    
+
+@app.route("/assunto/<int:assunto_id>", methods=["PUT"])
+def update_assunto(assunto_id):
+    dados = request.get_json()
+    assunto = db.session.get(Assunto, assunto_id)
+    if assunto is None:
+        return jsonify({"result": "error", "details": "Assunto não encontrado"}), 404
+    try:
+        for k, v in dados.items():
+            if hasattr(Assunto, k):
+                setattr(assunto, k, v)
+        db.session.commit()
+        return jsonify({"result": "ok", "details": assunto.json()})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 400
+    
+@app.route("/assunto/<int:assunto_id>", methods=["DELETE"])
+def delete_assunto(assunto_id):
+    assunto = db.session.get(Assunto, assunto_id)
+    if assunto is None:
+        return jsonify({"result": "error", "details": "Assunto não encontrado"}), 404
+    try:
+        db.session.delete(assunto)
+        db.session.commit()
+        return jsonify({"result": "ok", "details": f"Assunto {assunto_id} removido"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+
+
+'''
+
+CRUD routes for link Assunto and Questao
+
+'''
+
+@app.route("/assunto/<int:assunto_id>/questoes", methods=["GET"])
+def get_questoes_por_assunto(assunto_id):
+    assunto = db.session.get(Assunto, assunto_id)
+    if not assunto:
+        return jsonify({"result": "error", "details": "Assunto não encontrado"}), 404
+
+    # se `questoes` for relationship
+    questoes = [q.json() for q in assunto.questoes]
+    return jsonify({"result": "ok", "details": questoes})
+
+
+
+
+
+# se existir association table:
+# assunto.questoes = relationship("Questao", secondary=assunto_questao, back_populates="assuntos")
+
+@app.route("/assunto/<int:assunto_id>/questao/<int:questao_id>", methods=["POST"])
+def add_m2m_assunto_questao(assunto_id, questao_id):
+    assunto = db.session.get(Assunto, assunto_id)
+    questao = db.session.get(Questao, questao_id)
+    if not assunto or not questao:
+        return jsonify({"result": "error", "details": "Não encontrado"}), 404
+
+    if questao not in assunto.questoes:
+        assunto.questoes.append(questao)
+        db.session.commit()
+    return jsonify({"result":"ok","details":"Vinculado já ou feito"})
+
+
+@app.route("/assunto/<int:assunto_id>/questao/<int:questao_id>", methods=["DELETE"])
+def del_m2m_assunto_questao(assunto_id, questao_id):
+    assunto = db.session.get(Assunto, assunto_id)
+    questao = db.session.get(Questao, questao_id)
+    if not assunto or not questao:
+        return jsonify({"result": "error", "details": "Não encontrado"}), 404
+
+    if questao in assunto.questoes:
+        assunto.questoes.remove(questao)
+        db.session.commit()
+    return jsonify({"result":"ok","details":"Desvinculado ou já estava assim"})
+
 
 
 

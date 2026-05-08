@@ -13,21 +13,48 @@ export default function Home() {
             Gerenciar Círculos
           </Link>
           <Link
-            href="/pages/question"
+            href="/pages/newquestion"
             className="block px-6 py-4 rounded-lg bg-green-600 text-white text-lg font-semibold shadow hover:bg-green-700 transition"
           >
             Gerenciar Questões
           </Link>
           <Link
-            href="/pages/question_circle"
+            href="/pages/questions_circle_batch"
             className="block px-6 py-4 rounded-lg bg-purple-600 text-white text-lg font-semibold shadow hover:bg-purple-700 transition"
           >
             Questões por Círculo
           </Link>
+          <Link
+            href="/pages/import_students"
+            className="block px-6 py-4 rounded-lg bg-gray-600 text-white text-lg font-semibold shadow hover:bg-gray-700 transition"
+          >
+            Importar Alunos
+          </Link>
+          <Link
+            href="/pages/respondente"
+            className="block px-6 py-4 rounded-lg bg-yellow-600 text-white text-lg font-semibold shadow hover:bg-yellow-700 transition"
+          >
+            Gerenciar Respondentes
+          </Link>
+
+           <Link
+            href="/pages/assunto"
+            className="block px-6 py-4 rounded-lg bg-yellow-600 text-white text-lg font-semibold shadow hover:bg-yellow-700 transition"
+          >
+            Gerenciar Assuntos
+          </Link>
+
+          <Link
+            href="/pages/respostas_aluno"
+            className="block px-6 py-4 rounded-lg bg-indigo-600 text-white text-lg font-semibold shadow hover:bg-indigo-700 transition"
+          >
+            Respostas do Aluno
+          </Link>
+          
         </nav>
       </main>
       <footer className="mt-16 flex gap-6 flex-wrap items-center justify-center text-sm text-gray-500">
-        <span>Serena Manager &copy; 2025</span>
+        <span>Serena Manager &copy; 2026</span>
       </footer>
     </div>
   );

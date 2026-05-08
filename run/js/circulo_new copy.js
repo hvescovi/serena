@@ -91,17 +91,14 @@ $(function () {
                     lin = '<div class="row"><div class="col shadow p-3 mb-4 rounded wood"><font size="+2">';
 
                     //alert(url);
-                    //alert(quest.type);
 
                     if (quest.type == "aberta") {
                         //alert('questão: '+quest.enunciado);
-                        lin = lin + quest.enunciado;
-
-
-                        //novo = enun.replace(/\n/g, "<br>");
+                        enun = quest.enunciado;
+                        novo = enun.replace(/\n/g, "<br>");
                         
                         //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
-                        //lin = lin + ajustaImagens(novo); // + "(" + quest[i].type + ")"
+                        lin = lin + ajustaImagens(novo); // + "(" + quest[i].type + ")"
 
                         lin = lin + "<br>"
                         //lin = lin + "Sua resposta: <input type=text id=r" + idq + ">";
@@ -119,8 +116,7 @@ $(function () {
                     }
 
                     if (quest.type == "multiplaescolha") {
-                        //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
-                        lin = lin + quest.enunciado;
+                        lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                         lin = lin + "<br>"
 
 
@@ -129,7 +125,7 @@ $(function () {
                         quest.alternativas.sort(() => Math.random() - 0.5);
 
                         for (var j in quest.alternativas) {
-                            lin = lin + '<hr><input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + quest.alternativas[j].descricao + "<br/>";
+                            lin = lin + '<hr><input type=radio name="radiogrp' + idq + '" id="r' + quest.alternativas[j].id + '"> ' + ajustaImagens(quest.alternativas[j].descricao) + "<br/>";
                         }
                         lin = lin + '<button id="b' + idq + '" class="btn btn-primary btn-sm verificar_resposta_multipla_escolha">send answer</button>';
 
@@ -148,7 +144,7 @@ $(function () {
                         en = "";
                         for (var lac = 0; lac < n; lac++) {
                             // acrescentar o texto antes da lacuna
-                            en = en + partes[lac];
+                            en = en + ajustaImagens(partes[lac]);
                             // ainda não é a última parte de texto?
                             if (lac < (n - 1)) {
                                 // acrescentar o campo de entrada da lacuna

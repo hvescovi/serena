@@ -20,6 +20,11 @@ class Alternativa(db.Model):
 class Assunto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(254))
+
+    # n x n
+    questoes = db.relationship("Questao", secondary="assuntodaquestao",
+                               back_populates="assuntos")
+
     def __str__(self):
         return self.nome + "("+str(self.id)+")"
         
@@ -38,7 +43,8 @@ class Questao(db.Model):
     data_cadastro = db.Column(db.String(254))
 
     # n x n
-    assuntos = db.relationship("Assunto", secondary="assuntodaquestao")
+    assuntos = db.relationship("Assunto", secondary="assuntodaquestao", 
+                               back_populates="questoes")
 
     #questoesNaProva = db.relationship("QuestaoNaProva")
     #respostas = db.relationship("Resposta")
@@ -202,7 +208,7 @@ class Resposta(db.Model):
         ', pontuação: '+str(self.pontuacao) +', ptsugerida: '+str(self.pontuacao_sugerida)
 
     def json(self):
-        return {
+        x = {
             "id":self.id,
             "questao_id":self.questao_id,
             "questao": self.questao.json(),
@@ -213,6 +219,7 @@ class Resposta(db.Model):
             "pontuacao":self.pontuacao,
             "pontuacao_sugerida":self.pontuacao_sugerida # recomendação gerada pelo sistema
         }
+        return x
 
 class Completar(Questao):
     id = db.Column(db.Integer, db.ForeignKey('questao.id'), primary_key=True)

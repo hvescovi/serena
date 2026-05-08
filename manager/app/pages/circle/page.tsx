@@ -107,7 +107,9 @@ export default function Circles() {
 
        <Menu />
        
-      <h2>Gerenciar Círculos</h2>
+      <h1 className="text-4xl font-bold m-3">Círculos
+      </h1>
+      
       <form
         onSubmit={e => {
           e.preventDefault();

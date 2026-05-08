@@ -348,6 +348,9 @@ $(function () {
         success: function (resultado) {
             if (resultado.message == "ok") {
                 circulo = resultado.details.id;
+
+                circulo = 50; // HARD-CODED
+                                
                 $("#circulo_id").text(circulo);
             } else {
                 jmessage("ERRO", 'não foi possível obter o círculo ativo :-(');
