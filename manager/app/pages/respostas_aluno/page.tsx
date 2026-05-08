@@ -165,8 +165,6 @@ export default function RespostasAluno() {
                             <table className="w-full">
                                 <thead className="bg-blue-600 text-white">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">ID</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Questão</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Círculo</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Enunciado</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Resposta</th>
@@ -179,8 +177,6 @@ export default function RespostasAluno() {
                                             key={resposta.id}
                                             className={index % 2 === 0 ? "bg-green-100" : "bg-white"}
                                         >
-                                            <td className="px-6 py-4 text-sm text-gray-800">{resposta.id}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-800">Q{resposta.questao_id}</td>
                                             <td className="px-6 py-4 text-sm text-gray-800 max-w-xs">
                                                 <div className="flex flex-wrap gap-1">
                                                     {resposta.circulos && resposta.circulos.length > 0 ? (
@@ -199,8 +195,8 @@ export default function RespostasAluno() {
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-800 min-w-64 max-w-lg overflow-hidden text-ellipsis">
 
-                                                <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, resposta.questao.enunciado) }} />
-                                                ({resposta.questao.type})
+                                                <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, resposta.questao.enunciado) }} /> 
+                                                ({resposta.questao.type}) ({resposta.id})(Q{resposta.questao_id})
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-800 max-w-xs overflow-hidden text-ellipsis">
 
@@ -219,6 +215,7 @@ export default function RespostasAluno() {
                                                     <span>{resposta.resposta}</span>
                                                 )}
 
+                                                <br/>
                                                 <br/>
                                                 Data da resposta:
                                                 {formatTimestamp(resposta.timestamp)}
