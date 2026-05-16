@@ -13,8 +13,6 @@ def test():
 def vue():
     return render_template("index.html")
 
-
-
 @app.route('/exibir_respostas/<id_circulo>')
 def exibir_respostas_circulo(id_circulo):
 
@@ -1005,7 +1003,174 @@ def del_m2m_assunto_questao(assunto_id, questao_id):
     return jsonify({"result":"ok","details":"Desvinculado ou já estava assim"})
 
 
+'''
+CRUD routes for Lista
+'''
 
+@app.route("/lista", methods=["GET"])
+def list_listas():
+    """List all Lista instances"""
+    try:
+        listas = Lista.query.all()
+        lista_json = [l.json() for l in listas]
+        return jsonify({"result": "ok", "details": lista_json})
+    except Exception as e:
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+@app.route("/lista", methods=["POST"])
+def include_lista():
+    """Create a new Lista instance"""
+    try:
+        dados = request.get_json(force=True)
+        
+        # Validate required fields
+        if not dados.get('nome'):
+            return jsonify({"result": "error", "details": "Campo 'nome' é obrigatório"}), 400
+        
+        # Create new Lista
+        nova_lista = Lista(
+            nome=dados['nome'],
+            filtro_respondente=dados.get('filtro_respondente', ''),
+            ativa=dados.get('ativa', '1')
+        )
+        
+        db.session.add(nova_lista)
+        db.session.commit()
+        
+        return jsonify({"result": "ok", "details": nova_lista.json()}), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+@app.route("/lista/<int:lista_id>", methods=["PUT"])
+def edit_lista(lista_id):
+    """Edit an existing Lista instance"""
+    try:
+        lista = db.session.get(Lista, lista_id)
+        if not lista:
+            return jsonify({"result": "error", "details": "Lista não encontrada"}), 404
+        
+        dados = request.get_json(force=True)
+        
+        # Update fields if provided
+        if 'nome' in dados:
+            lista.nome = dados['nome']
+        if 'filtro_respondente' in dados:
+            lista.filtro_respondente = dados['filtro_respondente']
+        if 'ativa' in dados:
+            lista.ativa = dados['ativa']
+        
+        db.session.commit()
+        
+        return jsonify({"result": "ok", "details": lista.json()})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+@app.route("/lista/<int:lista_id>", methods=["DELETE"])
+def remove_lista(lista_id):
+    """Delete a Lista instance"""
+    try:
+        lista = db.session.get(Lista, lista_id)
+        if not lista:
+            return jsonify({"result": "error", "details": "Lista não encontrada"}), 404
+        
+        db.session.delete(lista)
+        db.session.commit()
+        
+        return jsonify({"result": "ok", "details": "Lista removida com sucesso"})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+@app.route("/lista/<int:lista_id>/questao/<int:questao_id>", methods=["POST"])
+def add_questao_to_lista(lista_id, questao_id):
+    """Add a Questao to a Lista"""
+    try:
+        lista = db.session.get(Lista, lista_id)
+        questao = db.session.get(Questao, questao_id)
+        
+        if not lista or not questao:
+            return jsonify({"result": "error", "details": "Lista ou Questão não encontrada"}), 404
+        
+        if questao not in lista.questoes:
+            lista.questoes.append(questao)
+            db.session.commit()
+        
+        return jsonify({"result": "ok", "details": "Questão vinculada à lista"})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+@app.route("/lista/<int:lista_id>/questao/<int:questao_id>", methods=["DELETE"])
+def remove_questao_from_lista(lista_id, questao_id):
+    """Remove a Questao from a Lista"""
+    try:
+        lista = db.session.get(Lista, lista_id)
+        questao = db.session.get(Questao, questao_id)
+        
+        if not lista or not questao:
+            return jsonify({"result": "error", "details": "Lista ou Questão não encontrada"}), 404
+        
+        if questao in lista.questoes:
+            lista.questoes.remove(questao)
+            db.session.commit()
+        
+        return jsonify({"result": "ok", "details": "Questão removida da lista"})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+@app.route("/lista/<int:lista_id>/questoes", methods=["GET"])
+def get_questoes_por_lista(lista_id):
+    """Get all Questoes from a Lista"""
+    try:
+        lista = db.session.get(Lista, lista_id)
+        if not lista:
+            return jsonify({"result": "error", "details": "Lista não encontrada"}), 404
+        
+        questoes = [q.json() for q in lista.questoes]
+        return jsonify({"result": "ok", "details": questoes})
+    
+    except Exception as e:
+        return jsonify({"result": "error", "details": str(e)}), 500
+
+
+@app.route("/lista/filtro/sugestoes", methods=["GET"])
+def get_filtro_sugestoes():
+    """Get filter suggestions from Respondente observacao field"""
+    import re
+    try:
+        respondentes = Respondente.query.all()
+        sugestoes = set()
+        
+        # Pattern to match |value| format
+        pattern = r'\|[^\|]+\|'
+        
+        for respondente in respondentes:
+            if respondente.observacao:
+                matches = re.findall(pattern, respondente.observacao)
+                for match in matches:
+                    sugestoes.add(match)
+        
+        # Convert to sorted list
+        sugestoes_list = sorted(list(sugestoes))
+        
+        return jsonify({"result": "ok", "details": sugestoes_list})
+    
+    except Exception as e:
+        return jsonify({"result": "error", "details": str(e)}), 500
 
 
 app.run(port=4999, debug=True)

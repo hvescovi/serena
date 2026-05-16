@@ -22,6 +22,24 @@ export default function Menu() {
         Questões por Círculo
       </Link>
       <Link
+        href="/pages/questions_lista"
+        className="px-4 py-2 rounded bg-purple-600 text-white font-semibold shadow hover:bg-purple-700 transition"
+      >
+        Questões por Lista
+      </Link>
+      <Link
+        href="/pages/lista_CRUD"
+        className="px-4 py-2 rounded bg-teal-600 text-white font-semibold shadow hover:bg-teal-700 transition"
+      >
+        Listas
+      </Link>
+      <Link
+        href="/pages/lista_render"
+        className="px-4 py-2 rounded bg-cyan-600 text-white font-semibold shadow hover:bg-cyan-700 transition"
+      >
+        Render Lista
+      </Link>
+      <Link
         href="/pages/import_students"
         className="px-4 py-2 rounded bg-gray-600 text-white font-semibold shadow hover:bg-gray-700 transition"
       >

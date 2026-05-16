@@ -382,6 +382,75 @@ class QuestaoExibidaNoCirculo(db.Model):
             "respondente_id":self.respondente_id
         }
 
+
+# lista de exercícios
+class Lista(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(254))
+    # data de criação da lista
+    timestamp = db.Column(db.DateTime(timezone=True), server_default=db.func.now()) # quando a questão foi respondida
+    
+    # relacionamento n x n 
+    questoes = db.relationship("Questao", secondary="questaodalista")
+    
+    # filtro para buscar respondentes
+    # para quem é esta lista de exercícios?
+    filtro_respondente = db.Column(db.Text)
+
+    # a lista está disponível
+    # 0 = não ativa
+    # 1 = ativa
+    ativa = db.Column(db.String(1))
+    
+    def __str__(self):
+        s = f'''Lista: {self.nome} ({self.id}), 
+        criada em {self.timestamp},
+        filtro_respondente: {self.filtro_respondente},
+        ativa: {self.ativa}'''
+        return s
+        
+    def json(self):
+        return {
+            "id":self.id,
+            "nome": self.nome,
+            "timestamp":self.timestamp,
+            "questoes":[a.json() for a in self.questoes],
+            "filtro_respondente":self.filtro_respondente,
+            "ativa":self.ativa
+        }
+
+questaoDaLista = db.Table('questaodalista', db.metadata,
+    db.Column('id_lista', db.Integer, db.ForeignKey(Lista.id)),
+    db.Column('id_questao', db.Integer, db.ForeignKey(Questao.id))
+)
+
+
+'''
+-- Main Lista table
+CREATE TABLE lista (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    filtro_respondente TEXT,
+    ativa TEXT
+);
+
+-- Many-to-many association table
+CREATE TABLE questaodalista (
+    id_lista INTEGER NOT NULL,
+    id_questao INTEGER NOT NULL,
+    FOREIGN KEY (id_lista) REFERENCES lista(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_questao) REFERENCES questao(id) ON DELETE CASCADE,
+    PRIMARY KEY (id_lista, id_questao)
+);
+
+-- Create indexes for better query performance
+CREATE INDEX idx_lista_ativa ON lista(ativa);
+CREATE INDEX idx_questaodalista_lista ON questaodalista(id_lista);
+CREATE INDEX idx_questaodalista_questao ON questaodalista(id_questao);
+'''
+
+
 #
 # teste
 #
