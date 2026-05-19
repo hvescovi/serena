@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Menu from "../../components/Menu";
-import { ajustaImagens } from "../../lib/htmlUtils";
+import { ajustaImagens } from "../../scripts/utils";
 
-const API = process.env.NEXT_PUBLIC_API_URL; // || "http://localhost:4999";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4999";
 
 export default function QuestionsListaBatchCRUD() {
   const [questions, setQuestions] = useState([]);

@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Menu from "../../components/Menu";
-import { ajustaImagens } from "../../lib/htmlUtils";
+import { ajustaImagens } from "../../scripts/utils";
 
-const API = process.env.NEXT_PUBLIC_API_URL;
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4999";
 
 export default function ListaRender() {
   const [listas, setListas] = useState([]);
@@ -112,6 +112,7 @@ export default function ListaRender() {
               key={q.id}
               className="border rounded p-4 bg-white shadow hover:shadow-lg transition"
             >
+              
               <div className="mb-3">
                 <span className="inline-block bg-green-100 border border-green-400 text-green-800 px-3 py-1 rounded font-semibold">
                   ID: {q.id}
