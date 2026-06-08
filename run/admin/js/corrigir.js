@@ -115,6 +115,7 @@ $(function () {
                                 pt = 0;
                             }
                         } else if (resp.questao.type == "aberta") {
+                            
                             temp = resp.questao.resposta;
                             temp = temp.replaceAll("<", "&lt;");
                             temp = temp.replaceAll(">", "&gt;");
@@ -156,6 +157,7 @@ $(function () {
                         // antes de mostrar a nova resposta: precisa mostrar gabarito?
                         if (mostrar_gabarito) {
                             lin += '<div class="row"><div class="col border border-warning bg-warning">';
+                            //lin += '<button id="html_render">Renderizar HTML</button>';
                             lin += '<h5 class="bg-info">CORRECT ANSWER</h5>' + gabarito;
                             lin += '</div></div>'; //col e row
                             mostrar_gabarito = false;
@@ -284,10 +286,16 @@ $(function () {
 
 
     function ajustaImagens(texto) {
-        myip = $("#myip").text();
-        url = 'http://' + myip + ':4999/imagem/';
-        return texto.replace(/<img src=/gi, "<img src=" + url);
+        if (texto.includes("data:image")) {
+            // new question types don't need adjustment
+            return texto;
+        } else {
+            myip = $("#myip").text();
+            url = 'http://' + myip + ':4999/imagem/';
+              return texto.replace(/<img src=/gi, "(<b>QUESTÃO ANTIGA</b>)<img src=" + url);
+        }
     }
+
 
 
 
