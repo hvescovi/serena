@@ -12,7 +12,7 @@ $(function () {
         myip = $("#myip").text();
 
         //alert('entrei');
-        id_circulo = $("#circulo_id").text();
+        id_circulo = $("#circulo_id").val(); //text();
 
         url = 'http://' + myip + ':4999/exibir_respostas/' + id_circulo;
 
@@ -281,7 +281,7 @@ $(function () {
         myip = $("#myip").text();
 
         //alert('entrei');
-        id_circulo = $("#circulo_id").text();
+        id_circulo = $("#circulo_id").val(); //text();
 
         url = 'http://' + myip + ':4999/gerar_recomendacoes_respostas_sem_pontuacao'
 
@@ -374,7 +374,9 @@ $(function () {
     // circulo 1 = turma 301
     // circulo 2 = turma 302
 
-    $("#circulo_id").text(circulo);
+    //circulo_id was changed from span to input in 08/06/2026
+    // $("#circulo_id").text(circulo);
+    $("#circulo_id").val(circulo);
 
     myip = $("#myip").text();
 
@@ -391,7 +393,7 @@ $(function () {
 
                 circulo = 50; // HARD-CODED
 
-                $("#circulo_id").text(circulo);
+                $("#circulo_id").val(circulo);
             } else {
                 jmessage("ERRO", 'não foi possível obter o círculo ativo :-(');
             }
