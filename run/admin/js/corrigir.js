@@ -115,11 +115,12 @@ $(function () {
                                 pt = 0;
                             }
                         } else if (resp.questao.type == "aberta") {
-                            
+
                             temp = resp.questao.resposta;
                             temp = temp.replaceAll("<", "&lt;");
                             temp = temp.replaceAll(">", "&gt;");
-                            gabarito = '<pre>' + temp + '</pre>'; //.replace("<", " (MENOR) ");
+                            gabarito = '<span id=resp_questao_' + resp.questao.id + '><pre>' + temp + '</pre></span>'; //.replace("<", " (MENOR) ");
+                            gabarito += '<button class="render_answer" id=ra_' + resp.questao.id + '>Renderizar HTML</button>';
                             pt = resp.pontuacao_sugerida;
                         } else if (resp.questao.type == "completar") {
                             temp = resp.questao.lacunas;
@@ -148,7 +149,7 @@ $(function () {
                             novaresp += ' =======> ' + resp.respondente.nome;
                         }
                         */
-                        
+
                         //novaresp += ' =======> ' + resp.respondente.nome;
 
                         novaresp += "</div>"; //col
@@ -178,8 +179,39 @@ $(function () {
     });
 
     $(document).on("click", ".vai", function () {
-        alert("foi");
+        //alert("foi");
         // OBS: na classe do elemento HTML é só class="vai" e não class=".vai" !!!!!!!!!!!
+    });
+
+    $(document).on("click", ".render_answer", function () {
+
+        // quem foi clicado
+        let eu = $(this).attr('id');
+        // obtém o id do botão
+
+        //alert(eu);
+
+        var id_quest = eu.substring(3); // ra_
+        //alert(id_quest);
+
+        //gabarito += '<button class="render_answer" id=ra_'+resp.questao.id+'>Renderizar HTML</button>';
+
+        // obtém a resposta
+        let texto = $("#resp_questao_" + id_quest).html();
+        //alert(texto);
+        //'<span id=resp_questao_'+resp.questao.id+'><pre>' + temp + '</pre></span>'; //.replace("<", " (MENOR) ");
+
+        // remover <pre> e </pre>
+        texto = texto.substring(5);
+        texto = texto.substring(0, texto.length - 5);
+
+        // retorna substituições anterirores
+        texto = texto.replaceAll("&lt;","<");
+        texto = texto.replaceAll("&gt;", ">");                            
+
+        // colocar o texto de volta lá
+        $("#resp_questao_" + id_quest).html(texto);
+
     });
 
 
@@ -292,7 +324,7 @@ $(function () {
         } else {
             myip = $("#myip").text();
             url = 'http://' + myip + ':4999/imagem/';
-              return texto.replace(/<img src=/gi, "(<b>QUESTÃO ANTIGA</b>)<img src=" + url);
+            return texto.replace(/<img src=/gi, "(<b>QUESTÃO ANTIGA</b>)<img src=" + url);
         }
     }
 
@@ -358,7 +390,7 @@ $(function () {
                 circulo = resultado.details.id;
 
                 circulo = 50; // HARD-CODED
-                                
+
                 $("#circulo_id").text(circulo);
             } else {
                 jmessage("ERRO", 'não foi possível obter o círculo ativo :-(');
