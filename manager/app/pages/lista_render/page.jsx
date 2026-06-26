@@ -145,7 +145,9 @@ export default function ListaRender() {
                   <div className="bg-yellow-50 border border-yellow-400 rounded p-3 space-y-1">
                     {q.alternativas.map((a) => (
                       <div key={a.id} className="text-gray-800">
-                        {expandedAnswers.has(q.id) && a.certa && (
+                    
+                    {/*    {expandedAnswers.has(q.id) && a.certa && ( */}
+                        {a.certa && (
                           <span className="inline-block bg-green-200 text-green-800 px-2 py-1 rounded text-sm font-semibold mr-2">
                             ✓ CORRETA
                           </span>
@@ -157,7 +159,8 @@ export default function ListaRender() {
                 </div>
               )}
 
-              {expandedAnswers.has(q.id) && q.type === "aberta" && (
+           {/*   {expandedAnswers.has(q.id) && q.type === "aberta" && ( */}
+                { q.type === "aberta" && (
                 <div className="mb-3">
                   <div className="font-semibold text-gray-700 mb-2">Resposta:</div>
                   <div className="bg-yellow-50 border border-yellow-400 rounded p-3 text-gray-800">
@@ -166,7 +169,8 @@ export default function ListaRender() {
                 </div>
               )}
 
-              {expandedAnswers.has(q.id) && q.type === "completar" && (
+          {/*    {expandedAnswers.has(q.id) && q.type === "completar" && (   */}
+                   {q.type === "completar" && (
                 <div className="mb-3">
                   <div className="font-semibold text-gray-700 mb-2">Lacunas:</div>
                   <div className="bg-yellow-50 border border-yellow-400 rounded p-3 text-gray-800">
