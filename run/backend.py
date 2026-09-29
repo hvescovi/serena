@@ -121,9 +121,14 @@ def preparar_rodada(id_circulo, id_respondente):
     # ATUALIZA o número de questões "a mais" que o respondente pode visualizar
     padrao_n_reservas = circulo.n_reservas  
 
+    # remove espaços do filtro do respondente
+    # em 29/09/2026 estava ocorrendo erro, não retornando respondentes,
+    # por causa de um espaço ao final da strin :-/
+    filtro_limpo = circulo.filtro_respondente.strip()
+
     # pega os respondentes do circulo
     todos = db.session.query(Respondente).filter(
-        Respondente.observacao.contains(circulo.filtro_respondente)).all()
+        Respondente.observacao.contains(filtro_limpo)).all()
 
     '''
     if id_circulo == '1':
