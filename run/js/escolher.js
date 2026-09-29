@@ -107,6 +107,9 @@ $(function () {
         success: function (resultado) {
             if (resultado.message == "ok") {
                 circulo = resultado.details.id;
+                // HARDCODED 29/09/2026
+                circulo = '55';
+                
                 console.log("circulo ativo: " + circulo);
 
                 // vamos obter a informação dos respondentes

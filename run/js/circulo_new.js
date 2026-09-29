@@ -95,12 +95,13 @@ $(function () {
 
                     if (quest.type == "aberta") {
                         //alert('questão: '+quest.enunciado);
-                        lin = lin + quest.enunciado;
+                        
+                        //lin = lin + quest.enunciado;
 
 
                         //novo = enun.replace(/\n/g, "<br>");
                         
-                        //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
+                        lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
                         //lin = lin + ajustaImagens(novo); // + "(" + quest[i].type + ")"
 
                         lin = lin + "<br>"
@@ -119,8 +120,9 @@ $(function () {
                     }
 
                     if (quest.type == "multiplaescolha") {
-                        //lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
-                        lin = lin + quest.enunciado;
+                        
+                        lin = lin + ajustaImagens(quest.enunciado); // + "(" + quest[i].type + ")"
+                        //lin = lin + quest.enunciado;
                         lin = lin + "<br>"
 
 
@@ -430,11 +432,19 @@ $(function () {
 
     });
 
+    // fix 29/09/2026
+    // consider new and old images format
     function ajustaImagens(texto) {
-        myip = $("#myip").text();
-        url = 'http://' + myip + ':5000/imagem/';
-        //texto = texto + "<br><br>";
-        return texto.replace(/<img src=/gi, "<br><img src=" + url);
+        if (texto.includes("data:image")) {
+            // new question types don't need adjustment
+            return texto;
+        } else {
+            myip = $("#myip").text();
+            url = 'http://' + myip + ':5000/imagem/';
+            //texto = texto + "<br><br>";
+            
+            return texto.replace(/<img src=/gi, "<br><img src=" + url);
+        }
     }
 
     //
