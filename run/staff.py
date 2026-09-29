@@ -4,7 +4,6 @@ from modelo import *
 from difflib import SequenceMatcher  # similaridade entre strings
 # https://stackoverflow.com/questions/17388213/find-the-similarity-metric-between-two-strings
 
-
 @app.route("/test")
 def test():
     return "Serena: servidor backend staff."
@@ -1188,4 +1187,3 @@ select count(resposta) AS q, rp.nome AS nome
     group by rp.id
     
     '''
-

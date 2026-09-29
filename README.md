@@ -8,7 +8,7 @@ Leia os arquivos textuais na pastas de documentação para obter orientações s
 
 ### Equipe atual
 
-- Hylson Vescovi Netto: [hylson.netto@ifc.edu.br](mailto:hylson.netto@ifc.edu.br)
+- Hylson Vescovi Netto: [hylson.vescovi@ifc.edu.br](mailto:hylson.vescovi@ifc.edu.br)
 
 ### Contribuidores
 
