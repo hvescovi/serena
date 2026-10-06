@@ -100,7 +100,7 @@ $(function () {
             //if (resultado.message == "ok") {
                 circulo = resultado.details.id;
 
-                circulo = 53; // HARD-CODED
+                circulo = 55; // HARD-CODED
                 
                 console.log("circulo ativo: " + circulo);
 
