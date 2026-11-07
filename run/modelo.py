@@ -59,6 +59,7 @@ class Questao(db.Model):
 
     # inserted in 16 october 2025
     observacao = db.Column(db.Text)
+    melhorias = db.Column(db.Text)
     ativa = db.Column(db.String(1)) # '0' ou '1'
 
     __mapper_args__ = {
@@ -112,6 +113,7 @@ class MultiplaEscolha(Questao):
             "textual_id":self.textual_id,
             "observacao":self.observacao,
             "ativa":self.ativa,
+            "melhorias": self.melhorias,
             # específico desse tipo de questão
                 "alternativas":[alternativa.json() for alternativa in self.alternativas]
         }
@@ -248,6 +250,7 @@ class Completar(Questao):
             "textual_id":self.textual_id,
             "observacao":self.observacao,
             "ativa":self.ativa,
+            "melhorias": self.melhorias,
             # específico desse tipo de questão
             "lacunas":self.lacunas
         }
@@ -279,6 +282,7 @@ class Aberta(Questao):
             "textual_id":self.textual_id,
             "observacao":self.observacao,
             "ativa":self.ativa,
+            "melhorias": self.melhorias,
             # específico desse tipo de questão
             "resposta": self.resposta
         }  

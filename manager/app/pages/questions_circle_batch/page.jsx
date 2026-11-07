@@ -16,12 +16,48 @@ export default function QuestionsCircleBatchCRUD() {
   const [selectedQuestionsToAdd, setSelectedQuestionsToAdd] = useState(new Set());
   const [selectedQuestionsToRemove, setSelectedQuestionsToRemove] = useState(new Set());
   const [isLoading, setIsLoading] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
+  const [answerStats, setAnswerStats] = useState({});
 
   // Fetch circles and all questions
   useEffect(() => {
     axios.get(`${API}/circle`).then(res => setCircles(res.data.details));
     axios.get(`${API}/question`).then(res => setQuestions(res.data.details));
   }, []);
+
+  // Fetch answer statistics for questions with numeric scores
+  useEffect(() => {
+    let cancelled = false;
+    const questionsWithStats = questions.filter(
+      q => ["multiplaescolha", "aberta", "completar"].includes(q.type)
+    );
+
+    setAnswerStats(Object.fromEntries(
+      questionsWithStats.map(q => [q.id, { status: "loading" }])
+    ));
+
+    Promise.all(questionsWithStats.map(async q => {
+      try {
+        const res = await axios.get(
+          `${API}/questao/${q.id}/estatisticas_respostas_${
+            q.type === "multiplaescolha" ? "multipla_escolha" : "aberta_completar"
+          }`
+        );
+        return [q.id, { status: "loaded", ...res.data.details }];
+      } catch (error) {
+        console.error(`Error fetching answer statistics for question ${q.id}:`, error);
+        return [q.id, { status: "error" }];
+      }
+    })).then(results => {
+      if (!cancelled) {
+        setAnswerStats(Object.fromEntries(results));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [questions]);
 
   // Fetch questions assigned to selected circle
   useEffect(() => {
@@ -117,6 +153,50 @@ export default function QuestionsCircleBatchCRUD() {
     }
   };
 
+  const duplicateQuestion = async (questionId) => {
+    if (!window.confirm(`Do you really want to duplicate question ${questionId}?`)) return;
+
+    setIsDuplicating(true);
+    try {
+      const res = await axios.post(`${API}/question/${questionId}/duplicate`);
+      setQuestions(currentQuestions => [...currentQuestions, res.data.details]);
+      alert(`Question duplicated successfully. New ID: ${res.data.details.id}`);
+    } catch (error) {
+      console.error(`Error duplicating question ${questionId}:`, error);
+      alert("Error duplicating question. Please try again.");
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
+
+  const renderAnswerStats = (question) => {
+    if (!["multiplaescolha", "aberta", "completar"].includes(question.type)) return null;
+
+    const stats = answerStats[question.id];
+    let label = "Loading answer statistics...";
+    if (stats?.status === "error") {
+      label = "Answer statistics unavailable";
+    } else if (stats?.status === "loaded") {
+      if (question.type === "multiplaescolha") {
+        const percentage = stats.total_respostas === 0
+          ? "—"
+          : `${((stats.respostas_certas / stats.total_respostas) * 100).toFixed(1)}%`;
+        label = `Answers: ${stats.total_respostas} | Correct: ${stats.respostas_certas} | Accuracy: ${percentage}`;
+      } else {
+        const average = typeof stats.pontuacao_media === "number"
+          ? stats.pontuacao_media.toFixed(2)
+          : "—";
+        label = `Answers: ${stats.total_respostas} | Average score: ${average}`;
+      }
+    }
+
+    return (
+      <span className="ml-2 inline-block rounded bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800">
+        {label}
+      </span>
+    );
+  };
+
   return (
     <div className="m-4">
       <Menu />
@@ -146,54 +226,64 @@ export default function QuestionsCircleBatchCRUD() {
               <>
                 <div className="space-y-2 mb-4">
                   {circleQuestions.map(q => (
-                    <label key={q.id} className="flex items-center mb-2 cursor-pointer border border-gray-300 rounded p-2 hover:bg-yellow-200">
-                      <input
-                        type="checkbox"
-                        checked={selectedQuestionsToRemove.has(q.id)}
-                        onChange={() => handleRemoveCheckboxChange(q.id)}
-                        className="mr-3 w-4 h-4"
-                        disabled={isLoading}
-                      />
-                      <span>
-                        {q.id})
-                        (<b>{q.type}</b>)
-                        <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, q.enunciado) }} />
-                      </span>
+                    <div key={q.id} className="flex items-center gap-2">
+                      <label className="flex flex-1 items-center mb-2 cursor-pointer border border-gray-300 rounded p-2 hover:bg-yellow-200">
+                        <input
+                          type="checkbox"
+                          checked={selectedQuestionsToRemove.has(q.id)}
+                          onChange={() => handleRemoveCheckboxChange(q.id)}
+                          className="mr-3 w-4 h-4"
+                          disabled={isLoading}
+                        />
+                        <span>
+                          {q.id})
+                          (<b>{q.type}</b>)
+                          <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, q.enunciado) }} />
+                          {renderAnswerStats(q)}
+                        </span>
 
-                      {/* details of the question */}
+                        {/* details of the question */}
 
-                      {q.type === "multiplaescolha" && (
-                        <div>
-                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                            {q.alternativas.map(a => (
-                              <div key={a.id}>
-                                {a.certa && <span>(CERTA)</span>}
-                                <span dangerouslySetInnerHTML={{ __html: a.descricao }} /><br />
-                              </div>
-                            ))}
-                          </span>
-                        </div>
-                      )}
+                        {q.type === "multiplaescolha" && (
+                          <div>
+                            <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                              {q.alternativas.map(a => (
+                                <div key={a.id}>
+                                  {a.certa && <span>(CERTA)</span>}
+                                  {!a.certa && <span> *  </span>}
+                                  <span dangerouslySetInnerHTML={{ __html: a.descricao }} /><br />
+                                </div>
+                              ))}
+                            </span>
+                          </div>
+                        )}
 
-                      {q.type === "aberta" && (
-                        <div>
-                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                            Resposta: {q.resposta}
-                          </span>
-                        </div>
-                      )}
+                        {q.type === "aberta" && (
+                          <div>
+                            <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                              Resposta: {q.resposta}
+                            </span>
+                          </div>
+                        )}
 
-                      {q.type === "completar" && (
-                        <div>
-                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                            Lacunas: {q.lacunas}
-                          </span>
-                        </div>
-                      )}
+                        {q.type === "completar" && (
+                          <div>
+                            <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                              Lacunas: {q.lacunas}
+                            </span>
+                          </div>
+                        )}
 
-
-
-                    </label>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => duplicateQuestion(q.id)}
+                        disabled={isDuplicating}
+                        className="mb-2 rounded bg-blue-600 px-3 py-2 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {isDuplicating ? "Duplicating..." : "Duplicate"}
+                      </button>
+                    </div>
                   ))}
                 </div>
                 <button
@@ -219,19 +309,21 @@ export default function QuestionsCircleBatchCRUD() {
               <>
                 <div className="space-y-2 mb-4">
                   {availableQuestions.map(q => (
-                    <label key={q.id} className="flex items-center mb-2 cursor-pointer border border-gray-300 rounded p-2 hover:bg-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={selectedQuestionsToAdd.has(q.id)}
-                        onChange={() => handleAddCheckboxChange(q.id)}
-                        className="mr-3 w-4 h-4"
-                        disabled={isLoading}
-                      />
-                      <span>
-                        {q.id})
-                        (<b>{q.type}</b>)
-                        <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, q.enunciado) }} />
-                      </span>
+                    <div key={q.id} className="flex items-center gap-2">
+                      <label className="flex flex-1 items-center mb-2 cursor-pointer border border-gray-300 rounded p-2 hover:bg-gray-200">
+                        <input
+                          type="checkbox"
+                          checked={selectedQuestionsToAdd.has(q.id)}
+                          onChange={() => handleAddCheckboxChange(q.id)}
+                          className="mr-3 w-4 h-4"
+                          disabled={isLoading}
+                        />
+                        <span>
+                          {q.id})
+                          (<b>{q.type}</b>)
+                          <span dangerouslySetInnerHTML={{ __html: ajustaImagens(API, q.enunciado) }} />
+                          {renderAnswerStats(q)}
+                        </span>
 
                       {/* details of the question
                       
@@ -239,37 +331,46 @@ export default function QuestionsCircleBatchCRUD() {
                       
                       */}
                       
-                      {q.type === "multiplaescolha" && (
-                        <div>
-                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                            {q.alternativas.map(a => (
-                              <div key={a.id}>
-                                {a.certa && <span>(CERTA)</span>}
-                                <span dangerouslySetInnerHTML={{ __html: a.descricao }} /><br />
-                              </div>
-                            ))}
-                          </span>
-                        </div>
-                      )}
+                        {q.type === "multiplaescolha" && (
+                          <div>
+                            <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                              {q.alternativas.map(a => (
+                                <div key={a.id}>
+                                  {a.certa && <span>(CERTA)</span>}
+                                  {!a.certa && <span> * </span>}
+                                  <span dangerouslySetInnerHTML={{ __html: a.descricao }} /><br />
+                                </div>
+                              ))}
+                            </span>
+                          </div>
+                        )}
 
-                      {q.type === "aberta" && (
-                        <div>
-                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                            Resposta: {q.resposta}
-                          </span>
-                        </div>
-                      )}
+                        {q.type === "aberta" && (
+                          <div>
+                            <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                              Resposta: {q.resposta}
+                            </span>
+                          </div>
+                        )}
 
-                      {q.type === "completar" && (
-                        <div>
-                          <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
-                            Lacunas: {q.lacunas}
-                          </span>
-                        </div>
-                      )}
+                        {q.type === "completar" && (
+                          <div>
+                            <span className="inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded font-semibold">
+                              Lacunas: {q.lacunas}
+                            </span>
+                          </div>
+                        )}
 
-
-                    </label>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => duplicateQuestion(q.id)}
+                        disabled={isDuplicating}
+                        className="mb-2 rounded bg-blue-600 px-3 py-2 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {isDuplicating ? "Duplicating..." : "Duplicate"}
+                      </button>
+                    </div>
                   ))}
                 </div>
                 <button

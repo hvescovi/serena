@@ -529,6 +529,57 @@ def retornar_questoes():
     retorno.update({"details":resp})
     return jsonify(retorno)
 
+#
+# rota para duplicar questões
+#
+# melhoria 07_11_2026_V
+#
+@app.route('/question/<int:question_id>/duplicate', methods=['POST'])
+def duplicate_question(question_id):
+    question = db.session.get(Questao, question_id)
+    if question is None:
+        return jsonify({"result": "error", "details": "Question not found"}), 404
+
+    question_classes = {
+        "multiplaescolha": MultiplaEscolha,
+        "completar": Completar,
+        "aberta": Aberta,
+    }
+    question_class = question_classes.get(question.type)
+    if question_class is None:
+        return jsonify({"result": "error", "details": "Unsupported question type"}), 400
+
+    try:
+        duplicate = question_class()
+        duplicate.enunciado = question.enunciado
+        duplicate.autor = question.autor
+        duplicate.data_cadastro = question.data_cadastro
+        duplicate.type = question.type
+        duplicate.textual_id = question.textual_id
+        duplicate.observacao = question.observacao
+        duplicate.melhorias = question.melhorias
+        duplicate.ativa = question.ativa
+        duplicate.assuntos = list(question.assuntos)
+
+        if question.type == "multiplaescolha":
+            duplicate.alternativas = []
+            for alternativa in question.alternativas:
+                alternativa_duplicada = Alternativa()
+                alternativa_duplicada.descricao = alternativa.descricao
+                alternativa_duplicada.certa = alternativa.certa
+                duplicate.alternativas.append(alternativa_duplicada)
+        elif question.type == "completar":
+            duplicate.lacunas = question.lacunas
+        elif question.type == "aberta":
+            duplicate.resposta = question.resposta
+
+        db.session.add(duplicate)
+        db.session.commit()
+        return jsonify({"result": "ok", "details": duplicate.json()}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"result": "error", "details": str(e)}), 500
+
 
 
 # update question by ID
@@ -540,6 +591,16 @@ def update_question(question_id):
         question = db.session.get(Questao, question_id)
         if question is None:
             return jsonify({"result": "error", "details": "Question not found"}), 404
+        if 'alternativas' in dados:
+            if question.type != "multiplaescolha" or not isinstance(dados['alternativas'], list):
+                return jsonify({"result": "error", "details": "Invalid alternatives"}), 400
+            if any(
+                not isinstance(alternativa, dict)
+                or not isinstance(alternativa.get("descricao"), str)
+                or not isinstance(alternativa.get("certa"), bool)
+                for alternativa in dados['alternativas']
+            ):
+                return jsonify({"result": "error", "details": "Invalid alternative data"}), 400
 
         # Update allowed fields
         for key, value in dados.items():
@@ -549,10 +610,17 @@ def update_question(question_id):
             if hasattr(question, key):
                 setattr(question, key, value)
 
+        if 'alternativas' in dados:
+            question.alternativas = [
+                Alternativa(descricao=alternativa["descricao"], certa=alternativa["certa"])
+                for alternativa in dados['alternativas']
+            ]
+
         db.session.commit()
         return jsonify({"result": "ok", "details": "Question updated successfully"})
     except Exception as e:
         print("Erro ao atualizar questão:", e)
+        db.session.rollback()
         return jsonify({"result": "error", "details": str(e)}), 500# CRUD routes for Respondente
 
 
@@ -566,6 +634,63 @@ def get_assuntos_por_questao(questao_id):
     # se relaciona via subject list
     assuntos = [a.json() for a in questao.assuntos]
     return jsonify({"result": "ok", "details": assuntos})
+
+
+@app.route("/questao/<int:questao_id>/estatisticas_respostas_multipla_escolha", methods=["GET"])
+def get_estatisticas_respostas_questao_multipla_escolha(questao_id):
+    questao = db.session.get(Questao, questao_id)
+    if questao is None:
+        return jsonify({"result": "error", "details": "Questao nao encontrada"}), 404
+    if questao.type != "multiplaescolha":
+        return jsonify({
+            "result": "error",
+            "details": "A questao precisa ser do tipo multiplaescolha"
+        }), 400
+
+    respostas = Resposta.query.filter(Resposta.questao_id == questao_id)
+    total_respostas = respostas.count()
+    respostas_certas = respostas.filter(Resposta.pontuacao == 1).count()
+
+    return jsonify({
+        "result": "ok",
+        "details": {
+            "questao_id": questao_id,
+            "total_respostas": total_respostas,
+            "respostas_certas": respostas_certas
+        }
+    })
+
+
+@app.route("/questao/<int:questao_id>/estatisticas_respostas_aberta_completar", methods=["GET"])
+def get_estatisticas_respostas_questao_aberta_completar(questao_id):
+    questao = db.session.get(Questao, questao_id)
+    if questao is None:
+        return jsonify({"result": "error", "details": "Questao nao encontrada"}), 404
+    if questao.type not in ("aberta", "completar"):
+        return jsonify({
+            "result": "error",
+            "details": "A questao precisa ser do tipo aberta ou completar"
+        }), 400
+
+    total_respostas, pontuacao_media = db.session.query(
+        func.count(Resposta.id),
+        func.avg(Resposta.pontuacao)
+    ).filter(Resposta.questao_id == questao_id).one()
+    respostas_certas = Resposta.query.filter(
+        Resposta.questao_id == questao_id,
+        Resposta.pontuacao == 1
+    ).count()
+
+    return jsonify({
+        "result": "ok",
+        "details": {
+            "questao_id": questao_id,
+            "total_respostas": total_respostas,
+            "respostas_certas": respostas_certas,
+            "pontuacao_media": pontuacao_media
+        }
+    })
+
 
 
 
@@ -1170,6 +1295,8 @@ def get_filtro_sugestoes():
     
     except Exception as e:
         return jsonify({"result": "error", "details": str(e)}), 500
+
+
 
 
 app.run(port=4999, debug=True)

@@ -16,6 +16,24 @@ export default function Menu() {
         Questões
       </Link>
       <Link
+        href="/pages/newquestion_img_external"
+        className="px-4 py-2 rounded bg-green-700 text-white font-semibold shadow hover:bg-green-800 transition"
+      >
+        Cadastrar Questão (imagens externas)
+      </Link>
+      <Link
+        href="/pages/question_img_external"
+        className="px-4 py-2 rounded bg-orange-600 text-white font-semibold shadow hover:bg-orange-700 transition"
+      >
+        Editar Questões (imagens externas)
+      </Link>
+      <Link
+        href="/pages/question_img_internal"
+        className="px-4 py-2 rounded bg-orange-600 text-white font-semibold shadow hover:bg-orange-700 transition"
+      >
+        Editar Questões (imagens internas)
+      </Link>
+      <Link
         href="/pages/questions_circle_batch"
         className="px-4 py-2 rounded bg-purple-600 text-white font-semibold shadow hover:bg-purple-700 transition"
       >
