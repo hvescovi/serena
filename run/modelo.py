@@ -197,7 +197,7 @@ class Resposta(db.Model):
     respondente = db.relationship("Respondente")
     
     # atributos da resposta
-    resposta = db.Column(db.String(254))
+    resposta = db.Column(db.String(1254))
     timestamp = db.Column(db.DateTime(timezone=True), server_default=db.func.now()) # quando a questão foi respondida
 
     # novo atributo: pontuação
