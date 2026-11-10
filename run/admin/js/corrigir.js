@@ -391,7 +391,7 @@ $(function () {
             if (resultado.message == "ok") {
                 circulo = resultado.details.id;
 
-                circulo = 55; // HARD-CODED
+                circulo = 56; // HARD-CODED
 
                 $("#circulo_id").val(circulo);
             } else {
