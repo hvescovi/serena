@@ -145,7 +145,8 @@ $(function () {
 
                     if (quest.type == "completar") {
                         // quebrar o enunciado em partes sepadas por três underlines
-                        partes = quest.enunciado.split("___");
+                        temp = ajustaImagens(quest.enunciado);
+                        partes = temp.split("___");
                         n = partes.length;
                         en = "";
                         for (var lac = 0; lac < n; lac++) {
